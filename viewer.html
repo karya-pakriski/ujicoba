@@ -7,9 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
+    /* ===== VARIABEL ===== */
     :root {
       --bg: #EAFFD0;
       --surface: #FFFFFF;
+      --surface-soft: #F7F5F0;
       --border: #E3F0D0;
       --ink: #2B3A3A;
       --ink-muted: #6E827D;
@@ -17,11 +19,15 @@
       --coral-dark: #D65A5A;
       --mint: #95E1D3;
       --mint-dark: #2E8B7A;
-      --header-bg: rgba(255,255,255,0.92);
+      --shadow-light: 0 8px 30px rgba(43,58,58,0.08);
+      --shadow-heavy: 0 20px 50px rgba(43,58,58,0.20);
+      --radius-lg: 24px;
+      --radius-sm: 12px;
+      --header-bg: rgba(255,255,255,0.94);
     }
 
+    /* ===== RESET & GLOBAL ===== */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body {
       font-family: 'Nunito', sans-serif;
       color: var(--ink);
@@ -31,62 +37,156 @@
       height: 100vh;
       overflow: hidden;
       overscroll-behavior-y: none;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(243,129,129,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(149,225,211,0.12) 0%, transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(252,227,138,0.06) 0%, transparent 60%);
     }
 
+    /* ===== HEADER ===== */
     .header {
       background: var(--header-bg);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 20px;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       z-index: 20;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      flex-shrink: 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.02);
     }
-
     .brand {
       font-family: 'Fredoka', sans-serif;
       font-weight: 700;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
-
+    .brand .logo-icon { font-size: 1.4rem; }
     .doc-title {
       color: var(--mint-dark);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      background: rgba(149,225,211,0.25);
+      background: rgba(149,225,211,0.20);
       padding: 4px 14px;
       border-radius: 999px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 45vw;
+      max-width: 42vw;
+      margin-left: 4px;
     }
-
     .btn-back {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 18px;
+      padding: 7px 18px;
       border-radius: 999px;
       background: var(--coral);
       color: #fff;
       font-weight: 800;
-      font-size: 14px;
+      font-size: 13px;
       text-decoration: none;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      flex-shrink: 0;
     }
-
-    .btn-back:hover { 
+    .btn-back:hover {
       background: var(--coral-dark);
       transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(243,129,129,0.30);
     }
+    .btn-back svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; }
 
+    /* ===== KONTROL NAVIGASI ===== */
+    .nav-controls {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .nav-controls .page-info {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink-muted);
+      min-width: 90px;
+    }
+    .nav-controls .page-info strong {
+      color: var(--ink);
+      font-size: 16px;
+    }
+    .nav-controls .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .nav-controls label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-muted);
+    }
+    .nav-controls input[type="number"] {
+      width: 64px;
+      padding: 6px 8px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.2s;
+      text-align: center;
+    }
+    .nav-controls input[type="number"]:focus {
+      border-color: var(--mint);
+    }
+    .nav-controls input[type="number"]::-webkit-inner-spin-button { opacity: 1; }
+    .nav-btn {
+      padding: 6px 16px;
+      border: none;
+      border-radius: 999px;
+      background: var(--mint-dark);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(46,139,122,0.30);
+    }
+    .nav-btn.secondary {
+      background: var(--surface);
+      color: var(--ink);
+      border: 2px solid var(--border);
+    }
+    .nav-btn.secondary:hover {
+      border-color: var(--mint);
+      box-shadow: none;
+    }
+    .nav-btn .icon { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; }
+
+    /* ===== AREA VIEWER ===== */
     .viewer-area {
       flex: 1;
       position: relative;
@@ -94,13 +194,21 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      padding: 15px;
+      padding: 24px 20px 28px;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(149,225,211,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(243,129,129,0.06) 0%, transparent 50%),
+        #e8e2d6;
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c4b8a8' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 
+    /* ===== LOADING ===== */
     #loadingScreen {
       position: absolute;
       inset: 0;
-      background: var(--bg);
+      background: rgba(232, 226, 214, 0.92);
+      backdrop-filter: blur(4px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -111,36 +219,59 @@
       color: var(--ink-muted);
       text-align: center;
       padding: 20px;
-      transition: opacity 0.4s ease;
+      transition: opacity 0.5s ease;
     }
-
-    .spinner {
+    #loadingScreen .spinner {
       width: 44px;
       height: 44px;
-      border: 4px solid rgba(243, 129, 129, 0.2);
+      border: 4px solid rgba(243, 129, 129, 0.18);
       border-top-color: var(--coral);
       border-radius: 50%;
       animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .flip-book {
-      display: none;
-      box-shadow: 0 15px 40px rgba(43,58,58,0.18);
+    #loadingText {
+      font-size: 15px;
+      max-width: 32ch;
     }
 
+    /* ===== BUKU ===== */
+    .flip-book {
+      display: none;
+      box-shadow: var(--shadow-heavy), 0 0 0 1px rgba(255,255,255,0.6) inset;
+      border-radius: 4px;
+      background: #fcfaf7;
+      transition: box-shadow 0.3s ease;
+    }
+    .flip-book:hover {
+      box-shadow: var(--shadow-heavy), 0 0 0 1px rgba(255,255,255,0.8) inset;
+    }
     .page {
       background-color: var(--surface);
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: none;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
     }
-
     .page canvas {
       width: 100%;
       height: 100%;
       object-fit: fill;
       display: block;
+    }
+    /* Halaman kosong (cover kosong) */
+    .page.blank {
+      background: #faf8f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #c4b8a8;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .page.blank::after {
+      content: "—";
+      opacity: 0.3;
     }
 
     #htmlViewer {
@@ -149,81 +280,138 @@
       height: 100%;
       border: none;
       background: var(--surface);
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(43,58,58,0.10);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-heavy);
     }
 
+    /* ===== RESPONSIF ===== */
     @media (max-width: 768px) {
-      .doc-title { max-width: 30vw; font-size: 0.85rem; }
-      .header { padding: 10px 14px; }
-      .btn-back { padding: 6px 14px; font-size: 13px; }
-      .viewer-area { padding: 5px; }
+      .doc-title { max-width: 30vw; font-size: 0.8rem; }
+      .header { padding: 8px 14px; }
+      .btn-back { padding: 5px 12px; font-size: 12px; }
+      .viewer-area { padding: 16px 10px 20px; }
+      .nav-controls { padding: 6px 14px; gap: 8px; }
+      .nav-controls .page-info { font-size: 12px; min-width: 70px; }
+      .nav-controls input[type="number"] { width: 54px; padding: 4px 6px; font-size: 13px; }
+      .nav-btn { padding: 5px 12px; font-size: 12px; }
     }
-
     @media (max-width: 480px) {
       .doc-title { display: none; }
+      .brand { font-size: 0.95rem; }
+      .viewer-area { padding: 12px 4px 16px; }
+      .nav-controls .ctrl-group label { display: none; }
+      .nav-controls .page-info { min-width: 60px; font-size: 11px; }
+    }
+    @media (min-width: 1200px) {
+      .viewer-area { padding: 32px 40px 36px; }
+      .flip-book { border-radius: 6px; }
     }
   </style>
 </head>
 <body>
 
+  <!-- ===== HEADER ===== -->
   <header class="header">
     <div class="brand">
       <span class="logo-icon">📘</span>
-      <span id="titleDisplay" class="doc-title">Memuat Dokumen...</span>
+      <span id="titleDisplay" class="doc-title">Memuat Dokumen…</span>
     </div>
-    <a href="index.html" class="btn-back">⬅ Katalog</a>
+    <a href="index.html" class="btn-back">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      Katalog
+    </a>
   </header>
 
+  <!-- ===== KONTROL NAVIGASI ===== -->
+  <div class="nav-controls" id="navControls" hidden>
+    <span class="page-info" id="pageInfo">Halaman <strong id="currentPageNum">1</strong> / <span id="totalPageNum">0</span></span>
+    <div class="ctrl-group">
+      <label for="pageInput">Lompat ke</label>
+      <input type="number" id="pageInput" min="1" value="1" />
+      <button class="nav-btn" id="goPageBtn">Go</button>
+    </div>
+    <div class="ctrl-group" style="margin-left:auto;">
+      <button class="nav-btn secondary" id="fullscreenBtn" title="Layar penuh">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        Fullscreen
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== AREA VIEWER ===== -->
   <main class="viewer-area">
     <div id="loadingScreen">
       <div class="spinner"></div>
-      <span id="loadingText">Mengunduh dokumen, mohon tunggu...</span>
+      <span id="loadingText">Mengunduh dokumen, mohon tunggu…</span>
     </div>
 
     <div id="book" class="flip-book"></div>
     <iframe id="htmlViewer" sandbox="allow-scripts allow-same-origin"></iframe>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+  <!-- ===== DEPENDENSI ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@1.5.5/dist/js/page-flip.browser.min.js">
+  </script>
 
   <script>
+    /**
+     * ViewerEngine — Menangani render PDF/HTML, navigasi, fullscreen, dan tata letak ganjil-genap.
+     * Optimasi: decoding Base64 via Fetch API (Native C++), rendering kanvas dengan skala terbatas.
+     */
     class ViewerEngine {
       constructor() {
-        this.API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
+        this.API_URL =
+          "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
         this.params = new URLSearchParams(window.location.search);
-        
+        this.flip = null; // instance PageFlip
+        this.totalPages = 0;
+        this.hasBlankPage = true; // selalu sisipkan halaman kosong di awal
+
         this.dom = {
           title: document.getElementById('titleDisplay'),
           loading: document.getElementById('loadingScreen'),
           loadingText: document.getElementById('loadingText'),
           spinner: document.querySelector('.spinner'),
           book: document.getElementById('book'),
-          htmlViewer: document.getElementById('htmlViewer')
+          htmlViewer: document.getElementById('htmlViewer'),
+          nav: document.getElementById('navControls'),
+          pageInfo: document.getElementById('pageInfo'),
+          currentPageNum: document.getElementById('currentPageNum'),
+          totalPageNum: document.getElementById('totalPageNum'),
+          pageInput: document.getElementById('pageInput'),
+          goBtn: document.getElementById('goPageBtn'),
+          fullscreenBtn: document.getElementById('fullscreenBtn'),
         };
-        
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
       }
 
+      // ===== INISIALISASI =====
       init() {
         const title = this.params.get('judul');
         if (title) this.dom.title.textContent = title;
         this.loadDocument();
+        this.bindNavigationEvents();
       }
 
-      /**
-       * Engine Dekode Berkecepatan Tinggi (Native C++ Browser Execution)
-       * Memanfaatkan Fetch API untuk mengubah Base64 menjadi ArrayBuffer
-       * secara instan tanpa mengunci Main Thread JS (bebas freeze)
-       */
-      async decodeBase64Optimized(base64Str) {
-        const cleanStr = base64Str.replace(/\s/g, "");
-        const dataUrl = `data:application/pdf;base64,${cleanStr}`;
-        const response = await fetch(dataUrl);
-        return new Uint8Array(await response.arrayBuffer());
+      // ===== EVENT BINDING =====
+      bindNavigationEvents() {
+        // Tombol Go
+        this.dom.goBtn.addEventListener('click', () => this.jumpToPage());
+        this.dom.pageInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') this.jumpToPage();
+        });
+
+        // Fullscreen
+        this.dom.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+
+        // Update nomor halaman saat flip terjadi (dipasang setelah flip diinisialisasi)
       }
 
+      // ===== LOAD DOKUMEN =====
       async loadDocument() {
         const fileId = this.params.get('id');
         const format = this.params.get('format');
@@ -236,55 +424,56 @@
         try {
           const response = await fetch(`${this.API_URL}?action=getfile&id=${fileId}&format=${format}`);
           if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-          
           const data = await response.json();
-          if (!data.ok) throw new Error(data.error);
+          if (!data.ok) throw new Error(data.error || "Gagal mengambil berkas.");
 
           if (format === 'html') {
             this.renderHTML(data.content);
           } else if (format === 'pdf') {
             await this.renderPDF(data.content);
+          } else {
+            throw new Error(`Format tidak dikenali: ${format}`);
           }
         } catch (error) {
-          this.showError(`Gagal memuat sistem: ${error.message}`);
+          this.showError(`Gagal memuat dokumen: ${error.message}`);
         }
       }
 
+      // ===== HTML VIEWER =====
       renderHTML(content) {
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
           this.dom.loading.style.display = 'none';
           this.dom.htmlViewer.style.display = 'block';
-          this.dom.htmlViewer.srcdoc = content; 
+          this.dom.htmlViewer.srcdoc = content;
+          this.dom.nav.hidden = true; // HTML tidak pakai flip, sembunyikan navigasi
         }, 400);
       }
 
+      // ===== PDF VIEWER =====
       async renderPDF(base64Content) {
-        this.dom.loadingText.textContent = "Membuka dokumen...";
+        this.dom.loadingText.textContent = "Membuka dokumen…";
 
-        // Eksekusi asinkron Fetch API menggantikan perulangan atob tradisional
+        // Decode Base64 via Fetch API (Native C++ di browser, non-blocking)
         const pdfData = await this.decodeBase64Optimized(base64Content);
-        base64Content = null; // Memicu Garbage Collection untuk pembersihan memori
+        base64Content = null; // bantu GC
 
         const loadingTask = pdfjsLib.getDocument({ data: pdfData });
         const pdf = await loadingTask.promise;
         const totalPages = pdf.numPages;
+        this.totalPages = totalPages;
 
-        // Ukuran tampil target (mengikuti ukuran flipbook, BUKAN resolusi native PDF).
-        // Ini kunci performa: sebelumnya kanvas dirender pada scale 1.5 x devicePixelRatio
-        // penuh (bisa 3x di HP), padahal yang tampil di layar hanya ~380-520px lebar.
+        // Ukuran target mengikuti lebar area tampil
         const targetWidth = this.getTargetBookWidth();
-        // Batasi devicePixelRatio efektif ke maksimum 2 — di atas itu tidak terlihat
-        // bedanya untuk teks buku, tapi biaya render naik kuadratik.
         const outputScale = Math.min(window.devicePixelRatio || 1, 2);
 
         const fragment = document.createDocumentFragment();
-        // Placeholder array supaya urutan halaman tetap benar walau dirender paralel
-        const pageWrappers = new Array(totalPages);
+        const pageWrappers = [];
         let baseWidth = targetWidth;
         let baseHeight = targetWidth * 1.414;
         let rendered = 0;
 
+        // ===== RENDER PER BATCH (PARALEL) =====
         const renderPage = async (pageNum) => {
           const page = await pdf.getPage(pageNum);
           const nativeViewport = page.getViewport({ scale: 1 });
@@ -294,92 +483,193 @@
             baseHeight = nativeViewport.height;
           }
 
-          // Skala dihitung agar resolusi kanvas pas dengan ukuran tampil x outputScale,
-          // bukan resolusi asli PDF (yang seringkali jauh lebih besar dari kebutuhan layar).
           const renderScale = (targetWidth * outputScale) / nativeViewport.width;
           const viewport = page.getViewport({ scale: renderScale });
 
-          const pageWrapper = document.createElement('div');
-          pageWrapper.className = 'page';
+          const wrapper = document.createElement('div');
+          wrapper.className = 'page';
 
           const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d', { alpha: false });
+          const ctx = canvas.getContext('2d', { alpha: false });
 
           canvas.width = Math.floor(viewport.width);
           canvas.height = Math.floor(viewport.height);
-          canvas.style.width = Math.floor(viewport.width / outputScale) + "px";
-          canvas.style.height = Math.floor(viewport.height / outputScale) + "px";
+          canvas.style.width = Math.floor(viewport.width / outputScale) + 'px';
+          canvas.style.height = Math.floor(viewport.height / outputScale) + 'px';
 
-          pageWrapper.appendChild(canvas);
-          pageWrappers[pageNum - 1] = pageWrapper;
+          wrapper.appendChild(canvas);
+          pageWrappers[pageNum - 1] = wrapper;
 
-          await page.render({ canvasContext: context, viewport: viewport }).promise;
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
 
           rendered++;
-          this.dom.loadingText.textContent = `Merender halaman ${rendered} dari ${totalPages}...`;
+          this.dom.loadingText.textContent = `Merender halaman ${rendered} dari ${totalPages}…`;
         };
 
-        // Render per-batch paralel (bukan satu-satu berurutan) untuk memangkas waktu tunggu total.
         const BATCH_SIZE = 4;
         for (let start = 1; start <= totalPages; start += BATCH_SIZE) {
           const batch = [];
-          for (let n = start; n < start + BATCH_SIZE && n <= totalPages; n++) batch.push(renderPage(n));
+          for (let n = start; n < start + BATCH_SIZE && n <= totalPages; n++) {
+            batch.push(renderPage(n));
+          }
           await Promise.all(batch);
         }
 
+        // ===== SISIPKAN HALAMAN KOSONG DI AWAL (GANJIL DI KANAN) =====
+        const blankPage = document.createElement('div');
+        blankPage.className = 'page blank';
+        // tidak perlu konten, class .blank sudah menampilkan tanda
+        pageWrappers.unshift(blankPage);
+
+        // Masukkan semua ke fragment
         pageWrappers.forEach(w => fragment.appendChild(w));
 
-        // Menyisipkan seluruh DOM sekaligus
+        // Tancapkan ke DOM
         this.dom.book.appendChild(fragment);
 
+        // Sembunyikan loading, tampilkan buku
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
           this.dom.loading.style.display = 'none';
           this.dom.book.style.display = 'block';
-          this.initFlipEngine(baseWidth, baseHeight, targetWidth);
-        }, 300);
+          this.dom.nav.hidden = false;
+          this.initFlipEngine(baseWidth, baseHeight, targetWidth, totalPages);
+        }, 350);
       }
 
-      // Ukuran dasar flipbook mengikuti lebar layar supaya tidak selalu tampil besar,
-      // terutama di layar desktop lebar.
+      // ===== DECODE BASE64 (FETCH API) =====
+      async decodeBase64Optimized(base64Str) {
+        const cleanStr = base64Str.replace(/\s/g, "");
+        const dataUrl = `data:application/pdf;base64,${cleanStr}`;
+        const response = await fetch(dataUrl);
+        return new Uint8Array(await response.arrayBuffer());
+      }
+
+      // ===== UKURAN BUKU =====
       getTargetBookWidth() {
         const vw = window.innerWidth;
-        return Math.round(Math.min(380, Math.max(240, vw - 80)));
+        const vh = window.innerHeight;
+        // Lebar menyesuaikan, dengan batas nyaman
+        const maxWidth = Math.min(vw - 48, 520);
+        const minWidth = Math.min(260, vw - 32);
+        return Math.round(Math.min(maxWidth, Math.max(minWidth, vw * 0.45)));
       }
 
-      initFlipEngine(baseWidth, baseHeight, targetWidth) {
-        // Kalkulasi dinamis rasio aspek berdasarkan ukuran asli PDF
+      // ===== INISIALISASI PAGE-FLIP =====
+      initFlipEngine(baseWidth, baseHeight, targetWidth, totalPages) {
         const aspectRatio = baseWidth / baseHeight;
         const width = targetWidth || 380;
+        const height = Math.round(width / aspectRatio);
 
-        const pageFlip = new St.PageFlip(this.dom.book, {
-          width: width,
-          height: Math.round(width / aspectRatio),
+        // Batasi agar tidak terlalu tinggi
+        const maxH = Math.min(window.innerHeight - 200, 720);
+        const finalH = Math.min(height, maxH);
+        const finalW = Math.round(finalH * aspectRatio);
+
+        this.flip = new St.PageFlip(this.dom.book, {
+          width: finalW,
+          height: finalH,
           size: "stretch",
-          minWidth: 240,
-          maxWidth: 480,
-          minHeight: 320,
-          maxHeight: 680,
-          showCover: false, 
+          minWidth: 220,
+          maxWidth: 560,
+          minHeight: 300,
+          maxHeight: 740,
+          showCover: false,
           mobileScrollSupport: true,
-          maxShadowOpacity: 0.35,
+          maxShadowOpacity: 0.30,
           drawShadow: true,
-          flippingTime: 700
+          flippingTime: 650,
         });
 
-        pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
-        // Catatan: mode size:"stretch" pada page-flip.js sudah otomatis menyesuaikan
-        // ukuran mengikuti container saat window di-resize, jadi tidak perlu listener manual.
+        this.flip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
+
+        // ===== UPDATE INFO HALAMAN =====
+        this.updatePageInfo();
+
+        // Event listener untuk perubahan halaman
+        this.flip.on('flip', () => this.updatePageInfo());
+
+        // ===== RESPONSIF: resize ulang =====
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            if (this.flip) {
+              const newW = this.getTargetBookWidth();
+              const newH = Math.round(newW / aspectRatio);
+              this.flip.updateSize(newW, Math.min(newH, window.innerHeight - 200));
+              // Page-flip otomatis menyesuaikan dengan size:"stretch"
+            }
+          }, 300);
+        });
+
+        // ===== SET TOTAL HALAMAN DI UI =====
+        // total halaman = totalPages + 1 (karena ada blank)
+        this.dom.totalPageNum.textContent = totalPages;
+        this.dom.pageInput.max = totalPages;
+        this.dom.pageInput.value = 1;
+        this.dom.currentPageNum.textContent = 1;
       }
 
+      // ===== UPDATE INFORMASI HALAMAN =====
+      updatePageInfo() {
+        if (!this.flip) return;
+        try {
+          // currentPageIndex = indeks 0-based dari halaman yang sedang aktif (halaman kiri)
+          const currentIdx = this.flip.getCurrentPageIndex();
+          // Karena ada blank di indeks 0, maka nomor halaman yang terlihat = currentIdx
+          // Tapi jika currentIdx = 0 (blank), kita tampilkan 1 (halaman pertama isi)
+          let displayPage = currentIdx;
+          if (currentIdx === 0) displayPage = 1;
+          // Jika currentIdx > totalPages (berarti di akhir), tampilkan totalPages
+          if (currentIdx > this.totalPages) displayPage = this.totalPages;
+
+          this.dom.currentPageNum.textContent = displayPage;
+          this.dom.pageInput.value = displayPage;
+
+          // Update juga di judul info
+          const info = this.dom.pageInfo;
+          // sudah diatur di HTML
+        } catch (_) { /* abaikan */ }
+      }
+
+      // ===== LOMPAT KE HALAMAN =====
+      jumpToPage() {
+        if (!this.flip) return;
+        const raw = this.dom.pageInput.value.trim();
+        const num = parseInt(raw, 10);
+        if (isNaN(num) || num < 1 || num > this.totalPages) {
+          // reset ke nilai sekarang
+          this.dom.pageInput.value = this.dom.currentPageNum.textContent;
+          return;
+        }
+        // Karena indeks 0 = blank, halaman ke-N ada di indeks N
+        const targetIdx = num;
+        this.flip.turnToPage(targetIdx);
+        // update info akan terjadi via event 'flip'
+      }
+
+      // ===== FULLSCREEN =====
+      toggleFullscreen() {
+        const el = document.documentElement;
+        if (!document.fullscreenElement) {
+          el.requestFullscreen?.().catch(() => {});
+        } else {
+          document.exitFullscreen?.().catch(() => {});
+        }
+      }
+
+      // ===== ERROR =====
       showError(msg) {
         console.error("Viewer Error:", msg);
         this.dom.loadingText.textContent = msg;
         this.dom.spinner.style.display = 'none';
         this.dom.loadingText.style.color = 'var(--coral)';
+        this.dom.loadingText.style.fontWeight = '800';
       }
     }
 
+    // ===== START =====
     document.addEventListener('DOMContentLoaded', () => {
       const viewer = new ViewerEngine();
       viewer.init();
