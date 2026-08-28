@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bank Materi &amp; Soal PAI — KKG Kabupaten Kulon Progo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <style>
+        /* ----- reset & variabel ----- */
+        :root {
+            --bg: #EAFFD0;
+            --surface: #FFFFFF;
+            --surface-2: #FFF8E1;
+            --border: #E3F0D0;
+            --ink: #2B3A3A;
+            --ink-muted: #6E827D;
+            --coral: #F38181;
+            --coral-dark: #D65A5A;
+            --mint: #95E1D3;
+            --mint-dark: #2E8B7A;
+            --yellow: #FCE38A;
+            --yellow-dark: #8A6D1D;
+            --radius: 20px;
+            --shadow: 0 10px 30px rgba(43, 58, 58, 0.08);
+            --header-bg: rgba(255, 255, 255, 0.92);
+            --max-width: 1200px;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            min-height: 100vh;
+            font-family: 'Nunito', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 6% 0%, rgba(243, 129, 129, 0.12), transparent 32%),
+                radial-gradient(circle at 94% 6%, rgba(252, 227, 138, 0.25), transparent 34%),
+                radial-gradient(circle at 90% 96%, rgba(149, 225, 211, 0.25), transparent 38%),
+                var(--bg);
+            display: flex;
+            flex-direction: column;
+        }
+        .icon {
+            display: inline-flex;
+            vertical-align: middle;
+        }
+        .icon svg {
+            display: block;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ----- toast container ----- */
+        #toast-container {
+            position: fixed;
+            top: 80px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+            width: 90%;
+            pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            #toast-container {
+                top: 70px;
+                right: 12px;
+                max-width: 100%;
+                width: calc(100% - 24px);
+            }
+        }
+        .toast {
+            pointer-events: auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--mint-dark);
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            font-weight: 700;
+            font-size: 14px;
+            animation: slideIn 0.3s ease;
+            color: var(--ink);
+            word-break: break-word;
+        }
+        .toast-success {
+            border-left-color: var(--mint-dark);
+        }
+        .toast-error {
+            border-left-color: var(--coral-dark);
+        }
+        .toast-info {
+            border-left-color: var(--yellow-dark);
+        }
+        .toast .msg {
+            flex: 1;
+        }
+        .toast .close-toast {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--ink-muted);
+            padding: 0 4px;
+            flex-shrink: 0;
+        }
+        .toast .close-toast:hover {
+            color: var(--coral);
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+        }
+        .toast.removing {
+            animation: slideOut 0.25s ease forwards;
+        }
+
+        /* ----- header ----- */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: var(--header-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        @media (max-width: 768px) {
+            .header {
+                padding: 12px 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            .header {
+                padding: 10px 16px;
+            }
+        }
+        .brand {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .brand .logo-icon {
+            font-size: 1.2em;
+        }
+        .brand small {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--mint-dark);
+            background: rgba(149, 225, 211, 0.25);
+            padding: 4px 14px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: 999px;
+            border: 2px solid var(--border);
+            background: var(--surface);
+            color: var(--ink);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: border-color 0.15s ease, transform 0.1s ease, background 0.15s ease;
+            min-height: 44px;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            border-color: var(--mint);
+            background: var(--surface-2);
+        }
+        .btn.primary {
+            background: var(--coral);
+            color: #fff;
+            border-color: var(--coral);
+            box-shadow: 0 8px 20px rgba(243, 129, 129, 0.30);
+        }
+        .btn.primary:hover {
+            background: var(--coral-dark);
+            border-color: var(--coral-dark);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn .spinner-btn {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        @media (max-width: 600px) {
+            .btn {
+                padding: 6px 14px;
+                font-size: 12px;
+                min-height: 36px;
+            }
+        }
+
+        /* ----- konten utama ----- */
+        .wrap {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 32px 32px 60px;
+            width: 100%;
+            flex: 1;
+        }
+        @media (max-width: 768px) {
+            .wrap {
+                padding: 24px 20px 50px;
+            }
+        }
+        @media (max-width: 480px) {
+            .wrap {
+                padding: 16px 14px 40px;
+            }
+        }
+
+        /* ----- toolbar ----- */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 24px;
+            margin-bottom: 32px;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        @media (max-width: 768px) {
+            .toolbar {
+                padding: 14px 18px;
+                gap: 10px;
+            }
+        }
+        @media (max-width: 480px) {
+            .toolbar {
+                padding: 12px 14px;
+                gap: 8px;
+            }
+        }
+        .toolbar .search-wrap {
+            position: relative;
+            flex: 2 1 240px;
+            min-width: 160px;
+        }
+        .toolbar .search-wrap .icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ink-muted);
+            width: 16px;
+            height: 16px;
+        }
+        .toolbar input[type="search"],
+        .toolbar select {
+            width: 100%;
+            background: var(--surface-2);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px 10px 40px;
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            outline: none;
+            color: var(--ink);
+            min-height: 46px;
+            transition: border-color 0.15s ease;
+        }
+        .toolbar select {
+            padding: 10px 14px;
+            flex: 1 1 140px;
+            min-width: 110px;
+            appearance: auto;
+        }
+        .toolbar input:focus,
+        .toolbar select:focus {
+            border-color: var(--mint);
+        }
+        .toolbar .count {
+            font-size: 14px;
+            color: var(--ink-muted);
+            font-weight: 700;
+            white-space: nowrap;
+            margin-left: auto;
+            padding-left: 10px;
+        }
+        @media (max-width: 768px) {
+            .toolbar .search-wrap {
+                flex: 1 1 100%;
+            }
+            .toolbar select {
+                flex: 1 1 30%;
+                min-width: 80px;
+            }
+            .toolbar .count {
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+                padding-left: 0;
+            }
+        }
+
+        /* ----- grid kartu ----- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                gap: 18px;
+            }
+        }
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px 24px 24px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 16px rgba(43, 58, 58, 0.04);
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(243, 129, 129, 0.12);
+            border-color: var(--coral);
+        }
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .badge {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 999px;
+            border: 2px solid var(--border);
+            color: var(--ink);
+        }
+        .badge.materi {
+            border-color: var(--mint);
+            color: var(--mint-dark);
+            background: rgba(149, 225, 211, 0.15);
+        }
+        .badge.soal {
+            border-color: var(--yellow);
+            color: var(--yellow-dark);
+            background: rgba(252, 227, 138, 0.25);
+        }
+        .badge.fmt {
+            border-color: var(--border);
+            color: var(--ink-muted);
+            background: transparent;
+        }
+        .card h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 0 0 6px;
+            line-height: 1.4;
+        }
+        .card .meta {
+            font-size: 12.5px;
+            color: var(--ink-muted);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        .card p.desc {
+            font-size: 13.5px;
+            color: var(--ink-muted);
+            line-height: 1.6;
+            margin: 0 0 18px;
+            flex: 1;
+            font-weight: 500;
+        }
+        .card a.btn-card {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            background: var(--coral);
+            color: #fff;
+            font-weight: 800;
+            font-size: 13.5px;
+            padding: 12px 18px;
+            border-radius: 999px;
+            transition: background 0.15s ease, transform 0.1s ease;
+            box-shadow: 0 8px 20px rgba(243, 129, 129, 0.25);
+            width: 100%;
+        }
+        .card a.btn-card:hover {
+            background: var(--coral-dark);
+            transform: scale(1.02);
+        }
+
+        /* ----- empty & loading ----- */
+        .empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+            padding: 80px 20px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            color: var(--ink-muted);
+            background: var(--surface);
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .empty .icon {
+            color: var(--coral);
+            width: 48px;
+            height: 48px;
+            opacity: 0.6;
+        }
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 80px 20px;
+            color: var(--ink-muted);
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 4px solid var(--border);
+            border-top-color: var(--coral);
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ----- modal overlay ----- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.30);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: var(--surface);
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: var(--radius);
+            padding: 28px 30px 30px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.20);
+            border: 1px solid var(--border);
+        }
+        @media (max-width: 480px) {
+            .modal {
+                padding: 20px 16px;
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
+            font-size: 1.3rem;
+            border-bottom: 2px dashed var(--border);
+            padding-bottom: 12px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--ink-muted);
+            padding: 0 4px;
+            transition: color 0.15s;
+        }
+        .modal-close:hover {
+            color: var(--coral);
+        }
+        .field {
+            margin-bottom: 16px;
+        }
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        .field label .req {
+            color: var(--coral);
+        }
+        .field input,
+        .field select,
+        .field textarea {
+            width: 100%;
+            background: var(--surface-2);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            color: var(--ink);
+            transition: border-color 0.15s ease;
+        }
+        .field textarea {
+            min-height: 72px;
+            resize: vertical;
+        }
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--mint);
+        }
+        .badge-pai {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(149, 225, 211, 0.20);
+            border: 2px solid var(--mint);
+            color: var(--mint-dark);
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 800;
+        }
+        .file-drop {
+            border: 2.5px dashed var(--border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            background: var(--surface-2);
+            cursor: pointer;
+            transition: border-color 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .file-drop:hover {
+            border-color: var(--coral);
+        }
+        .file-drop input {
+            display: none;
+        }
+        .file-drop .icon {
+            color: var(--coral);
+            width: 32px;
+            height: 32px;
+        }
+        .file-drop .hint {
+            color: var(--ink-muted);
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .file-drop .name {
+            color: var(--mint-dark);
+            font-weight: 800;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        @media (max-width: 480px) {
+            .row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            background: var(--coral);
+            color: #fff;
+            font-weight: 800;
+            font-size: 15px;
+            font-family: 'Fredoka', sans-serif;
+            transition: background 0.15s ease;
+            box-shadow: 0 10px 24px rgba(243, 129, 129, 0.30);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 8px;
+            min-height: 54px;
+        }
+        .btn-submit:hover {
+            background: var(--coral-dark);
+        }
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-submit .spinner-btn {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .modal-footer {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--ink-muted);
+            text-align: center;
+        }
+
+        /* ----- scroll bar modal ----- */
+        .modal::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal::-webkit-scrollbar-track {
+            background: var(--surface-2);
+            border-radius: 8px;
+        }
+        .modal::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 8px;
+        }
+        .modal::-webkit-scrollbar-thumb:hover {
+            background: var(--mint);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div id="toast-container"></div>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="brand">
+            <span class="logo-icon">📘</span>
+            <span>KKG PAI</span>
+            <small>Kabupaten Kulon Progo</small>
+        </div>
+        <div class="header-actions" id="headerActions">
+            <!-- diisi JS -->
+        </div>
+    </header>
+
+    <!-- ===== KONTEN UTAMA ===== -->
+    <div class="wrap">
+        <!-- toolbar filter -->
+        <div class="toolbar">
+            <div class="search-wrap">
+                <span class="icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg>
+                </span>
+                <input type="search" id="searchInput" placeholder="Cari judul atau deskripsi..." />
+            </div>
+            <select id="filterKelas"><option value="">Semua kelas</option></select>
+            <select id="filterFase"><option value="">Semua fase</option></select>
+            <select id="filterTipe">
+                <option value="">Semua tipe</option>
+                <option value="Materi">Materi</option>
+                <option value="Soal">Soal</option>
+            </select>
+            <span class="count" id="countLabel">0 konten</span>
+        </div>
+
+        <!-- area daftar kartu -->
+        <div id="catalogArea" class="loading">
+            <span class="spinner"></span>
+            Memuat katalog...
+        </div>
+    </div>
+
+    <!-- ===== MODAL LOGIN ===== -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span>🔐 Login</span>
+                <button class="modal-close" data-close="loginModal">&times;</button>
+            </div>
+            <div class="field">
+                <label>Masukkan passcode unggah</label>
+                <input type="password" id="loginPasscode" placeholder="Passcode dari spreadsheet" />
+            </div>
+            <button class="btn-submit" id="loginBtn">Login</button>
+            <div class="modal-footer">Passcode didapatkan dari menu "Bank Materi &amp; Soal" di spreadsheet.</div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL UPLOAD ===== -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <span>📤 Unggah Materi / Soal</span>
+                <button class="modal-close" data-close="uploadModal">&times;</button>
+            </div>
+            <form id="uploadForm">
+                <input type="hidden" id="uploadPasscode" value="" />
+
+                <div class="field">
+                    <label>Mapel</label>
+                    <span class="badge-pai">PAI — Pendidikan Agama Islam</span>
+                    <input type="hidden" id="mapel" value="PAI" />
+                </div>
+
+                <div class="field">
+                    <label for="judul">Judul <span class="req">*</span></label>
+                    <input type="text" id="judul" required placeholder="Misal: Iman Kepada Allah Melalui Kalimat Thayyibah" />
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="kelas">Kelas <span class="req">*</span></label>
+                        <select id="kelas" required>
+                            <option value="">Pilih kelas</option>
+                            <option>1</option><option>2</option><option>3</option>
+                            <option>4</option><option>5</option><option>6</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="fase">Fase <span class="req">*</span></label>
+                        <select id="fase" required>
+                            <option value="">Pilih fase</option>
+                            <option>A</option><option>B</option><option>C</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="bab">Kode Bab / TP</label>
+                        <input type="text" id="bab" placeholder="Misal: 1.1" />
+                    </div>
+                    <div class="field">
+                        <label for="tipe">Tipe <span class="req">*</span></label>
+                        <select id="tipe" required>
+                            <option value="">Pilih tipe</option>
+                            <option>Materi</option>
+                            <option>Soal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="deskripsi">Deskripsi singkat</label>
+                    <textarea id="deskripsi" placeholder="Ringkasan isi materi/soal ini"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="status">Status tampil</label>
+                    <select id="statusSelect">
+                        <option value="Draft">Draft (belum tampil di web)</option>
+                        <option value="Aktif">Aktif (langsung tampil di web)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>File (.pdf atau .html) <span class="req">*</span></label>
+                    <label class="file-drop" id="dropLabel">
+                        <input type="file" id="fileInput" accept=".pdf,.html" required />
+                        <span class="icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                        </span>
+                        <span class="hint">Klik untuk memilih file — format terdeteksi otomatis</span>
+                        <div class="name" id="fileName"></div>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit" id="uploadSubmitBtn">
+                    <span class="icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                    </span>
+                    Unggah ke Bank Materi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // KONFIGURASI — WEB APP URL
+        // ================================================================
+        const API_URL =
+            "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
+
+        // ================================================================
+        // TOAST SYSTEM
+        // ================================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            toast.innerHTML = `
+                <span class="msg">${icon} ${message}</span>
+                <button class="close-toast">&times;</button>
+            `;
+            container.appendChild(toast);
+
+            const closeBtn = toast.querySelector('.close-toast');
+            const removeToast = () => {
+                if (toast.classList.contains('removing')) return;
+                toast.classList.add('removing');
+                setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+            };
+            closeBtn.addEventListener('click', removeToast);
+
+            let timer = setTimeout(removeToast, duration);
+            toast.addEventListener('mouseenter', () => clearTimeout(timer));
+            toast.addEventListener('mouseleave', () => {
+                timer = setTimeout(removeToast, duration);
+            });
+        }
+
+        // ================================================================
+        // STATE
+        // ================================================================
+        let allItems = [];
+        let isLoggedIn = false;
+        let currentPasscode = '';
+
+        const ICON_BOOK =
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/><path d="M12 5v14"/></svg>';
+        const ICON_EMPTY =
+            '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg>';
+
+        // DOM refs
+        const headerActions = document.getElementById('headerActions');
+        const catalogArea = document.getElementById('catalogArea');
+        const searchInput = document.getElementById('searchInput');
+        const filterKelas = document.getElementById('filterKelas');
+        const filterFase = document.getElementById('filterFase');
+        const filterTipe = document.getElementById('filterTipe');
+        const countLabel = document.getElementById('countLabel');
+
+        const loginModal = document.getElementById('loginModal');
+        const loginPasscode = document.getElementById('loginPasscode');
+        const loginBtn = document.getElementById('loginBtn');
+
+        const uploadModal = document.getElementById('uploadModal');
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadPasscode = document.getElementById('uploadPasscode');
+        const uploadSubmitBtn = document.getElementById('uploadSubmitBtn');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+
+        // ================================================================
+        // RENDER HEADER
+        // ================================================================
+        function renderHeader() {
+            if (isLoggedIn) {
+                headerActions.innerHTML = `
+                    <button class="btn primary" id="btnUpload">📤 Unggah</button>
+                    <button class="btn" id="btnLogout">🚪 Logout</button>
+                `;
+                document.getElementById('btnUpload').addEventListener('click', () => openUploadModal());
+                document.getElementById('btnLogout').addEventListener('click', logout);
+            } else {
+                headerActions.innerHTML = `<button class="btn primary" id="btnLogin">🔐 Login</button>`;
+                document.getElementById('btnLogin').addEventListener('click', () => openLoginModal());
+            }
+        }
+
+        // ================================================================
+        // LOGIN / LOGOUT
+        // ================================================================
+        function openLoginModal() {
+            loginModal.classList.add('active');
+            loginPasscode.value = '';
+            loginPasscode.focus();
+        }
+
+        function closeLoginModal() {
+            loginModal.classList.remove('active');
+        }
+
+        function handleLogin() {
+            const code = loginPasscode.value.trim();
+            if (!code) {
+                showToast('Passcode tidak boleh kosong.', 'error');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner-btn"></span> Memproses...';
+
+            setTimeout(() => {
+                currentPasscode = code;
+                sessionStorage.setItem('bms_passcode', code);
+                isLoggedIn = true;
+                closeLoginModal();
+                renderHeader();
+                showToast('Login berhasil! Sekarang Anda dapat mengunggah materi.', 'success');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Login';
+            }, 600);
+        }
+
+        function logout() {
+            isLoggedIn = false;
+            currentPasscode = '';
+            sessionStorage.removeItem('bms_passcode');
+            renderHeader();
+            closeUploadModal();
+            showToast('Anda telah logout.', 'info');
+        }
+
+        // ================================================================
+        // UPLOAD MODAL
+        // ================================================================
+        function openUploadModal() {
+            if (!isLoggedIn) {
+                showToast('Silakan login terlebih dahulu.', 'error');
+                return;
+            }
+            uploadModal.classList.add('active');
+            uploadPasscode.value = currentPasscode;
+            uploadForm.reset();
+            fileName.textContent = '';
+            uploadPasscode.value = currentPasscode;
+            document.getElementById('mapel').value = 'PAI';
+            uploadSubmitBtn.disabled = false;
+            uploadSubmitBtn.innerHTML = 'Unggah ke Bank Materi';
+        }
+
+        function closeUploadModal() {
+            uploadModal.classList.remove('active');
+        }
+
+        // ================================================================
+        // FILE INPUT HANDLER
+        // ================================================================
+        let detectedFormat = '';
+        fileInput.addEventListener('change', function(e) {
+            const f = e.target.files[0];
+            if (!f) { fileName.textContent = ''; return; }
+            const ext = f.name.split('.').pop().toLowerCase();
+            detectedFormat = (ext === 'pdf') ? 'pdf' : 'html';
+            fileName.textContent = f.name + ' · format: ' + detectedFormat;
+        });
+
+        // ================================================================
+        // UPLOAD FORM SUBMIT
+        // ================================================================
+        uploadForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('Pilih file terlebih dahulu.', 'error');
+                return;
+            }
+            if (!detectedFormat) {
+                showToast('Format file tidak terdeteksi. Gunakan .pdf atau .html', 'error');
+                return;
+            }
+
+            const passcode = uploadPasscode.value;
+            const judul = document.getElementById('judul').value.trim();
+            if (!judul) { showToast('Judul harus diisi.', 'error'); return; }
+            const kelas = document.getElementById('kelas').value;
+            if (!kelas) { showToast('Pilih kelas.', 'error'); return; }
+            const fase = document.getElementById('fase').value;
+            if (!fase) { showToast('Pilih fase.', 'error'); return; }
+            const tipe = document.getElementById('tipe').value;
+            if (!tipe) { showToast('Pilih tipe.', 'error'); return; }
+
+            const bab = document.getElementById('bab').value.trim();
+            const deskripsi = document.getElementById('deskripsi').value.trim();
+            const status = document.getElementById('statusSelect').value;
+            const mapel = document.getElementById('mapel').value;
+
+            uploadSubmitBtn.disabled = true;
+            uploadSubmitBtn.innerHTML = '<span class="spinner-btn"></span> Mengunggah...';
+            showToast('Sedang mengunggah, mohon tunggu...', 'info', 5000);
+
+            try {
+                const base64 = await fileToBase64(file);
+                const payload = {
+                    passcode,
+                    judul,
+                    mapel,
+                    kelas,
+                    fase,
+                    bab,
+                    tipe,
+                    format: detectedFormat,
+                    deskripsi,
+                    status,
+                    filename: file.name,
+                    mimeType: file.type || (detectedFormat === 'pdf' ? 'application/pdf' : 'text/html'),
+                    fileBase64: base64
+                };
+
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    showToast(`✅ Berhasil diunggah! ID: ${data.id}. Katalog akan diperbarui.`, 'success');
+                    loadCatalog();
+                    uploadForm.reset();
+                    fileName.textContent = '';
+                    document.getElementById('mapel').value = 'PAI';
+                    uploadPasscode.value = currentPasscode;
+                    setTimeout(() => closeUploadModal(), 2000);
+                } else {
+                    showToast('Gagal: ' + data.error, 'error');
+                }
+            } catch (err) {
+                showToast('Terjadi kesalahan: ' + err.message, 'error');
+            } finally {
+                uploadSubmitBtn.disabled = false;
+                uploadSubmitBtn.innerHTML = 'Unggah ke Bank Materi';
+            }
+        });
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ================================================================
+        // KATALOG — LOAD & RENDER
+        // ================================================================
+        async function loadCatalog() {
+            if (!API_URL.startsWith('http')) {
+                catalogArea.className = '';
+                catalogArea.innerHTML =
+                    `<div class="empty"><span class="icon">${ICON_EMPTY}</span>API_URL belum diatur. Tempel URL Web App GAS di bagian script.</div>`;
+                showToast('API_URL belum diatur.', 'error');
+                return;
+            }
+            try {
+                const res = await fetch(API_URL + '?action=list');
+                const data = await res.json();
+                if (!data.ok) throw new Error(data.error);
+                allItems = data.data || [];
+                populateFilters(allItems);
+                renderCatalog();
+            } catch (err) {
+                catalogArea.className = '';
+                catalogArea.innerHTML =
+                    `<div class="empty"><span class="icon">${ICON_EMPTY}</span>Gagal memuat katalog.<br>${escapeHtml(err.message)}</div>`;
+                showToast('Gagal memuat katalog: ' + err.message, 'error');
+            }
+        }
+
+        function populateFilters(items) {
+            const kelasSet = [...new Set(items.map(i => i.Kelas).filter(Boolean))].sort();
+            const faseSet = [...new Set(items.map(i => i.Fase).filter(Boolean))].sort();
+            filterKelas.innerHTML = '<option value="">Semua kelas</option>';
+            filterFase.innerHTML = '<option value="">Semua fase</option>';
+            kelasSet.forEach(k => filterKelas.insertAdjacentHTML('beforeend', `<option value="${k}">Kelas ${k}</option>`));
+            faseSet.forEach(f => filterFase.insertAdjacentHTML('beforeend', `<option value="${f}">Fase ${f}</option>`));
+        }
+
+        function renderCatalog() {
+            const q = searchInput.value.toLowerCase();
+            const kelas = filterKelas.value;
+            const fase = filterFase.value;
+            const tipe = filterTipe.value;
+
+            const filtered = allItems.filter(item => {
+                if (kelas && String(item.Kelas) !== kelas) return false;
+                if (fase && item.Fase !== fase) return false;
+                if (tipe && item.Tipe !== tipe) return false;
+                if (q && !((item.Judul || '') + ' ' + (item.Deskripsi || '')).toLowerCase().includes(q)) return false;
+                return true;
+            });
+
+            countLabel.textContent = filtered.length + ' konten';
+
+            if (filtered.length === 0) {
+                catalogArea.className = '';
+                catalogArea.innerHTML =
+                    `<div class="empty"><span class="icon">${ICON_EMPTY}</span>Belum ada materi yang cocok.<br>Coba ubah filter atau kata kunci pencarian.</div>`;
+                return;
+            }
+
+            catalogArea.className = 'grid';
+            catalogArea.innerHTML = filtered.map(item => {
+                const tipeClass = item.Tipe === 'Soal' ? 'soal' : 'materi';
+                return `
+                    <div class="card">
+                        <div class="badges">
+                            <span class="badge ${tipeClass}">${escapeHtml(item.Tipe || '')}</span>
+                            <span class="badge fmt">${(item.Format || '').toUpperCase()}</span>
+                        </div>
+                        <h3>${escapeHtml(item.Judul || 'Tanpa judul')}</h3>
+                        <div class="meta">Kelas ${escapeHtml(item.Kelas || '-')} · Fase ${escapeHtml(item.Fase || '-')}${item.Bab ? ' · TP ' + escapeHtml(item.Bab) : ''}</div>
+                        <p class="desc">${escapeHtml(item.Deskripsi || '')}</p>
+                        <a class="btn-card" href="viewer.html?id=${encodeURIComponent(item.FileID_Drive)}&format=${encodeURIComponent(item.Format)}&judul=${encodeURIComponent(item.Judul || '')}">${ICON_BOOK} Baca sekarang</a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, function(c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+
+        // ================================================================
+        // EVENT BINDING FILTER
+        // ================================================================
+        [searchInput, filterKelas, filterFase, filterTipe].forEach(el => {
+            el.addEventListener('input', renderCatalog);
+            el.addEventListener('change', renderCatalog);
+        });
+
+        // ================================================================
+        // MODAL CLOSE HANDLERS
+        // ================================================================
+        document.querySelectorAll('[data-close]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById(this.dataset.close).classList.remove('active');
+            });
+        });
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('active');
+            });
+        });
+
+        // ================================================================
+        // INIT
+        // ================================================================
+        (function init() {
+            const saved = sessionStorage.getItem('bms_passcode');
+            if (saved) {
+                currentPasscode = saved;
+                isLoggedIn = true;
+            }
+            renderHeader();
+            loadCatalog();
+
+            loginBtn.addEventListener('click', handleLogin);
+            loginPasscode.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+
+            loginModal.addEventListener('transitionend', () => {
+                if (loginModal.classList.contains('active')) loginPasscode.focus();
+            });
+        })();
+    </script>
+</body>
+</html>
