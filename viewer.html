@@ -94,7 +94,94 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      padding: 15px;
+      padding: 18px;
+    }
+
+    /* Wadah tengah: judul + toolbar di atas, panel buku di bawahnya — supaya
+       buku tidak menempel langsung dari header ke footer. */
+    .stage-wrap {
+      width: 100%;
+      height: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .stage-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--mint-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .page-indicator {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 13px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { color: var(--coral); border-color: var(--coral); transform: translateY(-1px); }
+    .icon-btn svg { width: 17px; height: 17px; }
+
+    /* Panel/kotak wadah tempat buku "mengambang" di tengah, dengan jarak dari tepi */
+    .stage-frame {
+      flex: 1;
+      min-height: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: 0 20px 50px rgba(43,58,58,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(14px, 3vw, 34px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-wrap:fullscreen,
+    .stage-wrap:-webkit-full-screen {
+      max-width: 100%;
+      padding: 16px;
+      background: var(--bg);
+    }
+    .stage-wrap:fullscreen .stage-frame,
+    .stage-wrap:-webkit-full-screen .stage-frame {
+      border-radius: 18px;
     }
 
     #loadingScreen {
@@ -157,7 +244,10 @@
       .doc-title { max-width: 30vw; font-size: 0.85rem; }
       .header { padding: 10px 14px; }
       .btn-back { padding: 6px 14px; font-size: 13px; }
-      .viewer-area { padding: 5px; }
+      .viewer-area { padding: 8px; }
+      .stage-frame { border-radius: 18px; padding: 12px; }
+      .stage-title { font-size: 0.8rem; }
+      .page-indicator { font-size: 0.7rem; padding: 4px 10px; }
     }
 
     @media (max-width: 480px) {
@@ -181,8 +271,23 @@
       <span id="loadingText">Mengunduh dokumen, mohon tunggu...</span>
     </div>
 
-    <div id="book" class="flip-book"></div>
-    <iframe id="htmlViewer" sandbox="allow-scripts allow-same-origin"></iframe>
+    <div class="stage-wrap" id="stageWrap" hidden>
+      <div class="stage-toolbar">
+        <span class="stage-title" id="stageTitle">Dokumen</span>
+        <div class="stage-actions">
+          <span class="page-indicator" id="pageIndicator" hidden></span>
+          <button class="icon-btn" id="fullscreenBtn" title="Layar penuh" hidden>
+            <svg id="fullscreenIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="stage-frame">
+        <div id="book" class="flip-book"></div>
+        <iframe id="htmlViewer" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </div>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -199,17 +304,55 @@
           loading: document.getElementById('loadingScreen'),
           loadingText: document.getElementById('loadingText'),
           spinner: document.querySelector('.spinner'),
+          stageWrap: document.getElementById('stageWrap'),
+          stageTitle: document.getElementById('stageTitle'),
+          pageIndicator: document.getElementById('pageIndicator'),
+          fullscreenBtn: document.getElementById('fullscreenBtn'),
+          fullscreenIcon: document.getElementById('fullscreenIcon'),
           book: document.getElementById('book'),
           htmlViewer: document.getElementById('htmlViewer')
         };
+
+        this.ICON_EXPAND = '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
+        this.ICON_COLLAPSE = '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>';
         
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
       }
 
       init() {
         const title = this.params.get('judul');
-        if (title) this.dom.title.textContent = title;
+        if (title) {
+          this.dom.title.textContent = title;
+          this.dom.stageTitle.textContent = title;
+        }
+        this.setupFullscreen();
         this.loadDocument();
+      }
+
+      // Tombol layar penuh: memakai Fullscreen API pada stage-wrap saja
+      // (bukan seluruh dokumen) supaya header tetap konsisten dan mudah keluar.
+      setupFullscreen() {
+        const supported = document.fullscreenEnabled || document.webkitFullscreenEnabled;
+        if (!supported) return; // sembunyikan tombol jika browser tidak mendukung (mis. Safari iOS)
+
+        this.dom.fullscreenBtn.hidden = false;
+        this.dom.fullscreenBtn.addEventListener('click', () => {
+          const el = this.dom.stageWrap;
+          const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+          if (!isFs) {
+            (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+          } else {
+            (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+          }
+        });
+
+        const onFsChange = () => {
+          const isFs = document.fullscreenElement || document.webkitFullscreenElement;
+          this.dom.fullscreenIcon.innerHTML = isFs ? this.ICON_COLLAPSE : this.ICON_EXPAND;
+          this.dom.fullscreenBtn.title = isFs ? 'Keluar layar penuh' : 'Layar penuh';
+        };
+        document.addEventListener('fullscreenchange', onFsChange);
+        document.addEventListener('webkitfullscreenchange', onFsChange);
       }
 
       /**
@@ -254,6 +397,7 @@
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
           this.dom.loading.style.display = 'none';
+          this.dom.stageWrap.hidden = false;
           this.dom.htmlViewer.style.display = 'block';
           this.dom.htmlViewer.srcdoc = content; 
         }, 400);
@@ -335,8 +479,9 @@
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
           this.dom.loading.style.display = 'none';
+          this.dom.stageWrap.hidden = false;
           this.dom.book.style.display = 'block';
-          this.initFlipEngine(baseWidth, baseHeight, targetWidth);
+          this.initFlipEngine(baseWidth, baseHeight, targetWidth, totalPages);
         }, 300);
       }
 
@@ -347,7 +492,7 @@
         return Math.round(Math.min(380, Math.max(240, vw - 80)));
       }
 
-      initFlipEngine(baseWidth, baseHeight, targetWidth) {
+      initFlipEngine(baseWidth, baseHeight, targetWidth, totalPages) {
         // Kalkulasi dinamis rasio aspek berdasarkan ukuran asli PDF
         const aspectRatio = baseWidth / baseHeight;
         const width = targetWidth || 380;
@@ -360,7 +505,11 @@
           maxWidth: 480,
           minHeight: 320,
           maxHeight: 680,
-          showCover: false, 
+          // showCover: true membuat halaman pertama & terakhir tampil sendiri
+          // (seperti sampul buku asli) — otomatis membuat halaman 1 berada di
+          // kanan tanpa perlu menyisipkan halaman kosong, berlaku untuk jumlah
+          // halaman ganjil maupun genap.
+          showCover: true,
           mobileScrollSupport: true,
           maxShadowOpacity: 0.35,
           drawShadow: true,
@@ -370,6 +519,14 @@
         pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
         // Catatan: mode size:"stretch" pada page-flip.js sudah otomatis menyesuaikan
         // ukuran mengikuti container saat window di-resize, jadi tidak perlu listener manual.
+
+        // Indikator halaman di toolbar stage
+        this.dom.pageIndicator.hidden = false;
+        const updateIndicator = (current) => {
+          this.dom.pageIndicator.textContent = `Halaman ${current} / ${totalPages}`;
+        };
+        updateIndicator(1);
+        pageFlip.on('flip', (e) => updateIndicator(e.data + 1));
       }
 
       showError(msg) {
