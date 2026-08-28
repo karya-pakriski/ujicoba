@@ -63,7 +63,8 @@
   .brand-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.2; }
   .brand-sub { font-size: 12px; color: var(--ink-muted); font-weight: 700; }
 
-  .header-search { flex: 1 1 220px; position: relative; min-width: 180px; }
+  .header-search { flex: 1 1 220px; position: relative; min-width: 180px; display: flex; gap: 6px; }
+  .header-search .search-input-wrap { position: relative; flex: 1; }
   .header-search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-muted); width: 15px; height: 15px; }
   .header-search input {
     width: 100%; background: var(--surface-2); border: 2px solid var(--border); color: var(--ink);
@@ -72,6 +73,15 @@
   }
   .header-search input::placeholder { color: var(--ink-muted); opacity: .75; font-weight: 500; }
   .header-search input:focus { border-color: var(--mint); }
+  .search-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex-shrink: 0;
+    padding: 9px 16px; border-radius: 999px; border: none; background: var(--coral); color: #fff;
+    font-size: 13.5px; font-weight: 800; cursor: pointer; font-family: 'Nunito', sans-serif;
+    box-shadow: 0 8px 18px rgba(243,129,129,0.3); transition: all .15s ease;
+  }
+  .search-btn:hover { background: var(--coral-dark); transform: translateY(-1px); }
+  .search-btn .icon { width: 14px; height: 14px; }
+  .search-btn span.label { display: inline; }
 
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn {
@@ -100,6 +110,15 @@
   }
   .toolbar-row select:focus { border-color: var(--mint); }
   .toolbar-row .reset-btn { padding: 9px 14px; font-size: 13px; }
+  .active-search-chip {
+    display: inline-flex; align-items: center; gap: 8px; background: rgba(149,225,211,0.22); border: 2px solid var(--mint);
+    color: var(--mint-dark); border-radius: 999px; padding: 6px 8px 6px 14px; font-size: 13px; font-weight: 800;
+  }
+  .active-search-chip button {
+    display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%;
+    border: none; background: var(--mint); color: #fff; cursor: pointer; padding: 0;
+  }
+  .active-search-chip button svg { width: 11px; height: 11px; display: block; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; transition: all .15s ease; box-shadow: 0 8px 20px rgba(43,58,58,0.06); }
@@ -194,6 +213,8 @@
     .brand-sub { display: none; }
     .toolbar-row select { flex: 1; min-width: 100px; }
     .header-search { order: 3; flex-basis: 100%; margin-top: 10px; }
+    .search-btn span.label { display: none; }
+    .search-btn { padding: 9px 14px; }
   }
 
   @media (max-width: 480px) { 
@@ -216,8 +237,14 @@
     </div>
   </div>
   <div class="header-search">
-    <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg></span>
-    <input type="search" id="search" placeholder="Cari judul atau deskripsi...">
+    <div class="search-input-wrap">
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg></span>
+      <input type="search" id="search" placeholder="Cari judul atau deskripsi...">
+    </div>
+    <button type="button" class="search-btn" id="searchBtn">
+      <span class="icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg></span>
+      <span class="label">Cari</span>
+    </button>
   </div>
   <div class="header-actions">
     <button class="btn" id="loginBtn">
@@ -388,7 +415,7 @@ class CatalogApp {
       views: { catalog: document.getElementById('catalogView'), upload: document.getElementById('uploadView') },
       auth: { loginBtn: document.getElementById('loginBtn'), logoutBtn: document.getElementById('logoutBtn'), uploadNav: document.getElementById('uploadNavBtn') },
       modal: { overlay: document.getElementById('loginModal'), input: document.getElementById('loginPasscode'), err: document.getElementById('loginError'), submit: document.getElementById('loginSubmit'), cancel: document.getElementById('loginCancel') },
-      catalog: { list: document.getElementById('listArea'), count: document.getElementById('count'), search: document.getElementById('search'), fKelas: document.getElementById('filterKelas'), fFase: document.getElementById('filterFase'), fTipe: document.getElementById('filterTipe'), reset: document.getElementById('resetFiltersBtn') },
+      catalog: { list: document.getElementById('listArea'), count: document.getElementById('count'), search: document.getElementById('search'), searchBtn: document.getElementById('searchBtn'), fKelas: document.getElementById('filterKelas'), fFase: document.getElementById('filterFase'), fTipe: document.getElementById('filterTipe'), reset: document.getElementById('resetFiltersBtn') },
       upload: { form: document.getElementById('uploadForm'), input: document.getElementById('fileInput'), name: document.getElementById('fileName'), meta: document.getElementById('fileMeta'), btn: document.getElementById('submitBtn'), status: document.getElementById('uploadStatus'), back: document.getElementById('backToCatalog') }
     };
   }
@@ -409,12 +436,20 @@ class CatalogApp {
     this.dom.auth.uploadNav.addEventListener('click', () => this.switchView('upload'));
     this.dom.upload.back.addEventListener('click', () => this.switchView('catalog'));
 
-    // Filter Katalog
-    [this.dom.catalog.search, this.dom.catalog.fKelas, this.dom.catalog.fFase, this.dom.catalog.fTipe].forEach(el => {
-      el.addEventListener('input', () => this.renderCatalog());
+    // Filter dropdown (Kelas/Fase/Tipe) tetap langsung menyaring saat diubah (live)
+    [this.dom.catalog.fKelas, this.dom.catalog.fFase, this.dom.catalog.fTipe].forEach(el => {
       el.addEventListener('change', () => this.renderCatalog());
     });
+
+    // Pencarian teks HANYA jalan saat tombol "Cari" ditekan atau tombol Enter di keyboard —
+    // tidak lagi otomatis menyaring di setiap ketikan (mengurangi render berulang saat mengetik).
+    this.dom.catalog.searchBtn.addEventListener('click', () => this.renderCatalog());
+    this.dom.catalog.search.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); this.renderCatalog(); }
+    });
+
     this.dom.catalog.reset.addEventListener('click', () => {
+      this.dom.catalog.search.value = '';
       this.dom.catalog.fKelas.value = ''; this.dom.catalog.fFase.value = ''; this.dom.catalog.fTipe.value = '';
       this.renderCatalog();
     });
