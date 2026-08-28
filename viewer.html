@@ -283,7 +283,7 @@
           </button>
         </div>
       </div>
-      <div class="stage-frame">
+      <div class="stage-frame" id="stageFrame">
         <div id="book" class="flip-book"></div>
         <iframe id="htmlViewer" sandbox="allow-scripts allow-same-origin"></iframe>
       </div>
@@ -305,6 +305,7 @@
           loadingText: document.getElementById('loadingText'),
           spinner: document.querySelector('.spinner'),
           stageWrap: document.getElementById('stageWrap'),
+          stageFrame: document.getElementById('stageFrame'),
           stageTitle: document.getElementById('stageTitle'),
           pageIndicator: document.getElementById('pageIndicator'),
           fullscreenBtn: document.getElementById('fullscreenBtn'),
@@ -490,7 +491,7 @@
           this.dom.loading.style.display = 'none';
           this.dom.stageWrap.hidden = false;
           this.dom.book.style.display = 'block';
-          this.initFlipEngine(baseWidth, baseHeight, targetWidth, totalPages);
+          this.initFlipEngine(baseWidth, baseHeight, totalPages);
         }, 300);
       }
 
@@ -501,23 +502,62 @@
         return Math.round(Math.min(380, Math.max(240, vw - 80)));
       }
 
-      initFlipEngine(baseWidth, baseHeight, targetWidth, totalPages) {
-        // Kalkulasi dinamis rasio aspek berdasarkan ukuran asli PDF
-        const aspectRatio = baseWidth / baseHeight;
-        const width = targetWidth || 380;
+      // Ukuran satu halaman dihitung agar SPREAD (2 halaman berdampingan) pas
+      // di dalam ruang yang tersedia — baik dari sisi lebar maupun tinggi —
+      // supaya tidak ada bagian buku yang terpotong (overflow) di kontainer.
+      computeFitSize(aspectRatio) {
+        const rect = this.dom.stageFrame.getBoundingClientRect();
+        const buffer = 20; // jarak aman dari tepi panel
+        const availW = Math.max(220, rect.width - buffer);
+        const availH = Math.max(260, rect.height - buffer);
 
-        const pageFlip = new St.PageFlip(this.dom.book, {
-          width: width,
-          height: Math.round(width / aspectRatio),
-          size: "stretch",
-          minWidth: 240,
+        const widthFromWidth = availW / 2;   // batas dari lebar (2 halaman berdampingan)
+        const widthFromHeight = availH * aspectRatio; // batas dari tinggi
+
+        let width = Math.min(widthFromWidth, widthFromHeight, 480);
+        width = Math.max(width, 200);
+        return { width: Math.round(width), height: Math.round(width / aspectRatio) };
+      }
+
+      initFlipEngine(baseWidth, baseHeight, totalPages) {
+        this.aspectRatio = baseWidth / baseHeight;
+        this.totalPagesContent = totalPages;
+        this.buildFlipBook();
+
+        // Hitung ulang & bangun ulang ukuran buku saat window di-resize atau
+        // saat masuk/keluar fullscreen — supaya selalu pas (autofit), tidak
+        // pernah kepotong. Halaman sudah dirender, jadi membangun ulang di sini
+        // murah (tanpa render ulang kanvas), hanya menata ulang tampilan.
+        clearTimeout(this._fitResizeT);
+        const scheduleRebuild = () => {
+          clearTimeout(this._fitResizeT);
+          this._fitResizeT = setTimeout(() => this.buildFlipBook(true), 200);
+        };
+        window.addEventListener('resize', scheduleRebuild);
+        document.addEventListener('fullscreenchange', scheduleRebuild);
+        document.addEventListener('webkitfullscreenchange', scheduleRebuild);
+      }
+
+      buildFlipBook(preserveCurrent) {
+        const currentIndex = (preserveCurrent && this.pageFlip) ? this.pageFlip.getCurrentPageIndex() : 0;
+        if (this.pageFlip) {
+          this.pageFlip.destroy();
+          this.pageFlip = null;
+        }
+
+        const { width, height } = this.computeFitSize(this.aspectRatio);
+
+        // size:"fixed" karena ukurannya sudah kita hitung sendiri secara presisi
+        // (autofit) — tidak mengandalkan heuristik stretch bawaan library yang
+        // ternyata tidak memperhitungkan tinggi kontainer yang sebenarnya.
+        this.pageFlip = new St.PageFlip(this.dom.book, {
+          width,
+          height,
+          size: "fixed",
+          minWidth: 200,
           maxWidth: 480,
-          minHeight: 320,
-          maxHeight: 680,
-          // showCover sengaja TIDAK diaktifkan: opsi ini memaksa halaman pertama &
-          // terakhir jadi "hard page" (kaku, tanpa lengkungan animasi) — cocok untuk
-          // sampul buku beneran, tapi terasa aneh untuk dokumen tanpa desain sampul.
-          // Posisi halaman 1 di kanan sudah diatur lewat 1 halaman kosong di depan.
+          minHeight: 260,
+          maxHeight: 900,
           showCover: false,
           mobileScrollSupport: true,
           maxShadowOpacity: 0.35,
@@ -525,20 +565,18 @@
           flippingTime: 700
         });
 
-        pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
-        // Catatan: mode size:"stretch" pada page-flip.js sudah otomatis menyesuaikan
-        // ukuran mengikuti container saat window di-resize, jadi tidak perlu listener manual.
+        this.pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
+        if (currentIndex > 0) {
+          try { this.pageFlip.turnToPage(currentIndex); } catch (e) { /* abaikan jika index di luar batas */ }
+        }
 
-        // Indikator halaman di toolbar stage. Karena ada 1 halaman kosong sisipan di
-        // index 0, nomor halaman konten yang tampil = index dari page-flip itu sendiri
-        // (tidak perlu +1 lagi seperti sebelumnya).
         this.dom.pageIndicator.hidden = false;
         const updateIndicator = (current) => {
-          const clamped = Math.max(1, Math.min(current, totalPages));
-          this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${totalPages}`;
+          const clamped = Math.max(1, Math.min(current, this.totalPagesContent));
+          this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${this.totalPagesContent}`;
         };
-        updateIndicator(1);
-        pageFlip.on('flip', (e) => updateIndicator(e.data));
+        updateIndicator(Math.max(1, currentIndex));
+        this.pageFlip.on('flip', (e) => updateIndicator(e.data));
       }
 
       showError(msg) {
