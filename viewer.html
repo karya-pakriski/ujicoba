@@ -260,8 +260,8 @@
       }
 
       async renderPDF(base64Content) {
-        this.dom.loadingText.textContent = "Menyusun grafis resolusi tinggi...";
-        
+        this.dom.loadingText.textContent = "Membuka dokumen...";
+
         // Eksekusi asinkron Fetch API menggantikan perulangan atob tradisional
         const pdfData = await this.decodeBase64Optimized(base64Content);
         base64Content = null; // Memicu Garbage Collection untuk pembersihan memori
@@ -270,81 +270,106 @@
         const pdf = await loadingTask.promise;
         const totalPages = pdf.numPages;
 
-        // Skala adaptif untuk kejernihan gambar di layar Retina/FHD
-        const outputScale = window.devicePixelRatio || 1;
-        
-        // Bulk DOM Write untuk mencegah layout thrashing
+        // Ukuran tampil target (mengikuti ukuran flipbook, BUKAN resolusi native PDF).
+        // Ini kunci performa: sebelumnya kanvas dirender pada scale 1.5 x devicePixelRatio
+        // penuh (bisa 3x di HP), padahal yang tampil di layar hanya ~380-520px lebar.
+        const targetWidth = this.getTargetBookWidth();
+        // Batasi devicePixelRatio efektif ke maksimum 2 — di atas itu tidak terlihat
+        // bedanya untuk teks buku, tapi biaya render naik kuadratik.
+        const outputScale = Math.min(window.devicePixelRatio || 1, 2);
+
         const fragment = document.createDocumentFragment();
-        let baseWidth = 450;
-        let baseHeight = 636;
+        // Placeholder array supaya urutan halaman tetap benar walau dirender paralel
+        const pageWrappers = new Array(totalPages);
+        let baseWidth = targetWidth;
+        let baseHeight = targetWidth * 1.414;
+        let rendered = 0;
 
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+        const renderPage = async (pageNum) => {
           const page = await pdf.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 1.5 });
+          const nativeViewport = page.getViewport({ scale: 1 });
 
-          // Tangkap dimensi halaman pertama sebagai acuan rasio aspek
           if (pageNum === 1) {
-            baseWidth = viewport.width;
-            baseHeight = viewport.height;
+            baseWidth = nativeViewport.width;
+            baseHeight = nativeViewport.height;
           }
+
+          // Skala dihitung agar resolusi kanvas pas dengan ukuran tampil x outputScale,
+          // bukan resolusi asli PDF (yang seringkali jauh lebih besar dari kebutuhan layar).
+          const renderScale = (targetWidth * outputScale) / nativeViewport.width;
+          const viewport = page.getViewport({ scale: renderScale });
 
           const pageWrapper = document.createElement('div');
           pageWrapper.className = 'page';
-          
-          // Nonaktifkan lapisan transparan (alpha) demi performa rendering GPU
+
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d', { alpha: false });
-          
-          canvas.width = Math.floor(viewport.width * outputScale);
-          canvas.height = Math.floor(viewport.height * outputScale);
-          canvas.style.width = Math.floor(viewport.width) + "px";
-          canvas.style.height = Math.floor(viewport.height) + "px";
 
-          const transform = outputScale !== 1 
-            ? [outputScale, 0, 0, outputScale, 0, 0] 
-            : null;
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+          canvas.style.width = Math.floor(viewport.width / outputScale) + "px";
+          canvas.style.height = Math.floor(viewport.height / outputScale) + "px";
 
           pageWrapper.appendChild(canvas);
-          fragment.appendChild(pageWrapper);
+          pageWrappers[pageNum - 1] = pageWrapper;
 
-          await page.render({ 
-            canvasContext: context, 
-            transform: transform,
-            viewport: viewport 
-          }).promise;
+          await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+          rendered++;
+          this.dom.loadingText.textContent = `Merender halaman ${rendered} dari ${totalPages}...`;
+        };
+
+        // Render per-batch paralel (bukan satu-satu berurutan) untuk memangkas waktu tunggu total.
+        const BATCH_SIZE = 4;
+        for (let start = 1; start <= totalPages; start += BATCH_SIZE) {
+          const batch = [];
+          for (let n = start; n < start + BATCH_SIZE && n <= totalPages; n++) batch.push(renderPage(n));
+          await Promise.all(batch);
         }
+
+        pageWrappers.forEach(w => fragment.appendChild(w));
 
         // Menyisipkan seluruh DOM sekaligus
         this.dom.book.appendChild(fragment);
-        
+
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
           this.dom.loading.style.display = 'none';
           this.dom.book.style.display = 'block';
-          this.initFlipEngine(baseWidth, baseHeight);
-        }, 400);
+          this.initFlipEngine(baseWidth, baseHeight, targetWidth);
+        }, 300);
       }
 
-      initFlipEngine(baseWidth, baseHeight) {
+      // Ukuran dasar flipbook mengikuti lebar layar supaya tidak selalu tampil besar,
+      // terutama di layar desktop lebar.
+      getTargetBookWidth() {
+        const vw = window.innerWidth;
+        return Math.round(Math.min(380, Math.max(240, vw - 80)));
+      }
+
+      initFlipEngine(baseWidth, baseHeight, targetWidth) {
         // Kalkulasi dinamis rasio aspek berdasarkan ukuran asli PDF
         const aspectRatio = baseWidth / baseHeight;
+        const width = targetWidth || 380;
 
         const pageFlip = new St.PageFlip(this.dom.book, {
-          width: 450,
-          height: 450 / aspectRatio,
+          width: width,
+          height: Math.round(width / aspectRatio),
           size: "stretch",
-          minWidth: 315,
-          maxWidth: 700,
-          minHeight: 420,
-          maxHeight: 1000,
+          minWidth: 240,
+          maxWidth: 480,
+          minHeight: 320,
+          maxHeight: 680,
           showCover: false, 
           mobileScrollSupport: true,
           maxShadowOpacity: 0.35,
           drawShadow: true,
-          flippingTime: 800
+          flippingTime: 700
         });
 
         pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
+        // Catatan: mode size:"stretch" pada page-flip.js sudah otomatis menyesuaikan
+        // ukuran mengikuti container saat window di-resize, jadi tidak perlu listener manual.
       }
 
       showError(msg) {
