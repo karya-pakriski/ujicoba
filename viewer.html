@@ -471,6 +471,15 @@
           await Promise.all(batch);
         }
 
+        // Selipkan 1 halaman kosong (biasa/soft, sama seperti halaman lain) di paling
+        // depan. Ini membuat halaman 1 dokumen otomatis "geser" ke posisi kanan —
+        // sesuai konvensi buku (halaman ganjil selalu di kanan) — tanpa perlu opsi
+        // showCover (yang memaksa animasi kaku/hard-page, cocok hanya jika dokumen
+        // memang punya desain sampul terpisah).
+        const blankLeaf = document.createElement('div');
+        blankLeaf.className = 'page page-blank';
+        fragment.appendChild(blankLeaf);
+
         pageWrappers.forEach(w => fragment.appendChild(w));
 
         // Menyisipkan seluruh DOM sekaligus
@@ -505,11 +514,11 @@
           maxWidth: 480,
           minHeight: 320,
           maxHeight: 680,
-          // showCover: true membuat halaman pertama & terakhir tampil sendiri
-          // (seperti sampul buku asli) — otomatis membuat halaman 1 berada di
-          // kanan tanpa perlu menyisipkan halaman kosong, berlaku untuk jumlah
-          // halaman ganjil maupun genap.
-          showCover: true,
+          // showCover sengaja TIDAK diaktifkan: opsi ini memaksa halaman pertama &
+          // terakhir jadi "hard page" (kaku, tanpa lengkungan animasi) — cocok untuk
+          // sampul buku beneran, tapi terasa aneh untuk dokumen tanpa desain sampul.
+          // Posisi halaman 1 di kanan sudah diatur lewat 1 halaman kosong di depan.
+          showCover: false,
           mobileScrollSupport: true,
           maxShadowOpacity: 0.35,
           drawShadow: true,
@@ -520,13 +529,16 @@
         // Catatan: mode size:"stretch" pada page-flip.js sudah otomatis menyesuaikan
         // ukuran mengikuti container saat window di-resize, jadi tidak perlu listener manual.
 
-        // Indikator halaman di toolbar stage
+        // Indikator halaman di toolbar stage. Karena ada 1 halaman kosong sisipan di
+        // index 0, nomor halaman konten yang tampil = index dari page-flip itu sendiri
+        // (tidak perlu +1 lagi seperti sebelumnya).
         this.dom.pageIndicator.hidden = false;
         const updateIndicator = (current) => {
-          this.dom.pageIndicator.textContent = `Halaman ${current} / ${totalPages}`;
+          const clamped = Math.max(1, Math.min(current, totalPages));
+          this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${totalPages}`;
         };
         updateIndicator(1);
-        pageFlip.on('flip', (e) => updateIndicator(e.data + 1));
+        pageFlip.on('flip', (e) => updateIndicator(e.data));
       }
 
       showError(msg) {
