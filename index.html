@@ -2,224 +2,211 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bank Materi &amp; Soal PAI — KKG PAI Kabupaten Kulon Progo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Pustaka PDF.js untuk ekstraksi metadata halaman di sisi klien -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
 <style>
-  :root{
-    --bg:#EAFFD0;
-    --surface:#FFFFFF;
-    --surface-2:#FFF8E1;
-    --border:#E3F0D0;
-    --ink:#2B3A3A;
-    --ink-muted:#6E827D;
-    --coral:#F38181;
-    --coral-dark:#D65A5A;
-    --mint:#95E1D3;
-    --mint-dark:#2E8B7A;
-    --yellow:#FCE38A;
-    --yellow-dark:#8A6D1D;
-    --success:#2E8B7A;
-    --error:#D65A5A;
-    --radius:20px;
+  :root {
+    --bg: #EAFFD0;
+    --surface: #FFFFFF;
+    --surface-2: #FFF8E1;
+    --border: #E3F0D0;
+    --ink: #2B3A3A;
+    --ink-muted: #6E827D;
+    --coral: #F38181;
+    --coral-dark: #D65A5A;
+    --mint: #95E1D3;
+    --mint-dark: #2E8B7A;
+    --yellow: #FCE38A;
+    --yellow-dark: #8A6D1D;
+    --success: #2E8B7A;
+    --error: #D65A5A;
+    --radius: 20px;
   }
-  *{box-sizing:border-box;}
-  body{
-    margin:0; min-height:100vh; font-family:'Nunito',sans-serif; color:var(--ink);
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; 
+    min-height: 100vh; 
+    font-family: 'Nunito', sans-serif; 
+    color: var(--ink);
     background:
       radial-gradient(circle at 6% 0%, rgba(243,129,129,0.14), transparent 32%),
       radial-gradient(circle at 94% 6%, rgba(252,227,138,0.26), transparent 34%),
       radial-gradient(circle at 90% 96%, rgba(149,225,211,0.26), transparent 38%),
       var(--bg);
   }
-  .icon{ display:inline-block; vertical-align:middle; }
-  .icon svg{ display:block; }
-  [hidden]{ display:none !important; }
+  .icon { display: inline-block; vertical-align: middle; }
+  .icon svg { display: block; }
+  [hidden] { display: none !important; }
 
-  /* ---------- HEADER ---------- */
-  .site-header{
-    position:sticky; top:0; z-index:30; background:rgba(255,255,255,0.92); backdrop-filter:blur(6px);
-    border-bottom:1px solid var(--border); padding:14px 22px;
-    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  /* Header */
+  .site-header {
+    position: sticky; top: 0; z-index: 30; 
+    background: rgba(255,255,255,0.92); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border); 
+    padding: 14px 22px;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
   }
-  .brand{ display:flex; align-items:center; gap:11px; flex-shrink:0; }
-  .brand .logo{
-    width:42px; height:42px; border-radius:12px; background:rgba(243,129,129,0.16);
-    display:flex; align-items:center; justify-content:center; color:var(--coral); flex-shrink:0;
+  .brand { display: flex; align-items: center; gap: 11px; flex-shrink: 0; }
+  .brand .logo {
+    width: 42px; height: 42px; border-radius: 12px; background: rgba(243,129,129,0.16);
+    display: flex; align-items: center; justify-content: center; color: var(--coral); flex-shrink: 0;
   }
-  .brand-title{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:16px; color:var(--ink); line-height:1.2; }
-  .brand-sub{ font-size:12px; color:var(--ink-muted); font-weight:700; }
+  .brand-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.2; }
+  .brand-sub { font-size: 12px; color: var(--ink-muted); font-weight: 700; }
 
-  .header-search{ flex:1 1 220px; position:relative; min-width:180px; }
-  .header-search .icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--ink-muted); width:15px; height:15px; }
-  .header-search input{
-    width:100%; background:var(--surface-2); border:2px solid var(--border); color:var(--ink);
-    border-radius:999px; padding:9px 14px 9px 34px; font-size:14px; font-family:'Nunito',sans-serif; font-weight:600; outline:none;
+  .header-search { flex: 1 1 220px; position: relative; min-width: 180px; }
+  .header-search .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-muted); width: 15px; height: 15px; }
+  .header-search input {
+    width: 100%; background: var(--surface-2); border: 2px solid var(--border); color: var(--ink);
+    border-radius: 999px; padding: 9px 14px 9px 34px; font-size: 14px; font-family: 'Nunito', sans-serif; font-weight: 600; outline: none;
+    transition: border-color 0.2s ease;
   }
-  .header-search input::placeholder{ color:var(--ink-muted); opacity:.75; font-weight:500; }
-  .header-search input:focus{ border-color:var(--mint); }
+  .header-search input::placeholder { color: var(--ink-muted); opacity: .75; font-weight: 500; }
+  .header-search input:focus { border-color: var(--mint); }
 
-  .header-actions{ display:flex; gap:8px; flex-shrink:0; }
-  .btn{
-    display:inline-flex; align-items:center; gap:6px; padding:9px 16px; border-radius:999px;
-    border:2px solid var(--border); background:var(--surface); color:var(--ink);
-    font-size:13.5px; font-weight:800; cursor:pointer; text-decoration:none; font-family:'Nunito',sans-serif;
-    transition:border-color .15s ease, transform .1s ease;
+  .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 999px;
+    border: 2px solid var(--border); background: var(--surface); color: var(--ink);
+    font-size: 13.5px; font-weight: 800; cursor: pointer; text-decoration: none; font-family: 'Nunito', sans-serif;
+    transition: all .15s ease;
   }
-  .btn:hover{ border-color:var(--mint); }
-  .btn.primary{ background:var(--coral); color:#fff; border-color:var(--coral); box-shadow:0 8px 18px rgba(243,129,129,0.32); }
-  .btn.primary:hover{ background:var(--coral-dark); border-color:var(--coral-dark); }
-  .btn .icon{ width:15px; height:15px; }
+  .btn:hover { border-color: var(--mint); transform: translateY(-1px); }
+  .btn.primary { background: var(--coral); color: #fff; border-color: var(--coral); box-shadow: 0 8px 18px rgba(243,129,129,0.32); }
+  .btn.primary:hover { background: var(--coral-dark); border-color: var(--coral-dark); }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+  .btn .icon { width: 15px; height: 15px; }
 
-  /* ---------- CATALOG VIEW ---------- */
-  .tagline{ text-align:center; padding:22px 20px 6px; color:var(--ink-muted); font-size:15px; font-weight:600; max-width:56ch; margin:0 auto; }
+  /* Catalog View */
+  .tagline { text-align: center; padding: 22px 20px 6px; color: var(--ink-muted); font-size: 15px; font-weight: 600; max-width: 56ch; margin: 0 auto; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 22px 28px 80px; }
+  .toolbar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 18px; box-shadow: 0 10px 26px rgba(43,58,58,0.06); }
+  .toolbar-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .toolbar .count { font-size: 13px; color: var(--ink-muted); font-weight: 700; white-space: nowrap; margin-left: auto; }
+  .filter-label { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--ink-muted); white-space: nowrap; }
+  .filter-label .icon { color: var(--coral); width: 14px; height: 14px; }
+  .toolbar-row select {
+    width: auto; min-width: 130px; background: var(--surface-2); border: 2px solid var(--border); color: var(--ink);
+    border-radius: 12px; padding: 9px 12px; font-size: 13.5px; font-family: 'Nunito', sans-serif; font-weight: 600; outline: none;
+  }
+  .toolbar-row select:focus { border-color: var(--mint); }
+  .toolbar-row .reset-btn { padding: 9px 14px; font-size: 13px; }
 
-  .wrap{ max-width:1320px; margin:0 auto; padding:22px 28px 80px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; transition: all .15s ease; box-shadow: 0 8px 20px rgba(43,58,58,0.06); }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(243,129,129,0.16); }
+  .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+  .badge { font-size: 11px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; border: 2px solid var(--border); color: var(--ink); }
+  .badge.materi { border-color: var(--mint); color: var(--mint-dark); background: rgba(149,225,211,0.18); }
+  .badge.soal { border-color: var(--yellow); color: var(--yellow-dark); background: rgba(252,227,138,0.30); }
+  .badge.fmt { border-color: var(--border); color: var(--ink-muted); background: transparent; }
+  .card h3 { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 19px; margin: 0 0 6px; line-height: 1.4; }
+  .card .meta { font-size: 12.5px; color: var(--ink-muted); margin-bottom: 10px; font-weight: 700; }
+  .card p.desc { font-size: 13.5px; color: var(--ink-muted); line-height: 1.6; margin: 0 0 16px; flex: 1; font-weight: 500; }
+  .card a.btn-read {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px; background: var(--coral); color: #fff;
+    font-weight: 800; font-size: 13.5px; text-decoration: none; padding: 10px 14px; border-radius: 999px; transition: background .15s ease; box-shadow: 0 8px 16px rgba(243,129,129,0.3);
+  }
+  .card a.btn-read:hover { background: var(--coral-dark); }
 
-  .toolbar{
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-    padding:14px 16px; margin-bottom:18px; box-shadow:0 10px 26px rgba(43,58,58,0.06);
-  }
-  .toolbar-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .toolbar .count{ font-size:13px; color:var(--ink-muted); font-weight:700; white-space:nowrap; margin-left:auto; }
-  .filter-label{
-    display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:800; color:var(--ink-muted); white-space:nowrap;
-  }
-  .filter-label .icon{ color:var(--coral); width:14px; height:14px; }
-  .toolbar-row select{
-    width:auto; min-width:130px; background:var(--surface-2); border:2px solid var(--border); color:var(--ink);
-    border-radius:12px; padding:9px 12px; font-size:13.5px; font-family:'Nunito',sans-serif; font-weight:600; outline:none;
-  }
-  .toolbar-row select:focus{ border-color:var(--mint); }
-  .toolbar-row .reset-btn{ padding:9px 14px; font-size:13px; }
+  .empty { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; padding: 70px 20px; border: 2px dashed var(--border); border-radius: var(--radius); color: var(--ink-muted); background: var(--surface); font-weight: 600; }
+  .empty .icon { color: var(--coral); width: 32px; height: 32px; }
+  .loading { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px 20px; color: var(--ink-muted); font-size: 14px; font-weight: 700; }
+  .spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--border); border-top-color: var(--coral); animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:18px; }
+  /* Upload View */
+  .upload-wrap { max-width: 640px; margin: 0 auto; padding: 30px 20px 80px; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px; color: var(--mint-dark); font-weight: 800; font-size: 13.5px;
+    text-decoration: none; margin-bottom: 18px; cursor: pointer; background: none; border: none; padding: 0; font-family: 'Nunito', sans-serif;
+  }
+  h1.up-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: clamp(24px, 4.5vw, 32px); margin: 0 0 8px; }
+  p.lede { color: var(--ink-muted); font-size: 15px; line-height: 1.65; margin: 0 0 26px; max-width: 52ch; font-weight: 600; }
+  .flow { display: flex; gap: 0; margin-bottom: 30px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: 0 10px 26px rgba(43,58,58,0.07); }
+  .flow-step { flex: 1; padding: 16px 14px; display: flex; gap: 10px; align-items: flex-start; }
+  .flow-step + .flow-step { border-left: 1px solid var(--border); }
+  .flow-step .icon { color: var(--coral); width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px; }
+  .flow-step span.label { display: block; font-size: 12px; color: var(--ink-muted); line-height: 1.5; font-weight: 700; }
 
-  .card{
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
-    padding:20px; display:flex; flex-direction:column; transition:transform .15s ease, box-shadow .15s ease;
-    box-shadow:0 8px 20px rgba(43,58,58,0.06);
+  form { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 24px; box-shadow: 0 14px 34px rgba(43,58,58,0.08); }
+  fieldset { border: none; padding: 0; margin: 0 0 24px; }
+  fieldset legend { font-family: 'Fredoka', sans-serif; color: var(--coral-dark); font-weight: 600; font-size: 16px; padding: 0 0 12px; width: 100%; border-bottom: 2px dashed var(--border); margin-bottom: 16px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+  label .req { color: var(--coral); }
+  form input[type=text], form select, form textarea {
+    width: 100%; background: var(--surface-2); border: 2px solid var(--border); color: var(--ink);
+    border-radius: 12px; padding: 10px 12px; font-family: 'Nunito', sans-serif; font-size: 14.5px; font-weight: 600; outline: none;
   }
-  .card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px rgba(243,129,129,0.16); }
-  .badges{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
-  .badge{
-    font-size:11px; font-weight:800; letter-spacing:.02em; text-transform:uppercase;
-    padding:4px 10px; border-radius:999px; border:2px solid var(--border); color:var(--ink);
+  form input:focus, form select:focus, form textarea:focus { border-color: var(--mint); }
+  textarea { min-height: 70px; resize: vertical; }
+  .badge-pai { display: inline-flex; align-items: center; gap: 6px; background: rgba(149,225,211,0.25); border: 2px solid var(--mint); color: var(--mint-dark); border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 800; }
+  
+  .file-drop {
+    border: 2.5px dashed var(--border); border-radius: 16px; padding: 22px 20px; text-align: center; background: var(--surface-2);
+    cursor: pointer; transition: all .15s ease; display: flex; flex-direction: column; align-items: center; gap: 8px;
   }
-  .badge.materi{ border-color:var(--mint); color:var(--mint-dark); background:rgba(149,225,211,0.18); }
-  .badge.soal{ border-color:var(--yellow); color:var(--yellow-dark); background:rgba(252,227,138,0.30); }
-  .badge.fmt{ border-color:var(--border); color:var(--ink-muted); background:transparent; }
-  .card h3{ font-family:'Fredoka',sans-serif; font-weight:600; font-size:19px; margin:0 0 6px; line-height:1.4; }
-  .card .meta{ font-size:12.5px; color:var(--ink-muted); margin-bottom:10px; font-weight:700; }
-  .card p.desc{ font-size:13.5px; color:var(--ink-muted); line-height:1.6; margin:0 0 16px; flex:1; font-weight:500; }
-  .card a.btn-read{
-    display:inline-flex; align-items:center; justify-content:center; gap:7px;
-    background:var(--coral); color:#fff; font-weight:800; font-size:13.5px; text-decoration:none;
-    padding:10px 14px; border-radius:999px; transition:background .15s ease; box-shadow:0 8px 16px rgba(243,129,129,0.3);
-  }
-  .card a.btn-read:hover{ background:var(--coral-dark); }
-  .card a.btn-read .icon{ width:14px; height:14px; }
+  .file-drop:hover { border-color: var(--coral); background: rgba(243,129,129,0.05); }
+  .file-drop input { display: none; }
+  .file-drop .icon { color: var(--coral); width: 26px; height: 26px; }
+  .file-drop .hint { color: var(--ink-muted); font-size: 13px; font-weight: 700; }
+  .file-drop .name { color: var(--mint-dark); font-weight: 800; font-size: 14px; margin-top: 2px; word-break: break-all; }
+  .file-meta { font-size: 12px; color: var(--ink-muted); font-weight: 700; }
 
-  .empty{
-    display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center; padding:70px 20px;
-    border:2px dashed var(--border); border-radius:var(--radius); color:var(--ink-muted); background:var(--surface); font-weight:600;
+  button[type=submit] {
+    width: 100%; padding: 14px; border: none; border-radius: 999px; cursor: pointer; background: var(--coral); color: #fff;
+    font-weight: 800; font-size: 15px; font-family: 'Fredoka', sans-serif; transition: all .15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 10px 22px rgba(243,129,129,0.35);
   }
-  .empty .icon{ color:var(--coral); width:32px; height:32px; }
-  .loading{ display:flex; flex-direction:column; align-items:center; gap:12px; padding:60px 20px; color:var(--ink-muted); font-size:14px; font-weight:700; }
-  .spinner{ width:28px; height:28px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--coral); animation:spin 0.8s linear infinite; }
-  @keyframes spin{ to{ transform:rotate(360deg); } }
+  button[type=submit]:hover { background: var(--coral-dark); transform: translateY(-1px); }
+  button[type=submit]:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+  
+  #uploadStatus { margin-top: 16px; padding: 13px 16px; border-radius: 14px; font-size: 14px; display: none; line-height: 1.5; gap: 10px; font-weight: 700; }
+  #uploadStatus.show { display: flex; align-items: flex-start; }
+  #uploadStatus .icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+  #uploadStatus.ok { background: rgba(46,139,122,0.12); border: 2px solid var(--success); color: var(--success); }
+  #uploadStatus.err { background: rgba(214,90,90,0.12); border: 2px solid var(--error); color: var(--error); }
 
-  /* ---------- UPLOAD VIEW ---------- */
-  .upload-wrap{ max-width:640px; margin:0 auto; padding:30px 20px 80px; }
-  .back-link{
-    display:inline-flex; align-items:center; gap:6px; color:var(--mint-dark); font-weight:800; font-size:13.5px;
-    text-decoration:none; margin-bottom:18px; cursor:pointer; background:none; border:none; padding:0; font-family:'Nunito',sans-serif;
-  }
-  .back-link .icon{ width:15px; height:15px; }
-  h1.up-title{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(24px,4.5vw,32px); margin:0 0 8px; }
-  p.lede{ color:var(--ink-muted); font-size:15px; line-height:1.65; margin:0 0 26px; max-width:52ch; font-weight:600; }
+  /* Login Modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(43,58,58,0.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+  .modal { background: var(--surface); border-radius: var(--radius); padding: 26px; max-width: 360px; width: 100%; box-shadow: 0 24px 50px rgba(43,58,58,0.25); }
+  .modal h3 { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 20px; margin: 0 0 8px; color: var(--ink); }
+  .modal p { color: var(--ink-muted); font-size: 14px; margin: 0 0 16px; font-weight: 600; line-height: 1.5; }
+  .modal input { width: 100%; background: var(--surface-2); border: 2px solid var(--border); color: var(--ink); border-radius: 12px; padding: 11px 14px; font-size: 15px; font-family: 'Nunito', sans-serif; font-weight: 700; outline: none; margin-bottom: 10px; }
+  .modal input:focus { border-color: var(--mint); }
+  .modal-error { color: var(--error); font-size: 13px; font-weight: 700; margin: -2px 0 12px; display: none; }
+  .modal-error.show { display: block; }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-actions .btn { flex: 1; justify-content: center; }
 
-  .flow{
-    display:flex; gap:0; margin-bottom:30px; border:1px solid var(--border); border-radius:var(--radius);
-    overflow:hidden; background:var(--surface); box-shadow:0 10px 26px rgba(43,58,58,0.07);
+  @media (max-width: 768px) {
+    .brand-sub { display: none; }
+    .toolbar-row select { flex: 1; min-width: 100px; }
+    .header-search { order: 3; flex-basis: 100%; margin-top: 10px; }
   }
-  .flow-step{ flex:1; padding:16px 14px; display:flex; gap:10px; align-items:flex-start; }
-  .flow-step + .flow-step{ border-left:1px solid var(--border); }
-  .flow-step .icon{ color:var(--coral); width:20px; height:20px; flex-shrink:0; margin-top:1px; }
-  .flow-step span.label{ display:block; font-size:12px; color:var(--ink-muted); line-height:1.5; font-weight:700; }
 
-  form{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:26px 24px; box-shadow:0 14px 34px rgba(43,58,58,0.08); }
-  fieldset{ border:none; padding:0; margin:0 0 24px; }
-  fieldset legend{
-    font-family:'Fredoka',sans-serif; color:var(--coral-dark); font-weight:600; font-size:16px;
-    padding:0 0 12px; width:100%; border-bottom:2px dashed var(--border); margin-bottom:16px;
+  @media (max-width: 480px) { 
+    .row { grid-template-columns: 1fr; } 
+    .flow { flex-direction: column; } 
+    .flow-step + .flow-step { border-left: none; border-top: 1px solid var(--border); } 
+    form { padding: 20px 16px; }
+    .site-header { padding: 12px 16px; }
   }
-  .row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  .field{ margin-bottom:16px; }
-  .field:last-child{ margin-bottom:0; }
-  label{ display:block; font-size:13px; font-weight:800; color:var(--ink); margin-bottom:6px; }
-  label .req{ color:var(--coral); }
-  form input[type=text], form select, form textarea{
-    width:100%; background:var(--surface-2); border:2px solid var(--border); color:var(--ink);
-    border-radius:12px; padding:10px 12px; font-family:'Nunito',sans-serif; font-size:14.5px; font-weight:600; outline:none;
-  }
-  form input::placeholder, form textarea::placeholder{ color:var(--ink-muted); opacity:.75; font-weight:500; }
-  form input:focus, form select:focus, form textarea:focus{ border-color:var(--mint); }
-  textarea{ min-height:70px; resize:vertical; }
-  .badge-pai{
-    display:inline-flex; align-items:center; gap:6px; background:rgba(149,225,211,0.25); border:2px solid var(--mint);
-    color:var(--mint-dark); border-radius:999px; padding:7px 14px; font-size:13px; font-weight:800;
-  }
-  .file-drop{
-    border:2.5px dashed var(--border); border-radius:16px; padding:22px 20px; text-align:center; background:var(--surface-2);
-    cursor:pointer; transition:border-color .15s ease; display:flex; flex-direction:column; align-items:center; gap:8px;
-  }
-  .file-drop:hover{ border-color:var(--coral); }
-  .file-drop input{ display:none; }
-  .file-drop .icon{ color:var(--coral); width:26px; height:26px; }
-  .file-drop .hint{ color:var(--ink-muted); font-size:13px; font-weight:700; }
-  .file-drop .name{ color:var(--mint-dark); font-weight:800; font-size:14px; margin-top:2px; word-break:break-all; }
-  button[type=submit]{
-    width:100%; padding:14px; border:none; border-radius:999px; cursor:pointer; background:var(--coral); color:#fff;
-    font-weight:800; font-size:15px; font-family:'Fredoka',sans-serif; transition:background .15s ease, transform .1s ease;
-    display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 10px 22px rgba(243,129,129,0.35);
-  }
-  button[type=submit]:hover{ background:var(--coral-dark); transform:translateY(-1px); }
-  button[type=submit]:disabled{ opacity:.6; cursor:not-allowed; transform:none; }
-  #uploadStatus{ margin-top:16px; padding:13px 16px; border-radius:14px; font-size:14px; display:none; line-height:1.5; gap:10px; font-weight:700; }
-  #uploadStatus.show{ display:flex; align-items:flex-start; }
-  #uploadStatus .icon{ width:18px; height:18px; flex-shrink:0; margin-top:1px; }
-  #uploadStatus.ok{ background:rgba(46,139,122,0.12); border:2px solid var(--success); color:var(--success); }
-  #uploadStatus.err{ background:rgba(214,90,90,0.12); border:2px solid var(--error); color:var(--error); }
-
-  /* ---------- LOGIN MODAL ---------- */
-  .modal-overlay{
-    position:fixed; inset:0; background:rgba(43,58,58,0.45); z-index:100; display:flex;
-    align-items:center; justify-content:center; padding:20px;
-  }
-  .modal{
-    background:var(--surface); border-radius:var(--radius); padding:26px; max-width:360px; width:100%;
-    box-shadow:0 24px 50px rgba(43,58,58,0.25);
-  }
-  .modal h3{ font-family:'Fredoka',sans-serif; font-weight:700; font-size:20px; margin:0 0 8px; color:var(--ink); }
-  .modal p{ color:var(--ink-muted); font-size:14px; margin:0 0 16px; font-weight:600; line-height:1.5; }
-  .modal input{
-    width:100%; background:var(--surface-2); border:2px solid var(--border); color:var(--ink); border-radius:12px;
-    padding:11px 14px; font-size:15px; font-family:'Nunito',sans-serif; font-weight:700; outline:none; margin-bottom:10px;
-  }
-  .modal input:focus{ border-color:var(--mint); }
-  .modal-error{ color:var(--error); font-size:13px; font-weight:700; margin:-2px 0 12px; display:none; }
-  .modal-error.show{ display:block; }
-  .modal-actions{ display:flex; gap:10px; }
-  .modal-actions .btn{ flex:1; justify-content:center; }
-
-  @media (max-width:480px){ .row{ grid-template-columns:1fr; } .flow{ flex-direction:column; } .flow-step + .flow-step{ border-left:none; border-top:1px solid var(--border); } }
 </style>
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
 <header class="site-header">
   <div class="brand">
     <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/><path d="M12 5v14"/></svg></span>
@@ -230,7 +217,7 @@
   </div>
   <div class="header-search">
     <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg></span>
-    <input type="search" id="search" placeholder="Cari judul atau deskripsi materi/soal...">
+    <input type="search" id="search" placeholder="Cari judul atau deskripsi...">
   </div>
   <div class="header-actions">
     <button class="btn" id="loginBtn">
@@ -239,7 +226,7 @@
     </button>
     <button class="btn primary" id="uploadNavBtn" hidden>
       <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
-      Unggah Materi
+      Unggah
     </button>
     <button class="btn" id="logoutBtn" hidden title="Keluar">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
@@ -247,9 +234,8 @@
   </div>
 </header>
 
-<!-- ===== CATALOG VIEW ===== -->
 <section id="catalogView">
-  <p class="tagline">Kumpulan materi ajar dan soal Pendidikan Agama Islam, siap dibaca seperti buku atau diunduh langsung.</p>
+  <p class="tagline">Kumpulan materi ajar dan soal Pendidikan Agama Islam, siap dibaca atau diunduh secara interaktif.</p>
   <div class="wrap">
     <div class="toolbar">
       <div class="toolbar-row">
@@ -272,7 +258,6 @@
   </div>
 </section>
 
-<!-- ===== UPLOAD VIEW (perlu login) ===== -->
 <section id="uploadView" hidden>
   <div class="upload-wrap">
     <button class="back-link" id="backToCatalog">
@@ -280,20 +265,20 @@
       Kembali ke Katalog
     </button>
     <h1 class="up-title">Unggah materi atau soal baru</h1>
-    <p class="lede">Isi form ini sekali, dan kontennya akan otomatis tercatat di katalog serta tampil di halaman utama.</p>
+    <p class="lede">Sistem otomatis membaca jumlah halaman PDF dan mencatatnya ke dalam bank data katalog.</p>
 
     <div class="flow">
       <div class="flow-step">
         <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
-        <span class="label">Pilih file PDF atau HTML</span>
+        <span class="label">Pilih file PDF atau HTML (Maks 10MB)</span>
       </div>
       <div class="flow-step">
         <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10.5-10.5-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg></span>
-        <span class="label">Lengkapi detail konten</span>
+        <span class="label">Lengkapi detail & atribut</span>
       </div>
       <div class="flow-step">
         <span class="icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.4 2.4L16 9"/></svg></span>
-        <span class="label">Otomatis tampil di web utama</span>
+        <span class="label">Otomatis rilis ke web</span>
       </div>
     </div>
 
@@ -353,14 +338,15 @@
       </fieldset>
 
       <fieldset>
-        <legend>File</legend>
+        <legend>Unggah Berkas</legend>
         <div class="field">
           <label>File (.pdf atau .html) <span class="req">*</span></label>
           <label class="file-drop" id="dropLabel">
             <input type="file" id="fileInput" accept=".pdf,.html" required>
             <span class="icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
-            <span class="hint">Klik untuk memilih file — format terdeteksi otomatis</span>
+            <span class="hint">Klik untuk memilih file (Maks 10MB)</span>
             <div class="name" id="fileName"></div>
+            <div class="file-meta" id="fileMeta"></div>
           </label>
         </div>
       </fieldset>
@@ -374,7 +360,6 @@
   </div>
 </section>
 
-<!-- ===== LOGIN MODAL ===== -->
 <div class="modal-overlay" id="loginModal" hidden>
   <div class="modal">
     <h3>Masuk sebagai Admin</h3>
@@ -389,183 +374,230 @@
 </div>
 
 <script>
-  // ====== GANTI DENGAN URL WEB APP HASIL DEPLOY GAS ======
-  const API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
+class CatalogApp {
+  constructor() {
+    this.API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
+    this.MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    this.allItems = [];
+    this.currentFile = { format: '', pages: '' };
+    
+    // Inisialisasi PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-  const ICON_BOOK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/><path d="M12 5v14"/></svg>';
-  const ICON_EMPTY = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg>';
-  const ICON_OK = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.4 2.4L16 9"/></svg>';
-  const ICON_ERR = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>';
-
-  // ============ KATALOG ============
-  let allItems = [];
-
-  function badgeForFormat(fmt){ return '<span class="badge fmt">' + (fmt || '').toUpperCase() + '</span>'; }
-
-  function cardHtml(item){
-    const tipeClass = item.Tipe === 'Soal' ? 'soal' : 'materi';
-    return '' +
-      '<div class="card">' +
-        '<div class="badges"><span class="badge ' + tipeClass + '">' + (item.Tipe || '') + '</span>' + badgeForFormat(item.Format) + '</div>' +
-        '<h3>' + escapeHtml(item.Judul || 'Tanpa judul') + '</h3>' +
-        '<div class="meta">Kelas ' + escapeHtml(item.Kelas || '-') + ' · Fase ' + escapeHtml(item.Fase || '-') +
-          (item.Bab ? ' · TP ' + escapeHtml(item.Bab) : '') + '</div>' +
-        '<p class="desc">' + escapeHtml(item.Deskripsi || '') + '</p>' +
-        '<a class="btn-read" href="viewer.html?id=' + encodeURIComponent(item.FileID_Drive) +
-          '&format=' + encodeURIComponent(item.Format) + '&judul=' + encodeURIComponent(item.Judul || '') + '">' + ICON_BOOK + ' Baca sekarang</a>' +
-      '</div>';
+    this.dom = {
+      views: { catalog: document.getElementById('catalogView'), upload: document.getElementById('uploadView') },
+      auth: { loginBtn: document.getElementById('loginBtn'), logoutBtn: document.getElementById('logoutBtn'), uploadNav: document.getElementById('uploadNavBtn') },
+      modal: { overlay: document.getElementById('loginModal'), input: document.getElementById('loginPasscode'), err: document.getElementById('loginError'), submit: document.getElementById('loginSubmit'), cancel: document.getElementById('loginCancel') },
+      catalog: { list: document.getElementById('listArea'), count: document.getElementById('count'), search: document.getElementById('search'), fKelas: document.getElementById('filterKelas'), fFase: document.getElementById('filterFase'), fTipe: document.getElementById('filterTipe'), reset: document.getElementById('resetFiltersBtn') },
+      upload: { form: document.getElementById('uploadForm'), input: document.getElementById('fileInput'), name: document.getElementById('fileName'), meta: document.getElementById('fileMeta'), btn: document.getElementById('submitBtn'), status: document.getElementById('uploadStatus'), back: document.getElementById('backToCatalog') }
+    };
   }
 
-  function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  init() {
+    this.bindEvents();
+    this.updateHeaderAuth();
+    this.fetchCatalog();
   }
 
-  function populateFilters(items){
-    const kelasSet = [...new Set(items.map(i => i.Kelas).filter(Boolean))].sort();
-    const faseSet = [...new Set(items.map(i => i.Fase).filter(Boolean))].sort();
-    const kelasSel = document.getElementById('filterKelas');
-    const faseSel = document.getElementById('filterFase');
-    kelasSet.forEach(k => kelasSel.insertAdjacentHTML('beforeend', '<option value="'+k+'">Kelas '+k+'</option>'));
-    faseSet.forEach(f => faseSel.insertAdjacentHTML('beforeend', '<option value="'+f+'">Fase '+f+'</option>'));
+  bindEvents() {
+    // Navigasi & Modal
+    this.dom.auth.loginBtn.addEventListener('click', () => this.openLogin());
+    this.dom.modal.cancel.addEventListener('click', () => this.dom.modal.overlay.hidden = true);
+    this.dom.modal.submit.addEventListener('click', () => this.attemptLogin());
+    this.dom.modal.input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.attemptLogin(); });
+    this.dom.auth.logoutBtn.addEventListener('click', () => this.logout());
+    this.dom.auth.uploadNav.addEventListener('click', () => this.switchView('upload'));
+    this.dom.upload.back.addEventListener('click', () => this.switchView('catalog'));
+
+    // Filter Katalog
+    [this.dom.catalog.search, this.dom.catalog.fKelas, this.dom.catalog.fFase, this.dom.catalog.fTipe].forEach(el => {
+      el.addEventListener('input', () => this.renderCatalog());
+      el.addEventListener('change', () => this.renderCatalog());
+    });
+    this.dom.catalog.reset.addEventListener('click', () => {
+      this.dom.catalog.fKelas.value = ''; this.dom.catalog.fFase.value = ''; this.dom.catalog.fTipe.value = '';
+      this.renderCatalog();
+    });
+
+    // Form Unggah
+    this.dom.upload.input.addEventListener('change', (e) => this.handleFileSelect(e));
+    this.dom.upload.form.addEventListener('submit', (e) => this.submitUpload(e));
   }
 
-  function renderCatalog(){
-    const q = document.getElementById('search').value.toLowerCase();
-    const kelas = document.getElementById('filterKelas').value;
-    const fase = document.getElementById('filterFase').value;
-    const tipe = document.getElementById('filterTipe').value;
+  // --- Otorisasi ---
+  isAuthed() { return sessionStorage.getItem('bms_authed') === 'true'; }
+  getPasscode() { return sessionStorage.getItem('bms_passcode') || ''; }
+  
+  updateHeaderAuth() {
+    const authed = this.isAuthed();
+    this.dom.auth.loginBtn.hidden = authed;
+    this.dom.auth.uploadNav.hidden = !authed;
+    this.dom.auth.logoutBtn.hidden = !authed;
+  }
 
-    const filtered = allItems.filter(item => {
-      if (kelas && String(item.Kelas) !== kelas) return false;
-      if (fase && item.Fase !== fase) return false;
-      if (tipe && item.Tipe !== tipe) return false;
+  openLogin() {
+    this.dom.modal.overlay.hidden = false;
+    this.dom.modal.err.classList.remove('show');
+    this.dom.modal.input.value = '';
+    this.dom.modal.input.focus();
+  }
+
+  async attemptLogin() {
+    const code = this.dom.modal.input.value;
+    if (!code) return this.showLoginErr('Isi passcode terlebih dahulu.');
+    
+    this.dom.modal.submit.disabled = true;
+    this.dom.modal.submit.textContent = 'Memeriksa...';
+    
+    try {
+      // Menguji validasi dengan request endpoint jika tersedia di backend
+      const res = await fetch(`${this.API_URL}?action=verify&code=${encodeURIComponent(code)}`);
+      const data = await res.json();
+      
+      if (data.ok && data.valid) {
+        sessionStorage.setItem('bms_authed', 'true');
+        sessionStorage.setItem('bms_passcode', code);
+        this.dom.modal.overlay.hidden = true;
+        this.updateHeaderAuth();
+      } else {
+        this.showLoginErr('Passcode salah, coba lagi.');
+      }
+    } catch (err) {
+      // Fallback otorisasi sementara apabila endpoint verify belum tersedia di backend
+      sessionStorage.setItem('bms_authed', 'true');
+      sessionStorage.setItem('bms_passcode', code);
+      this.dom.modal.overlay.hidden = true;
+      this.updateHeaderAuth();
+    } finally {
+      this.dom.modal.submit.disabled = false;
+      this.dom.modal.submit.textContent = 'Masuk';
+    }
+  }
+
+  showLoginErr(msg) {
+    this.dom.modal.err.textContent = msg;
+    this.dom.modal.err.classList.add('show');
+  }
+
+  logout() {
+    sessionStorage.removeItem('bms_authed');
+    sessionStorage.removeItem('bms_passcode');
+    this.updateHeaderAuth();
+    this.switchView('catalog');
+  }
+
+  switchView(view) {
+    this.dom.views.catalog.hidden = view !== 'catalog';
+    this.dom.views.upload.hidden = view !== 'upload';
+  }
+
+  // --- Katalog ---
+  async fetchCatalog() {
+    try {
+      const res = await fetch(`${this.API_URL}?action=list`);
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error);
+      this.allItems = data.data;
+      this.populateFilters();
+      this.renderCatalog();
+    } catch (err) {
+      this.dom.catalog.list.className = '';
+      this.dom.catalog.list.innerHTML = `<div class="empty"><span class="icon">${this.icons.err}</span>Gagal memuat katalog.<br>${this.escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  populateFilters() {
+    const getSet = key => [...new Set(this.allItems.map(i => i[key]).filter(Boolean))].sort();
+    getSet('Kelas').forEach(k => this.dom.catalog.fKelas.insertAdjacentHTML('beforeend', `<option value="${k}">Kelas ${k}</option>`));
+    getSet('Fase').forEach(f => this.dom.catalog.fFase.insertAdjacentHTML('beforeend', `<option value="${f}">Fase ${f}</option>`));
+  }
+
+  renderCatalog() {
+    const q = this.dom.catalog.search.value.toLowerCase();
+    const fK = this.dom.catalog.fKelas.value;
+    const fF = this.dom.catalog.fFase.value;
+    const fT = this.dom.catalog.fTipe.value;
+
+    const filtered = this.allItems.filter(item => {
+      if (fK && String(item.Kelas) !== fK) return false;
+      if (fF && item.Fase !== fF) return false;
+      if (fT && item.Tipe !== fT) return false;
       if (q && !((item.Judul||'') + ' ' + (item.Deskripsi||'')).toLowerCase().includes(q)) return false;
       return true;
     });
 
-    const listArea = document.getElementById('listArea');
-    document.getElementById('count').textContent = filtered.length + ' konten';
+    this.dom.catalog.count.textContent = `${filtered.length} konten`;
 
-    if (filtered.length === 0){
-      listArea.className = '';
-      listArea.innerHTML = '<div class="empty"><span class="icon">' + ICON_EMPTY + '</span>Belum ada materi yang cocok.<br>Coba ubah filter atau kata kunci pencarian.</div>';
+    if (filtered.length === 0) {
+      this.dom.catalog.list.className = '';
+      this.dom.catalog.list.innerHTML = `<div class="empty"><span class="icon">${this.icons.empty}</span>Belum ada materi yang cocok.<br>Coba ubah filter atau kata kunci.</div>`;
       return;
     }
-    listArea.className = 'grid';
-    listArea.innerHTML = filtered.map(cardHtml).join('');
+    
+    this.dom.catalog.list.className = 'grid';
+    this.dom.catalog.list.innerHTML = filtered.map(item => this.buildCard(item)).join('');
   }
 
-  async function loadCatalog(){
-    const listArea = document.getElementById('listArea');
-    if (!API_URL.startsWith('http')){
-      listArea.className = '';
-      listArea.innerHTML = '<div class="empty"><span class="icon">' + ICON_EMPTY + '</span>API_URL belum diatur.</div>';
+  buildCard(item) {
+    const tipeClass = item.Tipe === 'Soal' ? 'soal' : 'materi';
+    const fmtBadge = `<span class="badge fmt">${(item.Format || '').toUpperCase()}</span>`;
+    const tpText = item.Bab ? ` · TP ${this.escapeHtml(item.Bab)}` : '';
+    const pgText = item.JumlahHalaman ? ` · ${item.JumlahHalaman} Hal` : '';
+    
+    return `
+      <div class="card">
+        <div class="badges"><span class="badge ${tipeClass}">${item.Tipe || ''}</span>${fmtBadge}</div>
+        <h3>${this.escapeHtml(item.Judul || 'Tanpa judul')}</h3>
+        <div class="meta">Kelas ${this.escapeHtml(item.Kelas || '-')} · Fase ${this.escapeHtml(item.Fase || '-')}${tpText}${pgText}</div>
+        <p class="desc">${this.escapeHtml(item.Deskripsi || '')}</p>
+        <a class="btn-read" href="viewer.html?id=${encodeURIComponent(item.FileID_Drive)}&format=${encodeURIComponent(item.Format)}&judul=${encodeURIComponent(item.Judul || '')}">
+          ${this.icons.book} Baca sekarang
+        </a>
+      </div>`;
+  }
+
+  escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  // --- Unggah & PDF.js ---
+  async handleFileSelect(e) {
+    const file = e.target.files[0];
+    this.currentFile = { format: '', pages: '' };
+    this.dom.upload.name.textContent = '';
+    this.dom.upload.meta.textContent = '';
+    this.setUploadStatus('hide', '');
+
+    if (!file) return;
+
+    // Proteksi Ukuran File Latar Belakang (Max 10MB)
+    if (file.size > this.MAX_FILE_SIZE) {
+      this.setUploadStatus('err', 'Ukuran file melampaui 10 MB. Kompres dokumen Anda terlebih dahulu.');
+      e.target.value = ''; 
       return;
     }
-    try {
-      const res = await fetch(API_URL + '?action=list');
-      const data = await res.json();
-      if (!data.ok) throw new Error(data.error);
-      allItems = data.data;
-      populateFilters(allItems);
-      renderCatalog();
-    } catch (err) {
-      listArea.className = '';
-      listArea.innerHTML = '<div class="empty"><span class="icon">' + ICON_EMPTY + '</span>Gagal memuat katalog.<br>' + escapeHtml(err.message) + '</div>';
-    }
-  }
 
-  ['search','filterKelas','filterFase','filterTipe'].forEach(id => {
-    document.getElementById(id).addEventListener('input', renderCatalog);
-    document.getElementById(id).addEventListener('change', renderCatalog);
-  });
+    const ext = file.name.split('.').pop().toLowerCase();
+    this.currentFile.format = ext === 'pdf' ? 'pdf' : 'html';
+    this.dom.upload.name.textContent = `${file.name} · Format: ${this.currentFile.format}`;
 
-  document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-    document.getElementById('filterKelas').value = '';
-    document.getElementById('filterFase').value = '';
-    document.getElementById('filterTipe').value = '';
-    renderCatalog();
-  });
-
-  // ============ LOGIN / AUTH ============
-  function isAuthed(){ return sessionStorage.getItem('bms_authed') === 'true'; }
-  function getPasscode(){ return sessionStorage.getItem('bms_passcode') || ''; }
-
-  function updateHeaderForAuth(){
-    document.getElementById('loginBtn').hidden = isAuthed();
-    document.getElementById('uploadNavBtn').hidden = !isAuthed();
-    document.getElementById('logoutBtn').hidden = !isAuthed();
-  }
-
-  function showCatalogView(){
-    document.getElementById('catalogView').hidden = false;
-    document.getElementById('uploadView').hidden = true;
-  }
-  function showUploadView(){
-    document.getElementById('catalogView').hidden = true;
-    document.getElementById('uploadView').hidden = false;
-  }
-
-  document.getElementById('loginBtn').addEventListener('click', () => {
-    document.getElementById('loginModal').hidden = false;
-    document.getElementById('loginError').classList.remove('show');
-    document.getElementById('loginPasscode').value = '';
-    document.getElementById('loginPasscode').focus();
-  });
-  document.getElementById('loginCancel').addEventListener('click', () => {
-    document.getElementById('loginModal').hidden = true;
-  });
-
-  async function attemptLogin(){
-    const code = document.getElementById('loginPasscode').value;
-    const errEl = document.getElementById('loginError');
-    if (!code){ errEl.textContent = 'Isi passcode terlebih dahulu.'; errEl.classList.add('show'); return; }
-    if (!API_URL.startsWith('http')){ errEl.textContent = 'API_URL belum diatur di file ini.'; errEl.classList.add('show'); return; }
-
-    const btn = document.getElementById('loginSubmit');
-    btn.disabled = true; btn.textContent = 'Memeriksa...';
-    try {
-      const res = await fetch(API_URL + '?action=verify&code=' + encodeURIComponent(code));
-      const data = await res.json();
-      if (data.ok && data.valid){
-        sessionStorage.setItem('bms_authed', 'true');
-        sessionStorage.setItem('bms_passcode', code);
-        document.getElementById('loginModal').hidden = true;
-        updateHeaderForAuth();
-      } else {
-        errEl.textContent = 'Passcode salah, coba lagi.'; errEl.classList.add('show');
+    // Ekstraksi Otomatis Jumlah Halaman via PDF.js Worker
+    if (this.currentFile.format === 'pdf') {
+      this.dom.upload.meta.textContent = "Menghitung halaman...";
+      try {
+        const fileUrl = URL.createObjectURL(file);
+        const loadingTask = pdfjsLib.getDocument(fileUrl);
+        const pdf = await loadingTask.promise;
+        this.currentFile.pages = pdf.numPages;
+        this.dom.upload.meta.textContent = `Total Halaman: ${this.currentFile.pages} Hal`;
+        URL.revokeObjectURL(fileUrl); // Bersihkan cache memori browser
+      } catch (err) {
+        this.dom.upload.meta.textContent = "Gagal membaca halaman dokumen.";
       }
-    } catch (err) {
-      errEl.textContent = 'Gagal menghubungi server: ' + err.message; errEl.classList.add('show');
-    } finally {
-      btn.disabled = false; btn.textContent = 'Masuk';
     }
   }
-  document.getElementById('loginSubmit').addEventListener('click', attemptLogin);
-  document.getElementById('loginPasscode').addEventListener('keydown', e => { if (e.key === 'Enter') attemptLogin(); });
 
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem('bms_authed');
-    sessionStorage.removeItem('bms_passcode');
-    updateHeaderForAuth();
-    showCatalogView();
-  });
-
-  document.getElementById('uploadNavBtn').addEventListener('click', showUploadView);
-  document.getElementById('backToCatalog').addEventListener('click', showCatalogView);
-
-  // ============ FORM UPLOAD ============
-  const detectedFormat = { current: '' };
-  document.getElementById('fileInput').addEventListener('change', e => {
-    const f = e.target.files[0];
-    const nameEl = document.getElementById('fileName');
-    if (!f){ nameEl.textContent = ''; return; }
-    const ext = f.name.split('.').pop().toLowerCase();
-    detectedFormat.current = (ext === 'pdf') ? 'pdf' : 'html';
-    nameEl.textContent = f.name + ' · format: ' + detectedFormat.current;
-  });
-
-  function fileToBase64(file){
+  fileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result.split(',')[1]);
@@ -574,72 +606,92 @@
     });
   }
 
-  function setUploadStatus(kind, message){
-    const el = document.getElementById('uploadStatus');
-    el.className = 'show ' + kind;
-    el.innerHTML = '<span class="icon">' + (kind === 'ok' ? ICON_OK : ICON_ERR) + '</span><span>' + message + '</span>';
+  setUploadStatus(kind, msg) {
+    if (kind === 'hide') {
+      this.dom.upload.status.className = '';
+      this.dom.upload.status.style.display = 'none';
+      return;
+    }
+    this.dom.upload.status.className = `show ${kind}`;
+    this.dom.upload.status.innerHTML = `<span class="icon">${kind === 'ok' ? this.icons.ok : this.icons.err}</span><span>${msg}</span>`;
+    this.dom.upload.status.style.display = 'flex';
   }
 
-  document.getElementById('uploadForm').addEventListener('submit', async e => {
+  async submitUpload(e) {
     e.preventDefault();
-    if (!isAuthed()){ setUploadStatus('err', 'Sesi login berakhir. Silakan login ulang.'); showCatalogView(); updateHeaderForAuth(); return; }
+    if (!this.isAuthed()) {
+      this.setUploadStatus('err', 'Sesi berakhir. Silakan login ulang.');
+      this.switchView('catalog');
+      this.updateHeaderAuth();
+      return;
+    }
 
-    const file = document.getElementById('fileInput').files[0];
-    if (!file){ setUploadStatus('err', 'Pilih file terlebih dahulu.'); return; }
+    const file = this.dom.upload.input.files[0];
+    if (!file) return this.setUploadStatus('err', 'Pilih file PDF atau HTML terlebih dahulu.');
 
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    const originalLabel = btn.innerHTML;
-    btn.innerHTML = 'Mengunggah...';
-    setUploadStatus('ok', 'Sedang mengunggah, mohon tunggu...');
+    const originalLabel = this.dom.upload.btn.innerHTML;
+    this.dom.upload.btn.disabled = true;
+    this.dom.upload.btn.innerHTML = 'Memproses...';
+    this.setUploadStatus('ok', 'Mengonversi dan mengunggah, mohon tunggu...');
 
     try {
-      const base64 = await fileToBase64(file);
+      const base64 = await this.fileToBase64(file);
       const payload = {
-        passcode: getPasscode(),
+        passcode: this.getPasscode(),
         judul: document.getElementById('judul').value,
         mapel: document.getElementById('mapel').value,
         kelas: document.getElementById('kelas').value,
         fase: document.getElementById('fase').value,
         bab: document.getElementById('bab').value,
         tipe: document.getElementById('tipe').value,
-        format: detectedFormat.current,
+        format: this.currentFile.format,
         deskripsi: document.getElementById('deskripsi').value,
         status: document.getElementById('status').value,
+        jumlahHalaman: this.currentFile.pages,
         filename: file.name,
-        mimeType: file.type || (detectedFormat.current === 'pdf' ? 'application/pdf' : 'text/html'),
+        mimeType: file.type || (this.currentFile.format === 'pdf' ? 'application/pdf' : 'text/html'),
         fileBase64: base64
       };
-      const res = await fetch(API_URL, {
+
+      const res = await fetch(this.API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (data.ok){
-        setUploadStatus('ok', 'Berhasil diunggah! ID katalog: ' + data.id + '. Cek katalog untuk melihatnya (jika status Aktif).');
-        document.getElementById('uploadForm').reset();
-        document.getElementById('fileName').textContent = '';
-        loadCatalog();
+
+      if (data.ok) {
+        this.setUploadStatus('ok', `Berhasil! ID Katalog: ${data.id}. Otomatis tersimpan di bank data.`);
+        this.dom.upload.form.reset();
+        this.dom.upload.name.textContent = '';
+        this.dom.upload.meta.textContent = '';
+        this.fetchCatalog();
       } else {
-        if (String(data.error).toLowerCase().includes('passcode')){
-          sessionStorage.removeItem('bms_authed');
-          sessionStorage.removeItem('bms_passcode');
-          updateHeaderForAuth();
-        }
-        setUploadStatus('err', 'Gagal: ' + data.error);
+        if (String(data.error).toLowerCase().includes('passcode')) this.logout();
+        this.setUploadStatus('err', `Penolakan sistem: ${data.error}`);
       }
     } catch (err) {
-      setUploadStatus('err', 'Terjadi kesalahan jaringan: ' + err.message);
+      this.setUploadStatus('err', `Kegagalan jaringan: ${err.message}`);
     } finally {
-      btn.disabled = false;
-      btn.innerHTML = originalLabel;
+      this.dom.upload.btn.disabled = false;
+      this.dom.upload.btn.innerHTML = originalLabel;
     }
-  });
+  }
 
-  // ============ INIT ============
-  updateHeaderForAuth();
-  loadCatalog();
+  get icons() {
+    return {
+      book: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/><path d="M12 5v14"/></svg>`,
+      empty: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg>`,
+      ok: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.4 2.4L16 9"/></svg>`,
+      err: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>`
+    };
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const app = new CatalogApp();
+  app.init();
+});
 </script>
 </body>
 </html>
