@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -9,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
+    /* ====== CSS SAMA SEPERTI SEBELUMNYA ====== */
     :root {
       --bg: #EAFFD0;
       --surface: #FFFFFF;
@@ -125,7 +125,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(10px, 2vw, 24px); /* padding lebih kecil */
+      padding: clamp(10px, 2vw, 24px);
       position: relative;
       overflow: hidden;
     }
@@ -192,9 +192,16 @@
       border: none;
       background: #fff;
     }
-    /* Tambahan untuk iframe agar scroll jika konten lebih tinggi */
     .page iframe {
       overflow: auto;
+    }
+    /* Halaman kosong (blank) tidak terlihat */
+    .page-blank {
+      background: transparent !important;
+      border: none !important;
+    }
+    .page-blank img, .page-blank iframe {
+      display: none !important;
     }
 
     @media (max-width: 768px) {
@@ -537,11 +544,22 @@
 
       mountBook() {
         const fragment = document.createDocumentFragment();
-        const blank = document.createElement('div');
-        blank.className = 'page page-blank';
-        fragment.appendChild(blank);
-        this.pageElements.forEach(el => fragment.appendChild(el));
+
+        // --- PERBAIKAN: tidak tambahkan blank di awal, tapi tambahkan di akhir jika ganjil ---
+        let pages = this.pageElements.slice(); // salin
+        // Jika jumlah halaman ganjil, tambahkan satu halaman kosong di akhir
+        // agar semua halaman berpasangan dan tidak ada efek sampul kaku.
+        if (pages.length % 2 === 1) {
+          const blank = document.createElement('div');
+          blank.className = 'page page-blank';
+          pages.push(blank);
+        }
+
+        pages.forEach(el => fragment.appendChild(el));
         this.dom.book.appendChild(fragment);
+
+        // Update totalPages dengan jumlah sebenarnya (termasuk blank)
+        this.totalPages = pages.length;
 
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
@@ -555,8 +573,6 @@
       }
 
       initFlipEngine() {
-        // Kunci: size:"stretch" dengan minHeight yang cukup dan maxHeight sangat besar
-        // agar buku selalu memanfaatkan tinggi yang tersedia tanpa terpotong.
         this.pageFlip = new St.PageFlip(this.dom.book, {
           width: 400,
           height: Math.round(400 / this.aspectRatio),
@@ -564,7 +580,7 @@
           minWidth: 200,
           maxWidth: 700,
           minHeight: 200,
-          maxHeight: 9999, // batas besar agar tidak membatasi
+          maxHeight: 9999,
           showCover: false,
           usePortrait: true,
           mobileScrollSupport: true,
@@ -580,20 +596,24 @@
         this.dom.navPrev.hidden = false;
         this.dom.navNext.hidden = false;
 
+        // Indeks halaman yang terlihat (tanpa blank) untuk indikator
+        const visiblePages = this.pageElements.length;
         const updateUI = (current) => {
-          const clamped = Math.max(1, Math.min(current, this.totalPages));
-          this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${this.totalPages}`;
-          this.dom.progressFill.style.width = `${(clamped / this.totalPages) * 100}%`;
-          this.dom.navPrev.disabled = clamped <= 1;
-          this.dom.navNext.disabled = clamped >= this.totalPages;
+          // current adalah indeks halaman (0-based) termasuk blank di akhir jika ada
+          // Kita ubah ke nomor halaman sebenarnya (tanpa blank)
+          let actual = current + 1;
+          if (actual > visiblePages) actual = visiblePages;
+          this.dom.pageIndicator.textContent = `Halaman ${actual} / ${visiblePages}`;
+          this.dom.progressFill.style.width = `${(actual / visiblePages) * 100}%`;
+          this.dom.navPrev.disabled = (current <= 0);
+          this.dom.navNext.disabled = (current >= this.totalPages - 1);
         };
-        updateUI(1);
+        updateUI(0);
         this.pageFlip.on('flip', (e) => updateUI(e.data));
 
         this.dom.navPrev.addEventListener('click', () => this.pageFlip.flipPrev());
         this.dom.navNext.addEventListener('click', () => this.pageFlip.flipNext());
 
-        // Reset zoom
         this.applyZoom(1);
       }
 
