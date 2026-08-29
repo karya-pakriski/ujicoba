@@ -14,9 +14,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- Pustaka PDF.js untuk ekstraksi metadata halaman di sisi klien -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-
 <style>
   :root {
     --bg: #EAFFD0;
@@ -434,15 +431,14 @@ class CatalogApp {
   constructor() {
     this.API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
     this.MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    this.CACHE_KEY = 'bms_catalog_cache';
+    this.CACHE_TTL = 5 * 60 * 1000; // 5 Menit TTL
     this.allItems = [];
     this.filteredItems = [];
     this.currentPage = 1;
     this.itemsPerPage = 12;
     this.currentFile = { format: '', pages: '' };
     
-    // Inisialisasi PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
     this.dom = {
       views: { catalog: document.getElementById('catalogView'), upload: document.getElementById('uploadView') },
       auth: { loginBtn: document.getElementById('loginBtn'), logoutBtn: document.getElementById('logoutBtn'), uploadNav: document.getElementById('uploadNavBtn') },
@@ -468,13 +464,12 @@ class CatalogApp {
     this.dom.auth.uploadNav.addEventListener('click', () => this.switchView('upload'));
     this.dom.upload.back.addEventListener('click', () => this.switchView('catalog'));
 
-    // Filter dropdown (Kelas/Fase/Tipe) tetap langsung menyaring saat diubah (live)
+    // Filter dropdown
     [this.dom.catalog.fKelas, this.dom.catalog.fFase, this.dom.catalog.fTipe].forEach(el => {
       el.addEventListener('change', () => this.renderCatalog());
     });
 
-    // Pencarian teks HANYA jalan saat tombol "Cari" ditekan atau tombol Enter di keyboard —
-    // tidak lagi otomatis menyaring di setiap ketikan (mengurangi render berulang saat mengetik).
+    // Pencarian teks
     this.dom.catalog.searchBtn.addEventListener('click', () => this.renderCatalog());
     this.dom.catalog.search.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); this.renderCatalog(); }
@@ -486,7 +481,7 @@ class CatalogApp {
       this.renderCatalog();
     });
 
-    // Delegasi klik tombol paginasi (tombol dibangun ulang tiap render, jadi listener dipasang sekali di kontainernya)
+    // Delegasi klik tombol paginasi
     this.dom.catalog.pagination.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-page]');
       if (!btn || btn.disabled) return;
@@ -500,6 +495,18 @@ class CatalogApp {
     // Form Unggah
     this.dom.upload.input.addEventListener('change', (e) => this.handleFileSelect(e));
     this.dom.upload.form.addEventListener('submit', (e) => this.submitUpload(e));
+  }
+
+  // --- Lazy Load PDF.js ---
+  loadPDFWorker() {
+    if (window.pdfjsLib || document.getElementById('pdfjs-script')) return;
+    const script = document.createElement('script');
+    script.id = 'pdfjs-script';
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js";
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    };
+    document.head.appendChild(script);
   }
 
   // --- Otorisasi ---
@@ -521,32 +528,31 @@ class CatalogApp {
   }
 
   async attemptLogin() {
-  const code = this.dom.modal.input.value;
-  if (!code) return this.showLoginErr('Isi passcode terlebih dahulu.');
-  
-  this.dom.modal.submit.disabled = true;
-  this.dom.modal.submit.textContent = 'Memeriksa...';
-  
-  try {
-    const res = await fetch(`${this.API_URL}?action=verify&code=${encodeURIComponent(code)}`);
-    const data = await res.json();
+    const code = this.dom.modal.input.value;
+    if (!code) return this.showLoginErr('Isi passcode terlebih dahulu.');
     
-    if (data.ok && data.valid) {
-      sessionStorage.setItem('bms_authed', 'true');
-      sessionStorage.setItem('bms_passcode', code);
-      this.dom.modal.overlay.hidden = true;
-      this.updateHeaderAuth();
-    } else {
-      this.showLoginErr('Passcode salah, coba lagi.');
+    this.dom.modal.submit.disabled = true;
+    this.dom.modal.submit.textContent = 'Memeriksa...';
+    
+    try {
+      const res = await fetch(`${this.API_URL}?action=verify&code=${encodeURIComponent(code)}`);
+      const data = await res.json();
+      
+      if (data.ok && data.valid) {
+        sessionStorage.setItem('bms_authed', 'true');
+        sessionStorage.setItem('bms_passcode', code);
+        this.dom.modal.overlay.hidden = true;
+        this.updateHeaderAuth();
+      } else {
+        this.showLoginErr('Passcode salah, coba lagi.');
+      }
+    } catch (err) {
+      this.showLoginErr('Gagal terhubung ke server. Coba lagi nanti.');
+    } finally {
+      this.dom.modal.submit.disabled = false;
+      this.dom.modal.submit.textContent = 'Masuk';
     }
-  } catch (err) {
-    // TETAP TAMPILKAN ERROR, JANGAN LANGSUNG LOGIN
-    this.showLoginErr('Gagal terhubung ke server. Coba lagi nanti.');
-  } finally {
-    this.dom.modal.submit.disabled = false;
-    this.dom.modal.submit.textContent = 'Masuk';
   }
-}
 
   showLoginErr(msg) {
     this.dom.modal.err.textContent = msg;
@@ -563,15 +569,50 @@ class CatalogApp {
   switchView(view) {
     this.dom.views.catalog.hidden = view !== 'catalog';
     this.dom.views.upload.hidden = view !== 'upload';
+    
+    // Lazy load pustaka PDF.js hanya ketika admin membuka menu unggah
+    if (view === 'upload') {
+      this.loadPDFWorker();
+    }
   }
 
-  // --- Katalog ---
+  // --- Katalog (Dengan Client-Side TTL Caching) ---
   async fetchCatalog() {
+    // 1. Cek cache di memori browser terlebih dahulu
+    const cachedData = sessionStorage.getItem(this.CACHE_KEY);
+    if (cachedData) {
+      try {
+        const parsedCache = JSON.parse(cachedData);
+        const age = Date.now() - parsedCache.timestamp;
+        // Jika data belum kedaluwarsa, gunakan data dari cache
+        if (age < this.CACHE_TTL) {
+          this.allItems = parsedCache.data;
+          this.populateFilters();
+          this.renderCatalog();
+          return;
+        }
+      } catch (e) {
+        sessionStorage.removeItem(this.CACHE_KEY); // Bersihkan cache rusak
+      }
+    }
+
+    // 2. Jika cache kosong atau expired, lakukan Fetch API
+    this.dom.catalog.list.className = 'loading';
+    this.dom.catalog.list.innerHTML = `<span class="spinner"></span>Memuat katalog dari server...`;
+    
     try {
       const res = await fetch(`${this.API_URL}?action=list`);
       const data = await res.json();
       if (!data.ok) throw new Error(data.error);
+      
       this.allItems = data.data;
+      
+      // Simpan hasil fetch ke cache browser beserta timestamp
+      sessionStorage.setItem(this.CACHE_KEY, JSON.stringify({
+        timestamp: Date.now(),
+        data: this.allItems
+      }));
+      
       this.populateFilters();
       this.renderCatalog();
     } catch (err) {
@@ -581,6 +622,8 @@ class CatalogApp {
   }
 
   populateFilters() {
+    this.dom.catalog.fKelas.innerHTML = '<option value="">Semua kelas</option>';
+    this.dom.catalog.fFase.innerHTML = '<option value="">Semua fase</option>';
     const getSet = key => [...new Set(this.allItems.map(i => i[key]).filter(Boolean))].sort();
     getSet('Kelas').forEach(k => this.dom.catalog.fKelas.insertAdjacentHTML('beforeend', `<option value="${k}">Kelas ${k}</option>`));
     getSet('Fase').forEach(f => this.dom.catalog.fFase.insertAdjacentHTML('beforeend', `<option value="${f}">Fase ${f}</option>`));
@@ -600,7 +643,6 @@ class CatalogApp {
       return true;
     });
 
-    // Setiap kali filter/pencarian berubah, selalu kembali ke halaman 1
     this.currentPage = 1;
     this.renderPage();
   }
@@ -626,8 +668,6 @@ class CatalogApp {
     this.dom.catalog.pagination.innerHTML = this.buildPagination(totalPages, this.currentPage);
   }
 
-  // Bangun daftar nomor halaman dengan elipsis ("...") untuk halaman yang banyak,
-  // selalu menampilkan halaman pertama, terakhir, dan sekitar halaman aktif.
   buildPageList(totalPages, current) {
     const delta = 1;
     const range = [];
@@ -691,7 +731,6 @@ class CatalogApp {
 
     if (!file) return;
 
-    // Proteksi Ukuran File Latar Belakang (Max 10MB)
     if (file.size > this.MAX_FILE_SIZE) {
       this.setUploadStatus('err', 'Ukuran file melampaui 10 MB. Kompres dokumen Anda terlebih dahulu.');
       e.target.value = ''; 
@@ -702,8 +741,7 @@ class CatalogApp {
     this.currentFile.format = ext === 'pdf' ? 'pdf' : 'html';
     this.dom.upload.name.textContent = `${file.name} · Format: ${this.currentFile.format}`;
 
-    // Ekstraksi Otomatis Jumlah Halaman via PDF.js Worker
-    if (this.currentFile.format === 'pdf') {
+    if (this.currentFile.format === 'pdf' && window.pdfjsLib) {
       this.dom.upload.meta.textContent = "Menghitung halaman...";
       try {
         const fileUrl = URL.createObjectURL(file);
@@ -711,7 +749,7 @@ class CatalogApp {
         const pdf = await loadingTask.promise;
         this.currentFile.pages = pdf.numPages;
         this.dom.upload.meta.textContent = `Total Halaman: ${this.currentFile.pages} Hal`;
-        URL.revokeObjectURL(fileUrl); // Bersihkan cache memori browser
+        URL.revokeObjectURL(fileUrl);
       } catch (err) {
         this.dom.upload.meta.textContent = "Gagal membaca halaman dokumen.";
       }
@@ -786,6 +824,9 @@ class CatalogApp {
         this.dom.upload.form.reset();
         this.dom.upload.name.textContent = '';
         this.dom.upload.meta.textContent = '';
+        
+        // Hapus cache katalog sisi klien agar unggahan baru langsung muncul
+        sessionStorage.removeItem(this.CACHE_KEY);
         this.fetchCatalog();
       } else {
         if (String(data.error).toLowerCase().includes('passcode')) this.logout();
