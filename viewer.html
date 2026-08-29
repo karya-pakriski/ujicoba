@@ -115,9 +115,18 @@
     .zoom-level:hover { color: var(--coral); }
 
     .stage-frame {
-      flex: 1; min-height: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 26px;
-      box-shadow: 0 20px 50px rgba(43,58,58,0.10); display: flex; align-items: center; justify-content: center;
-      padding: clamp(14px, 3vw, 34px); position: relative; overflow: hidden;
+      flex: 1;
+      min-height: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: 0 20px 50px rgba(43,58,58,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(10px, 2vw, 24px); /* padding lebih kecil */
+      position: relative;
+      overflow: hidden;
     }
     .stage-frame.is-zoomed { overflow: auto; align-items: flex-start; justify-content: flex-start; cursor: grab; }
     .stage-frame.is-zoomed:active { cursor: grabbing; }
@@ -149,9 +158,13 @@
     .spinner { width: 44px; height: 44px; border: 4px solid rgba(243,129,129,0.2); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4,0,0.2,1) infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .flip-book { display: none; box-shadow: none; }
+    .flip-book {
+      display: none;
+      box-shadow: none;
+      width: 100% !important;
+      height: 100% !important;
+    }
 
-    /* Wrapper zoom - HARUS 100% tinggi dan lebar */
     .book-zoom-wrap {
       width: 100%;
       height: 100%;
@@ -160,12 +173,28 @@
       justify-content: center;
       transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center center;
-      /* Pastikan tidak overflow */
       overflow: visible;
     }
 
-    .page { background-color: var(--surface); overflow: hidden; border: 1px solid var(--border); }
-    .page img, .page iframe { width: 100%; height: 100%; object-fit: contain; display: block; border: none; background: #fff; }
+    .page {
+      background-color: var(--surface);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      width: 100%;
+      height: 100%;
+    }
+    .page img, .page iframe {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      border: none;
+      background: #fff;
+    }
+    /* Tambahan untuk iframe agar scroll jika konten lebih tinggi */
+    .page iframe {
+      overflow: auto;
+    }
 
     @media (max-width: 768px) {
       .doc-title { max-width: 30vw; font-size: 0.85rem; }
@@ -525,16 +554,16 @@
       }
 
       initFlipEngine() {
-        // Hilangkan batasan maxHeight agar buku bisa memenuhi tinggi kontainer
+        // Kunci: size:"stretch" dengan minHeight yang cukup dan maxHeight sangat besar
+        // agar buku selalu memanfaatkan tinggi yang tersedia tanpa terpotong.
         this.pageFlip = new St.PageFlip(this.dom.book, {
           width: 400,
           height: Math.round(400 / this.aspectRatio),
           size: "stretch",
-          minWidth: 220,
+          minWidth: 200,
           maxWidth: 700,
           minHeight: 200,
-          // maxHeight dihilangkan (atau set ke 0 agar tidak membatasi)
-          maxHeight: 0,
+          maxHeight: 9999, // batas besar agar tidak membatasi
           showCover: false,
           usePortrait: true,
           mobileScrollSupport: true,
@@ -563,7 +592,7 @@
         this.dom.navPrev.addEventListener('click', () => this.pageFlip.flipPrev());
         this.dom.navNext.addEventListener('click', () => this.pageFlip.flipNext());
 
-        // Reset zoom ke 100%
+        // Reset zoom
         this.applyZoom(1);
       }
 
