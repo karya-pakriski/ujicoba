@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    /* ====== CSS SAMA SEPERTI SEBELUMNYA ====== */
+    /* ====== CSS SAMA ====== */
     :root {
       --bg: #EAFFD0;
       --surface: #FFFFFF;
@@ -195,7 +195,6 @@
     .page iframe {
       overflow: auto;
     }
-    /* Halaman kosong (blank) tidak terlihat */
     .page-blank {
       background: transparent !important;
       border: none !important;
@@ -296,6 +295,10 @@
         this.ZOOM_MAX = 2.5;
         this.ZOOM_STEP = 0.25;
 
+        // Untuk efek suara
+        this.audioCtx = null;
+        this.noiseBuffer = null;
+
         this.dom = {
           title: document.getElementById('titleDisplay'),
           loading: document.getElementById('loadingScreen'),
@@ -334,8 +337,77 @@
         this.setupDownload();
         this.setupZoomControls();
         this.setupResizeGuard();
+        this.setupAudio();
         this.loadDocument();
       }
+
+      // --- Setup Audio untuk suara kertas ---
+      setupAudio() {
+        // Buat AudioContext saat interaksi pertama (click) agar tidak diblokir browser
+        const initAudio = () => {
+          if (!this.audioCtx) {
+            try {
+              this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+              this.createNoiseBuffer();
+            } catch (e) { /* audio tidak didukung */ }
+          }
+          if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+          }
+        };
+        // Inisialisasi saat pengguna berinteraksi dengan viewer (klik di mana saja)
+        document.addEventListener('click', initAudio, { once: true });
+        // Juga saat tombol navigasi ditekan (prev/next)
+        this.dom.navPrev.addEventListener('click', initAudio);
+        this.dom.navNext.addEventListener('click', initAudio);
+        // Dan saat flip event (akan dipanggil dari playPaperSound)
+      }
+
+      createNoiseBuffer() {
+        if (!this.audioCtx) return;
+        const duration = 0.15; // detik
+        const sampleRate = this.audioCtx.sampleRate;
+        const bufferSize = Math.floor(duration * sampleRate);
+        const buffer = this.audioCtx.createBuffer(1, bufferSize, sampleRate);
+        const data = buffer.getChannelData(0);
+        // White noise
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * 0.3;
+        }
+        this.noiseBuffer = buffer;
+      }
+
+      playPaperSound() {
+        if (!this.audioCtx) return;
+        // Resume context jika suspended (misal setelah interaksi)
+        if (this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+        if (this.audioCtx.state !== 'running') return;
+        if (!this.noiseBuffer) return;
+
+        const source = this.audioCtx.createBufferSource();
+        source.buffer = this.noiseBuffer;
+
+        const gainNode = this.audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0.5, this.audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioCtx.currentTime + 0.15);
+
+        // Filter untuk memberi kesan kertas (low-pass)
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 3000;
+        filter.Q.value = 1;
+
+        source.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(this.audioCtx.destination);
+
+        source.start();
+        source.stop(this.audioCtx.currentTime + 0.2);
+      }
+
+      // --- Lanjut method lainnya ---
 
       setupKeyboardNav() {
         document.addEventListener('keydown', (e) => {
@@ -544,21 +616,14 @@
 
       mountBook() {
         const fragment = document.createDocumentFragment();
-
-        // --- PERBAIKAN: tidak tambahkan blank di awal, tapi tambahkan di akhir jika ganjil ---
-        let pages = this.pageElements.slice(); // salin
-        // Jika jumlah halaman ganjil, tambahkan satu halaman kosong di akhir
-        // agar semua halaman berpasangan dan tidak ada efek sampul kaku.
+        let pages = this.pageElements.slice();
         if (pages.length % 2 === 1) {
           const blank = document.createElement('div');
           blank.className = 'page page-blank';
           pages.push(blank);
         }
-
         pages.forEach(el => fragment.appendChild(el));
         this.dom.book.appendChild(fragment);
-
-        // Update totalPages dengan jumlah sebenarnya (termasuk blank)
         this.totalPages = pages.length;
 
         this.dom.loading.style.opacity = '0';
@@ -596,11 +661,8 @@
         this.dom.navPrev.hidden = false;
         this.dom.navNext.hidden = false;
 
-        // Indeks halaman yang terlihat (tanpa blank) untuk indikator
         const visiblePages = this.pageElements.length;
         const updateUI = (current) => {
-          // current adalah indeks halaman (0-based) termasuk blank di akhir jika ada
-          // Kita ubah ke nomor halaman sebenarnya (tanpa blank)
           let actual = current + 1;
           if (actual > visiblePages) actual = visiblePages;
           this.dom.pageIndicator.textContent = `Halaman ${actual} / ${visiblePages}`;
@@ -609,7 +671,12 @@
           this.dom.navNext.disabled = (current >= this.totalPages - 1);
         };
         updateUI(0);
-        this.pageFlip.on('flip', (e) => updateUI(e.data));
+
+        // --- Tambahkan efek suara pada event flip ---
+        this.pageFlip.on('flip', (e) => {
+          updateUI(e.data);
+          this.playPaperSound();
+        });
 
         this.dom.navPrev.addEventListener('click', () => this.pageFlip.flipPrev());
         this.dom.navNext.addEventListener('click', () => this.pageFlip.flipNext());
@@ -626,6 +693,9 @@
 
       cleanup() {
         this.objectUrls.forEach(u => URL.revokeObjectURL(u));
+        if (this.audioCtx) {
+          try { this.audioCtx.close(); } catch (e) {}
+        }
       }
     }
 
