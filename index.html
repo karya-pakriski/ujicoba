@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bank Materi &amp; Soal PAI — KKG PAI Kabupaten Kulon Progo</title>
+
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -63,27 +70,22 @@
   .brand-title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.2; }
   .brand-sub { font-size: 12px; color: var(--ink-muted); font-weight: 700; }
 
-  .header-search { flex: 1 1 220px; display: flex; gap: 8px; align-items: center; min-width: 180px; }
-  .search-input-wrap { position: relative; flex: 1; }
-  /* Ikon di dalam input dihilangkan */
+  .header-search { flex: 1 1 220px; position: relative; min-width: 180px; display: flex; gap: 8px; }
+  .header-search .search-input-wrap { position: relative; flex: 1; }
   .header-search input {
     width: 100%; background: var(--surface-2); border: 2px solid var(--border); color: var(--ink);
-    border-radius: 999px; padding: 9px 14px; font-size: 14px; font-family: 'Nunito', sans-serif; font-weight: 600; outline: none;
+    border-radius: 999px; padding: 9px 16px; font-size: 14px; font-family: 'Nunito', sans-serif; font-weight: 600; outline: none;
     transition: border-color 0.2s ease;
   }
   .header-search input::placeholder { color: var(--ink-muted); opacity: .75; font-weight: 500; }
   .header-search input:focus { border-color: var(--mint); }
-
-  /* Tombol pencarian hanya ikon (bulat) */
   .search-btn {
-    width: 42px; height: 42px; padding: 0; justify-content: center; border-radius: 50%;
-    background: var(--coral); color: #fff; border: none;
-    box-shadow: 0 8px 18px rgba(243,129,129,0.3);
-    cursor: pointer; transition: all .15s ease; flex-shrink: 0;
-    display: inline-flex; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 38px; height: 38px; padding: 0; border-radius: 50%; border: none; background: var(--coral); color: #fff;
+    cursor: pointer; box-shadow: 0 8px 18px rgba(243,129,129,0.3); transition: all .15s ease;
   }
   .search-btn:hover { background: var(--coral-dark); transform: translateY(-1px); }
-  .search-btn .icon { width: 18px; height: 18px; margin: 0; }
+  .search-btn svg { width: 16px; height: 16px; display: block; }
 
   .header-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .btn {
@@ -112,6 +114,15 @@
   }
   .toolbar-row select:focus { border-color: var(--mint); }
   .toolbar-row .reset-btn { padding: 9px 14px; font-size: 13px; }
+  .active-search-chip {
+    display: inline-flex; align-items: center; gap: 8px; background: rgba(149,225,211,0.22); border: 2px solid var(--mint);
+    color: var(--mint-dark); border-radius: 999px; padding: 6px 8px 6px 14px; font-size: 13px; font-weight: 800;
+  }
+  .active-search-chip button {
+    display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%;
+    border: none; background: var(--mint); color: #fff; cursor: pointer; padding: 0;
+  }
+  .active-search-chip button svg { width: 11px; height: 11px; display: block; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; transition: all .15s ease; box-shadow: 0 8px 20px rgba(43,58,58,0.06); }
@@ -202,12 +213,11 @@
   .modal-actions { display: flex; gap: 10px; }
   .modal-actions .btn { flex: 1; justify-content: center; }
 
-  /* Responsif */
   @media (max-width: 768px) {
     .brand-sub { display: none; }
     .toolbar-row select { flex: 1; min-width: 100px; }
     .header-search { order: 3; flex-basis: 100%; margin-top: 10px; }
-    .search-btn { width: 38px; height: 38px; }
+    .search-btn { width: 34px; height: 34px; }
   }
 
   @media (max-width: 480px) { 
@@ -223,60 +233,31 @@
 
 <header class="site-header">
   <div class="brand">
-    <span class="logo">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/>
-        <path d="M12 5v14"/>
-      </svg>
-    </span>
+    <span class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/><path d="M12 5v14"/></svg></span>
     <div>
       <div class="brand-title">KKG PAI</div>
       <div class="brand-sub">Kabupaten Kulon Progo</div>
     </div>
   </div>
-
   <div class="header-search">
     <div class="search-input-wrap">
-      <!-- Ikon di dalam input sudah dihapus -->
       <input type="search" id="search" placeholder="Cari judul atau deskripsi...">
     </div>
-    <button type="button" class="search-btn" id="searchBtn" aria-label="Cari">
-      <span class="icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="10" cy="10" r="6.5"/>
-          <path d="M20 20l-4.3-4.3"/>
-        </svg>
-      </span>
+    <button type="button" class="search-btn" id="searchBtn" title="Cari" aria-label="Cari">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg>
     </button>
   </div>
-
   <div class="header-actions">
     <button class="btn" id="loginBtn">
-      <span class="icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-          <path d="M10 17l5-5-5-5"/>
-          <path d="M15 12H3"/>
-        </svg>
-      </span>
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg></span>
       Login
     </button>
     <button class="btn primary" id="uploadNavBtn" hidden>
-      <span class="icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 3v12"/>
-          <path d="M7 8l5-5 5 5"/>
-          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
-        </svg>
-      </span>
+      <span class="icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></span>
       Unggah
     </button>
     <button class="btn" id="logoutBtn" hidden title="Keluar">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <path d="M16 17l5-5-5-5"/>
-        <path d="M21 12H9"/>
-      </svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
     </button>
   </div>
 </header>
@@ -456,12 +437,13 @@ class CatalogApp {
     this.dom.auth.uploadNav.addEventListener('click', () => this.switchView('upload'));
     this.dom.upload.back.addEventListener('click', () => this.switchView('catalog'));
 
-    // Filter dropdown
+    // Filter dropdown (Kelas/Fase/Tipe) tetap langsung menyaring saat diubah (live)
     [this.dom.catalog.fKelas, this.dom.catalog.fFase, this.dom.catalog.fTipe].forEach(el => {
       el.addEventListener('change', () => this.renderCatalog());
     });
 
-    // Pencarian hanya dengan tombol atau Enter
+    // Pencarian teks HANYA jalan saat tombol "Cari" ditekan atau tombol Enter di keyboard —
+    // tidak lagi otomatis menyaring di setiap ketikan (mengurangi render berulang saat mengetik).
     this.dom.catalog.searchBtn.addEventListener('click', () => this.renderCatalog());
     this.dom.catalog.search.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); this.renderCatalog(); }
@@ -504,6 +486,7 @@ class CatalogApp {
     this.dom.modal.submit.textContent = 'Memeriksa...';
     
     try {
+      // Menguji validasi dengan request endpoint jika tersedia di backend
       const res = await fetch(`${this.API_URL}?action=verify&code=${encodeURIComponent(code)}`);
       const data = await res.json();
       
@@ -516,7 +499,7 @@ class CatalogApp {
         this.showLoginErr('Passcode salah, coba lagi.');
       }
     } catch (err) {
-      // Fallback sementara
+      // Fallback otorisasi sementara apabila endpoint verify belum tersedia di backend
       sessionStorage.setItem('bms_authed', 'true');
       sessionStorage.setItem('bms_passcode', code);
       this.dom.modal.overlay.hidden = true;
@@ -623,6 +606,7 @@ class CatalogApp {
 
     if (!file) return;
 
+    // Proteksi Ukuran File Latar Belakang (Max 10MB)
     if (file.size > this.MAX_FILE_SIZE) {
       this.setUploadStatus('err', 'Ukuran file melampaui 10 MB. Kompres dokumen Anda terlebih dahulu.');
       e.target.value = ''; 
@@ -633,6 +617,7 @@ class CatalogApp {
     this.currentFile.format = ext === 'pdf' ? 'pdf' : 'html';
     this.dom.upload.name.textContent = `${file.name} · Format: ${this.currentFile.format}`;
 
+    // Ekstraksi Otomatis Jumlah Halaman via PDF.js Worker
     if (this.currentFile.format === 'pdf') {
       this.dom.upload.meta.textContent = "Menghitung halaman...";
       try {
@@ -641,7 +626,7 @@ class CatalogApp {
         const pdf = await loadingTask.promise;
         this.currentFile.pages = pdf.numPages;
         this.dom.upload.meta.textContent = `Total Halaman: ${this.currentFile.pages} Hal`;
-        URL.revokeObjectURL(fileUrl);
+        URL.revokeObjectURL(fileUrl); // Bersihkan cache memori browser
       } catch (err) {
         this.dom.upload.meta.textContent = "Gagal membaca halaman dokumen.";
       }
