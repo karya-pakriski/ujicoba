@@ -83,11 +83,7 @@
 
     .stage-frame {
       flex: 1; min-height: 0;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(243,129,129,0.16), transparent 45%),
-        radial-gradient(circle at 85% 15%, rgba(252,227,138,0.22), transparent 45%),
-        radial-gradient(circle at 80% 90%, rgba(149,225,211,0.22), transparent 50%),
-        var(--surface);
+      background: var(--surface);
       border: 1px solid var(--border); border-radius: 26px;
       box-shadow: 0 20px 50px rgba(43,58,58,0.10), inset 0 1px 0 rgba(255,255,255,0.6);
       display: flex; align-items: center; justify-content: center;
@@ -96,15 +92,15 @@
     .stage-wrap:fullscreen, .stage-wrap:-webkit-full-screen { max-width: 100%; padding: 16px; background: var(--bg); }
     .stage-wrap:fullscreen .stage-frame, .stage-wrap:-webkit-full-screen .stage-frame { border-radius: 18px; }
 
-    /* Panel mengambang tempat buku "duduk" — memberi kesan buku melayang
-       di atas nampan berwarna, alih-alih menempel rata di kotak polos. */
+    /* Panel tempat buku "duduk" — permukaan solid putih supaya bayangan
+       bawaan library flipbook tidak tercampur warna apa pun di belakangnya. */
     .book-stage {
       position: relative; width: 100%; height: 100%; max-width: 720px;
       display: flex; align-items: center; justify-content: center;
     }
     .book-stage::before {
       content: ''; position: absolute; left: 8%; right: 8%; bottom: -6px; height: 26px;
-      background: radial-gradient(ellipse at center, rgba(43,58,58,0.20), transparent 72%);
+      background: radial-gradient(ellipse at center, rgba(43,58,58,0.16), transparent 72%);
       filter: blur(4px); z-index: 0;
     }
     .flip-book { position: relative; z-index: 1; border-radius: 10px; }
@@ -192,7 +188,7 @@
       </div>
       <div class="progress-track" id="progressTrack" hidden><div class="progress-fill" id="progressFill"></div></div>
       <div class="stage-frame" id="stageFrame">
-        <div class="book-stage">
+        <div class="book-stage" id="bookStage">
           <div id="book" class="flip-book"></div>
         </div>
         <button class="nav-btn nav-prev" id="navPrev" title="Halaman sebelumnya (←)" hidden>
@@ -250,6 +246,7 @@
           spinner: document.querySelector('.spinner'),
           stageWrap: document.getElementById('stageWrap'),
           stageFrame: document.getElementById('stageFrame'),
+          bookStage: document.getElementById('bookStage'),
           stageTitle: document.getElementById('stageTitle'),
           pageIndicator: document.getElementById('pageIndicator'),
           progressTrack: document.getElementById('progressTrack'),
@@ -275,7 +272,37 @@
         this.setupKeyboardNav();
         this.setupDownload();
         this.setupResizeGuard();
+        // Didaftarkan sekali saja — memanggil this.pageFlip di saat klik
+        // (bukan menyimpan referensi lama), jadi tetap valid walau
+        // instance PageFlip dibangun ulang saat resize.
+        this.dom.navPrev.addEventListener('click', () => this.pageFlip && this.pageFlip.flipPrev());
+        this.dom.navNext.addEventListener('click', () => this.pageFlip && this.pageFlip.flipNext());
         this.loadDocument();
+      }
+
+      updateUI(current) {
+        const clamped = Math.max(1, Math.min(current, this.totalPages));
+        this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${this.totalPages}`;
+        this.dom.progressFill.style.width = `${(clamped / this.totalPages) * 100}%`;
+        this.dom.navPrev.disabled = clamped <= 1;
+        this.dom.navNext.disabled = clamped >= this.totalPages;
+      }
+
+      // Menghitung ukuran buku yang PAS di dalam wadah — mempertimbangkan
+      // lebar DAN tinggi yang tersedia, supaya tidak pernah terpotong
+      // walau pada rasio layar/zoom tertentu.
+      computeFitSize(aspectRatio) {
+        const rect = this.dom.bookStage.getBoundingClientRect();
+        const availW = Math.max(200, rect.width - 4);
+        const availH = Math.max(240, rect.height - 4);
+        const isNarrow = window.innerWidth < 700;
+        const widthFromWidth = isNarrow ? availW : availW / 2;
+        const widthFromHeight = availH * aspectRatio;
+        const cap = isNarrow ? 560 : 480;
+        const floor = isNarrow ? 200 : 200;
+        let width = Math.min(widthFromWidth, widthFromHeight, cap);
+        width = Math.max(width, floor);
+        return { width: Math.round(width), height: Math.round(width / aspectRatio), isNarrow };
       }
 
       setupKeyboardNav() {
@@ -350,12 +377,13 @@
         window.addEventListener('orientationchange', onResize);
       }
 
-      // Menata ulang tampilan flipbook TANPA merender ulang konten apa pun —
-      // halaman sudah berupa elemen statis (gambar/iframe), jadi ini murni
-      // operasi tata letak dan aman dipanggil kapan saja.
+      // Menata ulang tampilan flipbook. Halaman sudah berupa elemen statis
+      // (gambar/iframe) sehingga membangun ulang di sini MURAH dan AMAN —
+      // tidak ada render ulang konten, cuma menata ukuran & posisi.
       refreshFlipLayout() {
-        if (!this.pageFlip) return;
-        try { this.pageFlip.update(); } catch (e) { /* aman diabaikan */ }
+        if (!this.pageElements) return;
+        const current = this.pageFlip ? this.pageFlip.getCurrentPageIndex() : 0;
+        this.mountFlipEngine(current);
       }
 
       async loadDocument() {
@@ -480,25 +508,31 @@
           this.dom.loading.style.display = 'none';
           this.dom.stageWrap.hidden = false;
           this.dom.book.style.display = 'block';
-          this.initFlipEngine();
+          this.dom.pageIndicator.hidden = false;
+          this.dom.progressTrack.hidden = false;
+          this.dom.navPrev.hidden = false;
+          this.dom.navNext.hidden = false;
+          this.mountFlipEngine(0);
         }, 250);
       }
 
-      initFlipEngine() {
-        // size:"stretch" = PageFlip sendiri yang menata ulang mengikuti
-        // ukuran kontainer induknya. Ini jauh lebih tangguh daripada kita
-        // menghitung ulang lebar/tinggi piksel sendiri lalu destroy+rebuild
-        // manual — sumber utama ketidakstabilan pada versi sebelumnya.
+      // Bisa dipanggil berkali-kali (mis. saat resize/orientationchange/
+      // fullscreen) — murah karena halamannya statis, tidak ada render ulang.
+      mountFlipEngine(preserveIndex) {
+        const { width, height, isNarrow } = this.computeFitSize(this.aspectRatio);
+
+        if (this.pageFlip) {
+          try { this.pageFlip.destroy(); } catch (e) { /* aman diabaikan */ }
+          this.pageFlip = null;
+        }
+
         this.pageFlip = new St.PageFlip(this.dom.book, {
-          width: 400,
-          height: Math.round(400 / this.aspectRatio),
-          size: "stretch",
-          minWidth: 220,
-          maxWidth: 700,
-          minHeight: 280,
-          maxHeight: 1000,
+          width, height,
+          size: "fixed",
+          minWidth: 200, maxWidth: 560,
+          minHeight: 240, maxHeight: 900,
           showCover: false,
-          usePortrait: true,
+          usePortrait: isNarrow,
           mobileScrollSupport: true,
           maxShadowOpacity: 0.35,
           drawShadow: true,
@@ -506,24 +540,12 @@
         });
 
         this.pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
+        if (preserveIndex > 0) {
+          try { this.pageFlip.turnToPage(preserveIndex); } catch (e) { /* index di luar batas, abaikan */ }
+        }
 
-        this.dom.pageIndicator.hidden = false;
-        this.dom.progressTrack.hidden = false;
-        this.dom.navPrev.hidden = false;
-        this.dom.navNext.hidden = false;
-
-        const updateUI = (current) => {
-          const clamped = Math.max(1, Math.min(current, this.totalPages));
-          this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${this.totalPages}`;
-          this.dom.progressFill.style.width = `${(clamped / this.totalPages) * 100}%`;
-          this.dom.navPrev.disabled = clamped <= 1;
-          this.dom.navNext.disabled = clamped >= this.totalPages;
-        };
-        updateUI(1);
-        this.pageFlip.on('flip', (e) => updateUI(e.data));
-
-        this.dom.navPrev.addEventListener('click', () => this.pageFlip.flipPrev());
-        this.dom.navNext.addEventListener('click', () => this.pageFlip.flipNext());
+        this.updateUI(Math.max(1, preserveIndex));
+        this.pageFlip.on('flip', (e) => this.updateUI(e.data));
       }
 
       showError(msg) {
