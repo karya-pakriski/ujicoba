@@ -62,7 +62,15 @@
 
     .stage-wrap { width: 100%; height: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
 
-    .stage-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 4px; flex-shrink: 0; }
+    .stage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 4px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
     .stage-title { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.92rem; color: var(--mint-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .stage-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .page-indicator {
@@ -72,16 +80,50 @@
     .icon-btn {
       width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface);
       display: flex; align-items: center; justify-content: center; color: var(--ink-muted); cursor: pointer;
-      transition: all 0.15s ease; flex-shrink: 0;
+      transition: all 0.15s ease; flex-shrink: 0; padding: 0;
     }
-    .icon-btn:hover { color: var(--coral); border-color: var(--coral); transform: translateY(-1px); }
+    .icon-btn:hover:not(:disabled) { color: var(--coral); border-color: var(--coral); transform: translateY(-1px); }
+    .icon-btn:disabled { opacity: 0.35; cursor: default; }
     .icon-btn svg { width: 17px; height: 17px; }
+
+    /* Grup zoom */
+    .zoom-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px 6px;
+      flex-shrink: 0;
+    }
+    .zoom-group .icon-btn {
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+    }
+    .zoom-group .icon-btn svg { width: 14px; height: 14px; }
+    .zoom-level {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+      min-width: 40px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .zoom-level:hover { color: var(--coral); }
 
     .stage-frame {
       flex: 1; min-height: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 26px;
       box-shadow: 0 20px 50px rgba(43,58,58,0.10); display: flex; align-items: center; justify-content: center;
       padding: clamp(14px, 3vw, 34px); position: relative; overflow: hidden;
     }
+    /* Saat zoom aktif, aktifkan scroll untuk menggeser */
+    .stage-frame.is-zoomed { overflow: auto; align-items: flex-start; justify-content: flex-start; cursor: grab; }
+    .stage-frame.is-zoomed:active { cursor: grabbing; }
+
     .stage-wrap:fullscreen, .stage-wrap:-webkit-full-screen { max-width: 100%; padding: 16px; background: var(--bg); }
     .stage-wrap:fullscreen .stage-frame, .stage-wrap:-webkit-full-screen .stage-frame { border-radius: 18px; }
 
@@ -94,11 +136,13 @@
       box-shadow: 0 10px 24px rgba(43,58,58,0.14); display: flex; align-items: center; justify-content: center;
       color: var(--ink-muted); cursor: pointer; z-index: 6; transition: all 0.15s ease;
     }
-    .nav-btn:hover { color: #fff; background: var(--coral); border-color: var(--coral); transform: translateY(-50%) scale(1.08); }
+    .nav-btn:hover:not(:disabled) { color: #fff; background: var(--coral); border-color: var(--coral); transform: translateY(-50%) scale(1.08); }
     .nav-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
     .nav-btn svg { width: 19px; height: 19px; }
     .nav-prev { left: 14px; }
     .nav-next { right: 14px; }
+    /* Sembunyikan tombol navigasi saat zoom agar tidak mengganggu scroll */
+    .stage-frame.is-zoomed .nav-btn { display: none; }
 
     #loadingScreen {
       position: absolute; inset: 0; background: var(--bg); display: flex; flex-direction: column; justify-content: center;
@@ -108,15 +152,21 @@
     .spinner { width: 44px; height: 44px; border: 4px solid rgba(243,129,129,0.2); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4,0,0.2,1) infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .flip-book { display: none; box-shadow: 0 15px 40px rgba(43,58,58,0.18); }
+    .flip-book { display: none; box-shadow: none; } /* flat: tanpa shadow */
+
+    /* Pembungkus untuk zoom */
+    .book-zoom-wrap {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-origin: center center;
+    }
+
     .page { background-color: var(--surface); overflow: hidden; border: 1px solid var(--border); }
     .page img, .page iframe { width: 100%; height: 100%; object-fit: contain; display: block; border: none; background: #fff; }
-
-    /* Perbaikan: untuk memastikan konten tidak meluber saat zoom atau ukuran tertentu */
-    .stage-frame .flip-book {
-      max-width: 100%;
-      max-height: 100%;
-    }
 
     @media (max-width: 768px) {
       .doc-title { max-width: 30vw; font-size: 0.85rem; }
@@ -155,7 +205,19 @@
         <span class="stage-title" id="stageTitle">Dokumen</span>
         <div class="stage-actions">
           <span class="page-indicator" id="pageIndicator" hidden></span>
-          <button class="icon-btn" id="downloadBtn" title="Unduh">
+
+          <!-- Grup zoom -->
+          <div class="zoom-group" id="zoomGroup" hidden>
+            <button class="icon-btn" id="zoomOutBtn" title="Perkecil">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+            </button>
+            <span class="zoom-level" id="zoomLevelLabel" title="Klik untuk reset ke 100%">100%</span>
+            <button class="icon-btn" id="zoomInBtn" title="Perbesar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            </button>
+          </div>
+
+          <button class="icon-btn" id="downloadBtn" title="Unduh" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
           </button>
           <button class="icon-btn" id="fullscreenBtn" title="Layar penuh" hidden>
@@ -167,8 +229,8 @@
       </div>
       <div class="progress-track" id="progressTrack" hidden><div class="progress-fill" id="progressFill"></div></div>
       <div class="stage-frame" id="stageFrame">
-        <!-- Bungkus buku dengan div pembatas agar tidak meluber -->
-        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden;">
+        <!-- Pembungkus untuk zoom -->
+        <div id="bookZoomWrap" class="book-zoom-wrap">
           <div id="book" class="flip-book"></div>
         </div>
         <button class="nav-btn nav-prev" id="navPrev" title="Halaman sebelumnya (←)" hidden>
@@ -186,14 +248,13 @@
 
   <script>
     // =====================================================================
-    // PERBAIKAN STABILITAS:
-    // - Menggunakan size:"stretch" tetap, tapi dengan batasan max-width/max-height
-    //   pada wadah buku dan pengaturan padding yang cukup.
-    // - Menambahkan wrap div dengan overflow:hidden untuk memastikan tidak ada
-    //   konten yang keluar dari stage-frame.
-    // - Pada resize/fullscreen, panggil pageFlip.update() untuk menyesuaikan
-    //   tata letak.
-    // - Menghilangkan semua logika deteksi zoom karena tidak diperlukan.
+    // ATURAN STABILISASI TETAP DIJAGA:
+    // 1. size:"stretch" + batasan min/max
+    // 2. Tidak pernah rebuild, hanya pageFlip.update() saat resize/fullscreen
+    // 3. Tidak mendeteksi pinch-zoom
+    // 4. Konten digambar sekali menjadi gambar statis
+    // 5. Zoom manual diterapkan pada wrapper terpisah (bookZoomWrap) dengan CSS transform
+    // 6. Efek flat: drawShadow:false, maxShadowOpacity:0
     // =====================================================================
 
     class ViewerEngine {
@@ -208,6 +269,12 @@
         this.pageFlip = null;
         this.totalPages = 0;
         this.objectUrls = [];
+
+        // State zoom manual
+        this.zoomLevel = 1;
+        this.ZOOM_MIN = 1;
+        this.ZOOM_MAX = 2.5;
+        this.ZOOM_STEP = 0.25;
 
         this.dom = {
           title: document.getElementById('titleDisplay'),
@@ -225,7 +292,12 @@
           fullscreenBtn: document.getElementById('fullscreenBtn'),
           fullscreenIcon: document.getElementById('fullscreenIcon'),
           downloadBtn: document.getElementById('downloadBtn'),
-          book: document.getElementById('book')
+          zoomGroup: document.getElementById('zoomGroup'),
+          zoomInBtn: document.getElementById('zoomInBtn'),
+          zoomOutBtn: document.getElementById('zoomOutBtn'),
+          zoomLevelLabel: document.getElementById('zoomLevelLabel'),
+          book: document.getElementById('book'),
+          bookZoomWrap: document.getElementById('bookZoomWrap')
         };
 
         this.ICON_EXPAND = '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
@@ -240,6 +312,7 @@
         this.setupFullscreen();
         this.setupKeyboardNav();
         this.setupDownload();
+        this.setupZoomControls();
         this.setupResizeGuard();
         this.loadDocument();
       }
@@ -249,6 +322,9 @@
           if (!this.pageFlip) return;
           if (e.key === 'ArrowRight') { e.preventDefault(); this.pageFlip.flipNext(); }
           else if (e.key === 'ArrowLeft') { e.preventDefault(); this.pageFlip.flipPrev(); }
+          else if (e.key === '+' || e.key === '=') { e.preventDefault(); this.applyZoom(this.zoomLevel + this.ZOOM_STEP); }
+          else if (e.key === '-') { e.preventDefault(); this.applyZoom(this.zoomLevel - this.ZOOM_STEP); }
+          else if (e.key === '0') { e.preventDefault(); this.applyZoom(1); }
         });
       }
 
@@ -299,6 +375,43 @@
         w.document.close();
       }
 
+      // ---------- Kontrol Zoom ----------
+      setupZoomControls() {
+        this.dom.zoomInBtn.addEventListener('click', () => this.applyZoom(this.zoomLevel + this.ZOOM_STEP));
+        this.dom.zoomOutBtn.addEventListener('click', () => this.applyZoom(this.zoomLevel - this.ZOOM_STEP));
+        this.dom.zoomLevelLabel.addEventListener('click', () => this.applyZoom(1));
+      }
+
+      applyZoom(level) {
+        this.zoomLevel = Math.min(this.ZOOM_MAX, Math.max(this.ZOOM_MIN, level));
+        const zoomed = this.zoomLevel > 1.001;
+        const wrap = this.dom.bookZoomWrap;
+
+        // Terapkan scale pada wrapper
+        wrap.style.transform = 'scale(' + this.zoomLevel + ')';
+        // Atur transform-origin agar buku tetap terpusat saat 100%, dan kiri-atas saat zoom
+        if (zoomed) {
+          wrap.style.transformOrigin = 'top left';
+          wrap.style.alignItems = 'flex-start';
+          wrap.style.justifyContent = 'flex-start';
+        } else {
+          wrap.style.transformOrigin = 'center center';
+          wrap.style.alignItems = 'center';
+          wrap.style.justifyContent = 'center';
+        }
+
+        // Aktifkan scroll pada stage-frame
+        this.dom.stageFrame.classList.toggle('is-zoomed', zoomed);
+        this.dom.zoomLevelLabel.textContent = Math.round(this.zoomLevel * 100) + '%';
+        this.dom.zoomOutBtn.disabled = this.zoomLevel <= this.ZOOM_MIN + 0.001;
+        this.dom.zoomInBtn.disabled = this.zoomLevel >= this.ZOOM_MAX - 0.001;
+
+        // Reset scroll ke kiri-atas agar tidak "nyasar"
+        this.dom.stageFrame.scrollTop = 0;
+        this.dom.stageFrame.scrollLeft = 0;
+      }
+
+      // ---------- Resize Guard ----------
       setupResizeGuard() {
         let t;
         const onResize = () => {
@@ -315,6 +428,7 @@
         }
       }
 
+      // ---------- Muat Dokumen ----------
       async loadDocument() {
         const fileId = this.params.get('id');
         if (!fileId) { this.showError("Parameter ID file tidak ditemukan."); return; }
@@ -334,6 +448,7 @@
         }
       }
 
+      // ---------- HTML ----------
       buildHtmlPages(htmlText) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         this.originalHead = doc.head ? doc.head.innerHTML : '';
@@ -356,6 +471,7 @@
         this.totalPages = this.pageElements.length;
       }
 
+      // ---------- PDF ----------
       async buildPdfPages(base64) {
         this.dom.loadingText.textContent = "Membuka dokumen...";
         const binary = atob(base64.replace(/\s/g, ""));
@@ -415,6 +531,7 @@
         this.pageElements = pageWrappers;
       }
 
+      // ---------- Pasang Buku ----------
       mountBook() {
         const fragment = document.createDocumentFragment();
         const blank = document.createElement('div');
@@ -428,14 +545,15 @@
           this.dom.loading.style.display = 'none';
           this.dom.stageWrap.hidden = false;
           this.dom.book.style.display = 'block';
+          this.dom.downloadBtn.hidden = false;
+          this.dom.zoomGroup.hidden = false;
           this.initFlipEngine();
         }, 250);
       }
 
+      // ---------- Inisialisasi PageFlip (FLAT) ----------
       initFlipEngine() {
-        // Menggunakan size:"stretch" agar PageFlip menyesuaikan dengan wadah,
-        // tetapi wadah dibatasi dengan max-width/max-height dan overflow:hidden
-        // untuk mencegah meluber. Ini lebih simpel dan stabil.
+        // Efek FLAT: drawShadow:false, maxShadowOpacity:0
         this.pageFlip = new St.PageFlip(this.dom.book, {
           width: 400,
           height: Math.round(400 / this.aspectRatio),
@@ -447,8 +565,8 @@
           showCover: false,
           usePortrait: true,
           mobileScrollSupport: true,
-          maxShadowOpacity: 0.35,
-          drawShadow: true,
+          maxShadowOpacity: 0,
+          drawShadow: false,
           flippingTime: 700
         });
 
@@ -471,6 +589,9 @@
 
         this.dom.navPrev.addEventListener('click', () => this.pageFlip.flipPrev());
         this.dom.navNext.addEventListener('click', () => this.pageFlip.flipNext());
+
+        // Reset zoom ke 100% setelah buku terpasang
+        this.applyZoom(1);
       }
 
       showError(msg) {
