@@ -521,36 +521,32 @@ class CatalogApp {
   }
 
   async attemptLogin() {
-    const code = this.dom.modal.input.value;
-    if (!code) return this.showLoginErr('Isi passcode terlebih dahulu.');
+  const code = this.dom.modal.input.value;
+  if (!code) return this.showLoginErr('Isi passcode terlebih dahulu.');
+  
+  this.dom.modal.submit.disabled = true;
+  this.dom.modal.submit.textContent = 'Memeriksa...';
+  
+  try {
+    const res = await fetch(`${this.API_URL}?action=verify&code=${encodeURIComponent(code)}`);
+    const data = await res.json();
     
-    this.dom.modal.submit.disabled = true;
-    this.dom.modal.submit.textContent = 'Memeriksa...';
-    
-    try {
-      // Menguji validasi dengan request endpoint jika tersedia di backend
-      const res = await fetch(`${this.API_URL}?action=verify&code=${encodeURIComponent(code)}`);
-      const data = await res.json();
-      
-      if (data.ok && data.valid) {
-        sessionStorage.setItem('bms_authed', 'true');
-        sessionStorage.setItem('bms_passcode', code);
-        this.dom.modal.overlay.hidden = true;
-        this.updateHeaderAuth();
-      } else {
-        this.showLoginErr('Passcode salah, coba lagi.');
-      }
-    } catch (err) {
-      // Fallback otorisasi sementara apabila endpoint verify belum tersedia di backend
+    if (data.ok && data.valid) {
       sessionStorage.setItem('bms_authed', 'true');
       sessionStorage.setItem('bms_passcode', code);
       this.dom.modal.overlay.hidden = true;
       this.updateHeaderAuth();
-    } finally {
-      this.dom.modal.submit.disabled = false;
-      this.dom.modal.submit.textContent = 'Masuk';
+    } else {
+      this.showLoginErr('Passcode salah, coba lagi.');
     }
+  } catch (err) {
+    // TETAP TAMPILKAN ERROR, JANGAN LANGSUNG LOGIN
+    this.showLoginErr('Gagal terhubung ke server. Coba lagi nanti.');
+  } finally {
+    this.dom.modal.submit.disabled = false;
+    this.dom.modal.submit.textContent = 'Masuk';
   }
+}
 
   showLoginErr(msg) {
     this.dom.modal.err.textContent = msg;
