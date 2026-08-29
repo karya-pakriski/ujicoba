@@ -617,29 +617,43 @@
         this._lastFitWidth = null;
         this.buildFlipBook();
 
-        // Hitung ulang & bangun ulang ukuran buku saat window di-resize atau
-        // saat masuk/keluar fullscreen — supaya selalu pas (autofit), tidak
-        // pernah kepotong. Halaman sudah dirender, jadi membangun ulang di sini
-        // murah (tanpa render ulang kanvas), hanya menata ulang tampilan.
+        // Hitung ulang & bangun ulang ukuran buku saat wadahnya benar-benar
+        // berubah ukuran (rotasi HP, resize jendela, masuk/keluar fullscreen)
+        // — supaya selalu pas (autofit), tidak pernah kepotong.
         //
-        // PENTING: pinch-zoom (cubit dua jari) kadang memicu event 'resize' juga
-        // (terutama di iOS Safari), padahal itu bukan perubahan layar sungguhan.
-        // Kalau tetap direspons, buku akan dibangun ulang di tengah gestur zoom
-        // dan sempat "collapse" jadi kosong/putih sesaat — makanya kita cek dulu
-        // via visualViewport.scale, dan lewati kalau sedang dalam mode zoom.
+        // Dipakai ResizeObserver (bukan window 'resize') karena ini API yang
+        // lebih tepat: dia hanya bereaksi kalau ukuran LAYOUT elemen berubah,
+        // dan secara desain TIDAK terpicu oleh pinch-zoom (yang cuma perbesaran
+        // visual, layout-nya tidak berubah) — beda dengan event 'resize' pada
+        // window yang di sebagian browser (terutama iOS Safari) malah ikut
+        // menyala saat pinch-zoom, sehingga sebelumnya buku sempat dibangun
+        // ulang di tengah gestur zoom dan "collapse" jadi kosong/putih sesaat.
+        //
+        // Sebagai lapisan pengaman tambahan (defense-in-depth), tetap dicek
+        // juga visualViewport.scale dan validitas ukuran sebelum benar-benar
+        // membangun ulang.
         const vv = window.visualViewport;
         const isZooming = () => !!(vv && Math.abs(vv.scale - 1) > 0.02);
 
-        clearTimeout(this._fitResizeT);
         const scheduleRebuild = () => {
           if (isZooming()) return;
           clearTimeout(this._fitResizeT);
           this._fitResizeT = setTimeout(() => {
             if (isZooming()) return; // cek ulang setelah jeda, siapa tahu masih zoom
             this.buildFlipBook(true);
-          }, 250);
+          }, 220);
         };
-        window.addEventListener('resize', scheduleRebuild);
+
+        if ('ResizeObserver' in window) {
+          this._resizeObserver = new ResizeObserver(() => scheduleRebuild());
+          this._resizeObserver.observe(this.dom.stageFrame);
+        } else {
+          // fallback untuk browser sangat lama yang belum dukung ResizeObserver
+          window.addEventListener('resize', scheduleRebuild);
+        }
+        // Tetap dipertahankan sebagai jaring pengaman tambahan — pada sebagian
+        // browser ResizeObserver butuh satu frame lebih lama untuk menangkap
+        // perubahan ukuran akibat toggle fullscreen.
         document.addEventListener('fullscreenchange', scheduleRebuild);
         document.addEventListener('webkitfullscreenchange', scheduleRebuild);
       }
