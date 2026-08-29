@@ -3,247 +3,562 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
-  <title>Viewer Dokumen Enterprise — KKG PAI</title>
+  <title>Viewer Dokumen — KKG PAI Kulon Progo</title>
 
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brandBg: '#EAFFD0',
-            brandSurface: '#FFFFFF',
-            brandBorder: '#E3F0D0',
-            brandInk: '#2B3A3A',
-            brandMuted: '#6E827D',
-            brandCoral: '#F38181',
-            brandCoralDark: '#D65A5A',
-            brandMint: '#95E1D3',
-            brandMintDark: '#2E8B7A'
-          },
-          fontFamily: {
-            fredoka: ['Fredoka', 'sans-serif'],
-            nunito: ['Nunito', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
+    /* ==========================================================================
+       1. CSS VARIABLES & RESET
+       ========================================================================== */
+    :root {
+      --bg: #EAFFD0;
+      --surface: #FFFFFF;
+      --border: #E3F0D0;
+      --ink: #2B3A3A;
+      --ink-muted: #6E827D;
+      --coral: #F38181;
+      --coral-dark: #D65A5A;
+      --mint: #95E1D3;
+      --mint-dark: #2E8B7A;
+      --header-bg: rgba(255,255,255,0.92);
+      --toast-bg: rgba(43, 58, 58, 0.95);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       font-family: 'Nunito', sans-serif;
-      color: #2B3A3A;
-      background: #EAFFD0;
+      color: var(--ink);
+      background: var(--bg);
       display: flex;
       flex-direction: column;
       height: 100vh;
       overflow: hidden;
       overscroll-behavior-y: none;
     }
+
+    /* ==========================================================================
+       2. HEADER & NAVIGATION
+       ========================================================================== */
+    .header {
+      background: var(--header-bg);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 20;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .brand {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .doc-title {
+      color: var(--mint-dark);
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: rgba(149,225,211,0.25);
+      padding: 4px 14px;
+      border-radius: 999px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 45vw;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: var(--coral);
+      color: #fff;
+      font-weight: 800;
+      font-size: 14px;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-action:hover:not(:disabled) { 
+      background: var(--coral-dark);
+      transform: translateY(-1px);
+    }
+    
+    .btn-action:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* ==========================================================================
+       3. VIEWER STAGE & CANVAS
+       ========================================================================== */
+    .viewer-area {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .stage-wrap {
+      width: 100%;
+      height: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .stage-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .stage-title {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--mint-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .stage-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+    .page-indicator {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 5px 13px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+    .icon-btn:hover:not(:disabled) { color: var(--coral); border-color: var(--coral); transform: translateY(-1px); }
+    .icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .icon-btn svg { width: 17px; height: 17px; }
+
+    .stage-frame {
+      flex: 1;
+      min-height: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: 0 20px 50px rgba(43,58,58,0.10);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(14px, 3vw, 34px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stage-wrap:fullscreen, .stage-wrap:-webkit-full-screen {
+      max-width: 100%;
+      padding: 16px;
+      background: var(--bg);
+    }
+    .stage-wrap:fullscreen .stage-frame, .stage-wrap:-webkit-full-screen .stage-frame { border-radius: 18px; }
+
+    .progress-track {
+      height: 4px;
+      border-radius: 999px;
+      background: var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+      margin: 0 4px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--mint), var(--coral));
+      border-radius: 999px;
+      transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 10px 24px rgba(43,58,58,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-muted);
+      cursor: pointer;
+      z-index: 6;
+      transition: all 0.15s ease;
+    }
+    .nav-btn:hover:not(:disabled) { color: #fff; background: var(--coral); border-color: var(--coral); transform: translateY(-50%) scale(1.08); }
+    .nav-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+    .nav-btn svg { width: 19px; height: 19px; }
+    .nav-prev { left: 14px; }
+    .nav-next { right: 14px; }
+
+    /* ==========================================================================
+       4. FLIPBOOK & LAZY RENDER STATES
+       ========================================================================== */
     .flip-book {
       display: none;
       box-shadow: 0 15px 40px rgba(43,58,58,0.18);
     }
+
     .page {
-      background-color: #FFFFFF;
+      background-color: var(--surface);
       overflow: hidden;
-      border: 1px solid #E3F0D0;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
+
     .page canvas {
       width: 100%;
       height: 100%;
       object-fit: contain;
       display: block;
     }
-    /* Toast Notification Animation */
-    @keyframes slideIn {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+
+    /* Skeleton Loading untuk Lazy Page */
+    .page-skeleton {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--ink-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0.6;
+      animation: pulse 1.5s infinite ease-in-out;
     }
-    .toast-animate {
-      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+    .skeleton-spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--border);
+      border-top-color: var(--mint-dark);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
+
+    #htmlViewer {
+      display: none;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(43,58,58,0.10);
+    }
+
+    /* ==========================================================================
+       5. UI SAFEGUARDS (LOADING & TOAST)
+       ========================================================================== */
+    #loadingScreen {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      z-index: 15;
+      font-weight: 700;
+      color: var(--ink-muted);
+      text-align: center;
+      padding: 20px;
+      transition: opacity 0.4s ease, visibility 0.4s;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid rgba(243, 129, 129, 0.2);
+      border-top-color: var(--coral);
+      border-radius: 50%;
+      animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Sistem Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    
+    .toast {
+      background: var(--toast-bg);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      text-align: center;
+      white-space: nowrap;
+    }
+    
+    .toast.hide { animation: fadeOut 0.3s ease forwards; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(10px); } }
+
+    /* ==========================================================================
+       6. RESPONSIVE QUERIES
+       ========================================================================== */
+    @media (max-width: 768px) {
+      .doc-title { max-width: 30vw; font-size: 0.85rem; }
+      .header { padding: 10px 14px; }
+      .btn-action { padding: 6px 14px; font-size: 13px; }
+      .viewer-area { padding: 8px; }
+      .stage-frame { border-radius: 18px; padding: 12px; }
+      .stage-title { font-size: 0.8rem; }
+      .page-indicator { font-size: 0.7rem; padding: 4px 10px; }
+      .nav-btn { width: 36px; height: 36px; }
+      .nav-btn svg { width: 15px; height: 15px; }
+      .nav-prev { left: 6px; }
+      .nav-next { right: 6px; }
+    }
+    @media (max-width: 480px) { .doc-title { display: none; } }
   </style>
 </head>
-<body class="bg-brandBg text-brandInk flex flex-col h-screen overflow-hidden">
+<body>
 
-  <!-- Header -->
-  <header class="bg-white/92 backdrop-blur-md border-b border-brandBorder px-5 py-3 flex items-center justify-between z-20 shadow-sm">
-    <div class="flex items-center gap-3">
-      <span class="text-xl">📘</span>
-      <span id="titleDisplay" class="text-brandMintDark font-fredoka font-bold text-sm sm:text-base bg-brandMint/25 px-3.5 py-1 rounded-full max-w-[45vw] truncate">
-        Memuat Dokumen...
-      </span>
+  <!-- LAYER 1: Header -->
+  <header class="header">
+    <div class="brand">
+      <span class="logo-icon">📘</span>
+      <span id="titleDisplay" class="doc-title">Memuat Dokumen...</span>
     </div>
-    <a href="index.html" id="backBtn" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-brandCoral hover:bg-brandCoralDark text-white font-extrabold text-sm transition-all shadow-sm hover:-translate-y-0.5">
-      ⬅ Katalog
-    </a>
+    <a href="index.html" class="btn-action">⬅ Katalog</a>
   </header>
 
-  <!-- Main Viewer Stage -->
-  <main class="flex-1 relative flex justify-center items-center overflow-hidden p-4 sm:p-5">
-    
-    <!-- Loading Screen & Spinner -->
-    <div id="loadingScreen" class="absolute inset-0 bg-brandBg flex flex-col justify-center items-center gap-4 z-30 font-bold text-brandMuted text-center p-5 transition-opacity duration-400">
-      <div class="w-11 h-11 border-4 border-brandCoral/20 border-t-brandCoral rounded-full animate-spin"></div>
-      <span id="loadingText">Menghubungkan ke server & mengunduh dokumen...</span>
+  <!-- LAYER 2: Viewer & Stage -->
+  <main class="viewer-area">
+    <!-- Loading Overlay -->
+    <div id="loadingScreen">
+      <div class="spinner"></div>
+      <span id="loadingText">Menyiapkan lingkungan baca, mohon tunggu...</span>
     </div>
 
-    <!-- Stage Wrapper -->
-    <div class="w-full h-full max-w-[1100px] flex flex-col gap-2.5" id="stageWrap" hidden>
-      
-      <!-- Toolbar -->
-      <div class="flex items-center justify-between gap-2.5 px-1 flex-shrink-0">
-        <span class="font-fredoka font-semibold text-sm text-brandMintDark truncate" id="stageTitle">Dokumen</span>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xs font-extrabold text-brandMuted bg-white border border-brandBorder px-3 py-1.5 rounded-full" id="pageIndicator" hidden></span>
-          <button class="w-9 h-9 rounded-xl border border-brandBorder bg-white flex items-center justify-center text-brandMuted hover:text-brandCoral hover:border-brandCoral transition-all cursor-pointer shadow-sm" id="fullscreenBtn" title="Layar penuh" hidden>
-            <svg id="fullscreenIcon" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Document Stage -->
+    <div class="stage-wrap" id="stageWrap" hidden>
+      <div class="stage-toolbar">
+        <span class="stage-title" id="stageTitle">Dokumen</span>
+        <div class="stage-actions">
+          <span class="page-indicator" id="pageIndicator" hidden></span>
+          <button class="icon-btn" id="fullscreenBtn" title="Layar penuh" hidden>
+            <svg id="fullscreenIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
             </svg>
           </button>
         </div>
       </div>
-
-      <!-- Progress Track -->
-      <div class="h-1 rounded-full bg-brandBorder overflow-hidden flex-shrink-0 mx-1" id="progressTrack" hidden>
-        <div class="h-full w-0 bg-gradient-to-r from-brandMint to-brandCoral transition-all duration-350 rounded-full" id="progressFill"></div>
-      </div>
-
-      <!-- Stage Frame -->
-      <div class="flex-1 min-h-0 bg-white border border-brandBorder rounded-3xl shadow-xl flex items-center justify-center p-3 sm:p-8 relative overflow-hidden" id="stageFrame">
+      
+      <div class="progress-track" id="progressTrack" hidden><div class="progress-fill" id="progressFill"></div></div>
+      
+      <div class="stage-frame" id="stageFrame">
         <div id="book" class="flip-book"></div>
-        <iframe id="htmlViewer" class="w-full h-full border-none bg-white rounded-xl shadow-inner" style="display:none;" sandbox="allow-scripts allow-same-origin"></iframe>
+        <iframe id="htmlViewer" sandbox="allow-scripts allow-same-origin"></iframe>
         
-        <!-- Navigation Buttons -->
-        <button class="absolute top-1/2 -translate-y-1/2 left-3.5 w-11 h-11 rounded-full border border-brandBorder bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-brandMuted cursor-pointer z-10 transition-all hover:bg-brandCoral hover:text-white hover:border-brandCoral hover:scale-105 disabled:opacity-20 disabled:pointer-events-none" id="navPrev" title="Halaman sebelumnya" hidden>
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        <button class="nav-btn nav-prev" id="navPrev" title="Halaman sebelumnya (←)" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
-        <button class="absolute top-1/2 -translate-y-1/2 right-3.5 w-11 h-11 rounded-full border border-brandBorder bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-center text-brandMuted cursor-pointer z-10 transition-all hover:bg-brandCoral hover:text-white hover:border-brandCoral hover:scale-105 disabled:opacity-20 disabled:pointer-events-none" id="navNext" title="Halaman berikutnya" hidden>
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        <button class="nav-btn nav-next" id="navNext" title="Halaman berikutnya (→)" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
-
     </div>
   </main>
 
-  <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <!-- LAYER 3: Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
-  <!-- External Libraries: PDF.js & Page-Flip -->
+  <!-- DEPENDENCIES -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
   <script>
+    /* ==========================================================================
+       ENTERPRISE FRONTEND ARCHITECTURE
+       ========================================================================== */
+
     /**
-     * Enterprise Frontend Architecture & Lazy-Rendering Engine
+     * MODULE 1: UI/UX Manager
+     * Mengelola Notifikasi Toast dan State Interface.
      */
-    
-    // 1. Toast Notification Manager
-    class Toast {
-      static show(message, type = 'info') {
+    class UIManager {
+      static showToast(message, duration = 3000) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
-        
-        let bg = 'bg-brandInk text-white';
-        if (type === 'error') bg = 'bg-brandCoralDark text-white';
-        if (type === 'success') bg = 'bg-brandMintDark text-white';
-
-        toast.className = `pointer-events-auto px-4 py-3 rounded-2xl shadow-lg text-sm font-semibold toast-animate ${bg}`;
+        toast.className = 'toast';
         toast.textContent = message;
-        
         container.appendChild(toast);
+
         setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(10px)';
-          toast.style.transition = 'all 0.3s ease';
-          setTimeout(() => toast.remove(), 300);
-        }, 3500);
+          toast.classList.add('hide');
+          toast.addEventListener('animationend', () => toast.remove());
+        }, duration);
       }
     }
 
-    // 2. Client-Side TTL Caching Module
+    /**
+     * MODULE 2: Client-Side TTL Caching
+     * Menyimpan respons API untuk menghemat kuota dan mempercepat pemuatan ulang.
+     */
     class CacheManager {
-      static set(key, data, ttlMinutes = 60) {
-        const item = {
-          data: data,
-          expiry: new Date().getTime() + (ttlMinutes * 60 * 1000)
-        };
+      constructor(prefix = 'kkg_cache_') {
+        this.prefix = prefix;
+        this.ttl = 1000 * 60 * 60 * 24; // 24 Jam default TTL
+      }
+
+      set(key, data) {
         try {
-          sessionStorage.setItem(key, JSON.stringify(item));
+          const record = { value: data, expiry: Date.now() + this.ttl };
+          sessionStorage.setItem(this.prefix + key, JSON.stringify(record));
         } catch (e) {
-          console.warn("Storage quota exceeded, clearing session cache.", e);
-          sessionStorage.clear();
+          // Tangani kuota penuh (QuotaExceededError) pada sessionStorage secara elegan
+          if (e.name === 'QuotaExceededError') sessionStorage.clear();
+          console.warn("Storage quota exceeded. Cache bypassed.");
         }
       }
 
-      static get(key) {
-        const itemStr = sessionStorage.getItem(key);
-        if (!itemStr) return null;
+      get(key) {
         try {
-          const item = JSON.parse(itemStr);
-          if (new Date().getTime() > item.expiry) {
-            sessionStorage.removeItem(key);
+          const item = sessionStorage.getItem(this.prefix + key);
+          if (!item) return null;
+          const record = JSON.parse(item);
+          if (Date.now() > record.expiry) {
+            sessionStorage.removeItem(this.prefix + key);
             return null;
           }
-          return item.data;
+          return record.value;
         } catch (e) {
-          sessionStorage.removeItem(key);
           return null;
         }
       }
     }
 
-    // 3. Modern Fetch API Wrapper with Single-Trip & Batching readiness
-    class ApiClient {
-      constructor(apiUrl) {
-        this.apiUrl = apiUrl;
+    /**
+     * MODULE 3: Modern Fetch API Wrapper (Batch Payload)
+     * Mengelola komunikasi asinkron dengan Google Apps Script backend.
+     */
+    class APIClient {
+      constructor(baseUrl) {
+        this.baseUrl = baseUrl;
+        this.cache = new CacheManager();
       }
 
-      async fetchFile(fileId, format) {
-        const cacheKey = `doc_${fileId}_${format}`;
-        const cached = CacheManager.get(cacheKey);
-        if (cached) {
-          Toast.show("Memuat dari cache lokal (Instan)", "success");
-          return cached;
-        }
-
-        const url = `${this.apiUrl}?action=getfile&id=${fileId}&format=${format}`;
-        const response = await fetch(url, { method: 'GET' });
+      async fetchDocument(payload) {
+        // Pembuatan Cache Key berdasarkan ID dan Format
+        const cacheKey = `${payload.id}_${payload.format}`;
+        const cachedData = this.cache.get(cacheKey);
         
-        if (!response.ok) {
-          throw new Error(`HTTP Error Status: ${response.status}`);
+        if (cachedData) {
+          UIManager.showToast('Memuat dokumen dari Cache Lokal ⚡');
+          return cachedData;
         }
 
-        const json = await response.json();
-        if (!json.ok) {
-          throw new Error(json.error || "Gagal mengambil data dari Google Apps Script.");
-        }
+        // Single-Trip URL Params Constructor (Mendukung backend GAS GET Request yang sudah ada)
+        const params = new URLSearchParams({
+          action: 'getfile',
+          id: payload.id,
+          format: payload.format
+        });
 
-        CacheManager.set(cacheKey, json, 30); // Simpan TTL 30 menit
-        return json;
+        try {
+          const response = await fetch(`${this.baseUrl}?${params.toString()}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+          
+          const data = await response.json();
+          if (!data.ok) throw new Error(data.error || "Akses ditolak oleh server.");
+          
+          // Simpan ke Cache jika berhasil
+          this.cache.set(cacheKey, data);
+          return data;
+        } catch (error) {
+          throw new Error(`Koneksi Gagal: ${error.message}`);
+        }
       }
     }
 
-    // 4. Lazy-Rendering PDF Flipbook Controller
-    class LazyViewerEngine {
+    /**
+     * MODULE 4: Lazy-Rendering PDF Engine & Core Controller
+     * Arsitektur pembacaan PDF hemat memori dengan render sesuai kebutuhan.
+     */
+    class ViewerEngine {
       constructor() {
-        // Ganti dengan URL deployment Web App Google Apps Script Anda yang terbaru
         this.API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
+        this.api = new APIClient(this.API_URL);
         this.params = new URLSearchParams(window.location.search);
-        this.api = new ApiClient(this.API_URL);
-
+        
         this.dom = {
           title: document.getElementById('titleDisplay'),
           loading: document.getElementById('loadingScreen'),
           loadingText: document.getElementById('loadingText'),
+          spinner: document.querySelector('.spinner'),
           stageWrap: document.getElementById('stageWrap'),
           stageFrame: document.getElementById('stageFrame'),
           stageTitle: document.getElementById('stageTitle'),
@@ -258,51 +573,30 @@
           htmlViewer: document.getElementById('htmlViewer')
         };
 
-        this.pdfDoc = null;
-        this.totalPages = 0;
-        this.pageFlip = null;
-        this.renderedPages = new Set();
-        this.aspectRatio = 1.414; // Rasio standar A4 potret
-
+        this.ICON_EXPAND = '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
+        this.ICON_COLLAPSE = '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>';
+        
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        
+        // Internal State
+        this.pdfDocument = null;
+        this.renderedPages = new Set();
+        this.isProcessingFlip = false; // Mencegah double spam klik animasi
       }
 
       async init() {
-        const title = this.params.get('judul');
-        const fileId = this.params.get('id');
-        const format = this.params.get('format') || 'pdf';
-
-        if (title) {
-          this.dom.title.textContent = title;
-          this.dom.stageTitle.textContent = title;
-        }
-
-        if (!fileId) {
-          this.showError("Parameter ID File tidak valid atau kosong.");
-          return;
-        }
+        const title = this.params.get('judul') || 'Dokumen Tanpa Judul';
+        this.dom.title.textContent = title;
+        this.dom.stageTitle.textContent = title;
 
         this.setupFullscreen();
         this.setupKeyboardNav();
-
-        try {
-          this.dom.loadingText.textContent = "Mengunduh dokumen dari server...";
-          const data = await this.api.fetchFile(fileId, format);
-
-          if (format === 'html') {
-            this.renderHTML(data.content);
-          } else {
-            await this.initPDFEngine(data.content);
-          }
-        } catch (error) {
-          this.showError(`Gagal memuat dokumen: ${error.message}`);
-          Toast.show("Gagal memuat sistem viewer.", "error");
-        }
+        await this.bootstrapData();
       }
 
       setupKeyboardNav() {
         document.addEventListener('keydown', (e) => {
-          if (!this.pageFlip) return;
+          if (!this.pageFlip || this.isProcessingFlip) return;
           if (e.key === 'ArrowRight') { e.preventDefault(); this.pageFlip.flipNext(); }
           else if (e.key === 'ArrowLeft') { e.preventDefault(); this.pageFlip.flipPrev(); }
         });
@@ -325,207 +619,316 @@
 
         const onFsChange = () => {
           const isFs = document.fullscreenElement || document.webkitFullscreenElement;
-          this.dom.fullscreenIcon.innerHTML = isFs 
-            ? '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>'
-            : '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
+          this.dom.fullscreenIcon.innerHTML = isFs ? this.ICON_COLLAPSE : this.ICON_EXPAND;
+          this.dom.fullscreenBtn.title = isFs ? 'Keluar layar penuh' : 'Layar penuh';
         };
         document.addEventListener('fullscreenchange', onFsChange);
         document.addEventListener('webkitfullscreenchange', onFsChange);
       }
 
-      renderHTML(content) {
-        this.dom.loading.style.opacity = '0';
-        setTimeout(() => {
-          this.dom.loading.style.display = 'none';
-          this.dom.stageWrap.hidden = false;
-          this.dom.htmlViewer.style.display = 'block';
-          this.dom.htmlViewer.srcdoc = content;
-          Toast.show("Dokumen HTML berhasil dimuat.", "success");
-        }, 300);
+      async bootstrapData() {
+        const fileId = this.params.get('id');
+        const format = this.params.get('format');
+
+        if (!fileId || !format) {
+          this.showFatalError("Parameter ID atau Format File tidak lengkap.");
+          return;
+        }
+
+        try {
+          // Payload Batching Pattern untuk API Wrapper
+          const responsePayload = await this.api.fetchDocument({
+            id: fileId,
+            format: format
+          });
+
+          if (format === 'html') {
+            this.renderHTML(responsePayload.content);
+          } else if (format === 'pdf') {
+            await this.initPDFEngine(responsePayload.content);
+          }
+        } catch (error) {
+          this.showFatalError(error.message);
+        }
       }
 
-      async initPDFEngine(base64Str) {
-        this.dom.loadingText.textContent = "Memproses struktur PDF...";
-        
-        // Optimasi konversi Base64 ke ArrayBuffer tanpa blocking UI thread
+      renderHTML(content) {
+        this.hideLoading();
+        this.dom.htmlViewer.style.display = 'block';
+        this.dom.htmlViewer.srcdoc = content; 
+      }
+
+      async decodeBase64Async(base64Str) {
         const cleanStr = base64Str.replace(/\s/g, "");
-        const res = await fetch(`data:application/pdf;base64,${cleanStr}`);
-        const pdfData = new Uint8Array(await res.arrayBuffer());
+        const dataUrl = `data:application/pdf;base64,${cleanStr}`;
+        const response = await fetch(dataUrl);
+        return new Uint8Array(await response.arrayBuffer());
+      }
 
-        const loadingTask = pdfjsLib.getDocument({ data: pdfData });
-        this.pdfDoc = await loadingTask.promise;
-        this.totalPages = this.pdfDoc.numPages;
+      async initPDFEngine(base64Content) {
+        this.dom.loadingText.textContent = "Menyiapkan mesin rendering PDF...";
 
-        // Ambil rasio halaman pertama untuk ukuran proporsional
-        const firstPage = await this.pdfDoc.getPage(1);
-        const vp = firstPage.getViewport({ scale: 1 });
-        this.aspectRatio = vp.width / vp.height;
+        try {
+          const pdfData = await this.decodeBase64Async(base64Content);
+          base64Content = null; // Bebaskan memori variabel awal
+          
+          const loadingTask = pdfjsLib.getDocument({ data: pdfData });
+          this.pdfDocument = await loadingTask.promise;
+          const totalPages = this.pdfDocument.numPages;
 
-        // Buat Placeholder DOM untuk seluruh halaman (Lazy Container Creation)
+          // Garbage Collection pembersihan memory cache pdf raw data
+          loadingTask.destroy && setTimeout(() => loadingTask.destroy(), 1500);
+
+          // Manajemen Resolusi berdasarkan tebal dokumen untuk mengamankan RAM HP
+          this._targetWidth = this.getTargetBookWidth();
+          let maxScale = 2.0; 
+          if (totalPages > 15) maxScale = 1.5; 
+          if (totalPages > 30) maxScale = 1.2; 
+          if (totalPages > 50) maxScale = 1.0; 
+          this._outputScale = Math.min(window.devicePixelRatio || 1, maxScale);
+
+          // Hitung Aspect Ratio dari halaman 1
+          const page1 = await this.pdfDocument.getPage(1);
+          const viewport1 = page1.getViewport({ scale: 1 });
+          this.aspectRatio = viewport1.width / viewport1.height;
+
+          this.buildDOMSkeleton(totalPages);
+          this.hideLoading();
+          
+          this.dom.book.style.display = 'block';
+          this.initFlipEngine(totalPages);
+
+          // Pre-render 3 Halaman Awal secara asinkron agar buku siap dibaca
+          await Promise.all([
+            this.renderLazyCanvas(1),
+            this.renderLazyCanvas(2),
+            this.renderLazyCanvas(3)
+          ]);
+          
+        } catch (err) {
+          this.showFatalError(`Gagal membaca struktur PDF: ${err.message}`);
+        }
+      }
+
+      /**
+       * Membangun kontainer elemen DOM kosong yang wajib dimiliki Page-Flip.js.
+       * Memastikan ukuran memori di awal sangat ringan (O(n) div elements).
+       */
+      buildDOMSkeleton(totalPages) {
         const fragment = document.createDocumentFragment();
-        
-        // Selipkan halaman kosong di awal agar halaman 1 pas di sebelah kanan
+
+        // Sampul Lembut / Blank Cover agar halaman 1 ada di kanan
         const blankLeaf = document.createElement('div');
         blankLeaf.className = 'page page-blank';
         fragment.appendChild(blankLeaf);
 
-        for (let i = 1; i <= this.totalPages; i++) {
-          const pageWrap = document.createElement('div');
-          pageWrap.className = 'page';
-          pageWrap.dataset.pageNum = i;
+        // Injeksi kerangka Div kosong + Animasi Loading
+        for (let i = 1; i <= totalPages; i++) {
+          const pageDiv = document.createElement('div');
+          pageDiv.className = 'page';
+          pageDiv.dataset.page = i;
           
-          const canvas = document.createElement('canvas');
-          canvas.id = `pdf-canvas-${i}`;
-          pageWrap.appendChild(canvas);
-          fragment.appendChild(pageWrap);
+          const skeleton = document.createElement('div');
+          skeleton.className = 'page-skeleton';
+          skeleton.innerHTML = `<div class="skeleton-spinner"></div><span>Hal ${i}</span>`;
+          
+          pageDiv.appendChild(skeleton);
+          fragment.appendChild(pageDiv);
         }
 
         this.dom.book.appendChild(fragment);
-
-        this.dom.loading.style.opacity = '0';
-        setTimeout(() => {
-          this.dom.loading.style.display = 'none';
-          this.dom.stageWrap.hidden = false;
-          this.dom.book.style.display = 'block';
-          this.setupPageFlipEngine();
-        }, 300);
       }
 
-      computeFitSize() {
-        const rect = this.dom.stageFrame.getBoundingClientRect();
-        const availW = Math.max(200, rect.width - 30);
-        const availH = Math.max(240, rect.height - 30);
+      /**
+       * Renderer Kanvas Eksekusi Malas (Lazy Load).
+       * Membaca dan menggambar PDF *hanya* pada indeks halaman yang diminta.
+       */
+      async renderLazyCanvas(pageNum) {
+        if (pageNum < 1 || pageNum > this.pdfDocument.numPages) return;
+        if (this.renderedPages.has(pageNum)) return; // Cegah double render
 
-        const isNarrow = window.innerWidth < 700;
-        const widthFromWidth = isNarrow ? availW : availW / 2;
-        const widthFromHeight = availH * this.aspectRatio;
-        const cap = isNarrow ? 540 : 460;
-        const floor = isNarrow ? 220 : 200;
+        const pageDiv = this.dom.book.querySelector(`.page[data-page="${pageNum}"]`);
+        if (!pageDiv || pageDiv.dataset.processing === "true") return;
 
-        let width = Math.min(widthFromWidth, widthFromHeight, cap);
-        width = Math.max(width, floor);
-        return { width: Math.round(width), height: Math.round(width / this.aspectRatio) };
-      }
-
-      async renderPageLazy(pageNum) {
-        if (pageNum < 1 || pageNum > this.totalPages) return;
-        if (this.renderedPages.has(pageNum)) return; // Sudah dirender, lewati
+        // Kunci status render state
+        pageDiv.dataset.processing = "true";
 
         try {
-          const page = await this.pdfDoc.getPage(pageNum);
-          const canvas = document.getElementById(`pdf-canvas-${pageNum}`);
-          if (!canvas) return;
+          const page = await this.pdfDocument.getPage(pageNum);
+          const viewport = page.getViewport({ scale: 1 });
+          const renderScale = (this._targetWidth * this._outputScale) / viewport.width;
+          const scaledViewport = page.getViewport({ scale: renderScale });
 
+          const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d', { alpha: false });
-          const outputScale = Math.min(window.devicePixelRatio || 1, 2.0);
-          
-          const nativeViewport = page.getViewport({ scale: 1 });
-          // Render sesuai ukuran target canvas DOM
-          const renderScale = (canvas.parentElement.clientWidth * outputScale) / nativeViewport.width || (400 * outputScale) / nativeViewport.width;
-          const viewport = page.getViewport({ scale: renderScale > 0 ? renderScale : 1.5 });
+          canvas.width = Math.floor(scaledViewport.width);
+          canvas.height = Math.floor(scaledViewport.height);
 
-          canvas.width = Math.floor(viewport.width);
-          canvas.height = Math.floor(viewport.height);
+          await page.render({ canvasContext: context, viewport: scaledViewport }).promise;
 
-          await page.render({ canvasContext: context, viewport: viewport }).promise;
+          // Hapus skeleton & injeksi hasil akhir
+          pageDiv.innerHTML = '';
+          pageDiv.appendChild(canvas);
           this.renderedPages.add(pageNum);
-        } catch (err) {
-          console.error(`Gagal merender halaman ${pageNum}:`, err);
+
+        } catch (e) {
+          pageDiv.dataset.processing = "false"; // Buka kunci jika gagal
+          pageDiv.innerHTML = `<div style="color:var(--coral); font-weight:bold;">Gagal memuat Hal ${pageNum}</div>`;
+          console.error(`Render fail on page ${pageNum}:`, e);
         }
       }
 
-      async renderAdjacentPages(currentIndex) {
-        // Lazy-Rendering jendela aktif: Render halaman saat ini, sebelumnya, dan sesudahnya
-        await this.renderPageLazy(currentIndex);
-        await this.renderPageLazy(currentIndex + 1);
-        await this.renderPageLazy(currentIndex - 1);
+      getTargetBookWidth() {
+        const vw = window.innerWidth;
+        return Math.round(Math.min(560, Math.max(240, vw - 40)));
       }
 
-      setupPageFlipEngine() {
-        const { width, height } = this.computeFitSize();
+      computeFitSize(aspectRatio) {
+        const rect = this.dom.stageFrame.getBoundingClientRect();
+        const buffer = 20;
+        const availW = Math.max(200, rect.width - buffer);
+        const availH = Math.max(240, rect.height - buffer);
 
+        const isNarrow = window.innerWidth < 700;
+        const widthFromWidth = isNarrow ? availW : availW / 2;
+        const widthFromHeight = availH * aspectRatio;
+        
+        let width = Math.min(widthFromWidth, widthFromHeight, (isNarrow ? 560 : 480));
+        width = Math.max(width, (isNarrow ? 220 : 200));
+        
+        return { width: Math.round(width), height: Math.round(width / aspectRatio) };
+      }
+
+      initFlipEngine(totalPages) {
+        this.totalPagesContent = totalPages;
+        this._lastFitWidth = null;
+        this.initializeOrUpdateFlipBook();
+
+        // Arsitektur Resize yang stabil (Menggunakan update() bukan destroy())
+        const vv = window.visualViewport;
+        const isZooming = () => !!(vv && Math.abs(vv.scale - 1) > 0.02);
+
+        const scheduleRebuild = () => {
+          if (isZooming()) return;
+          clearTimeout(this._fitResizeT);
+          this._fitResizeT = setTimeout(() => {
+            if (isZooming()) return;
+            this.initializeOrUpdateFlipBook();
+          }, 220);
+        };
+
+        if ('ResizeObserver' in window) {
+          new ResizeObserver(() => scheduleRebuild()).observe(this.dom.stageFrame);
+        } else {
+          window.addEventListener('resize', scheduleRebuild);
+        }
+        document.addEventListener('fullscreenchange', scheduleRebuild);
+      }
+
+      initializeOrUpdateFlipBook() {
+        const { width, height } = this.computeFitSize(this.aspectRatio);
+
+        if (this._lastFitWidth && width < this._lastFitWidth * 0.4) return;
+
+        // Solusi Anti-Blank: Update ukuran instansiasi Page-Flip yang sudah ada.
+        if (this.pageFlip) {
+          this.pageFlip.update({ width, height });
+          this._lastFitWidth = width;
+          return;
+        }
+
+        // Instansiasi Pertama Page-Flip
         this.pageFlip = new St.PageFlip(this.dom.book, {
           width,
           height,
           size: "fixed",
-          minWidth: 200,
-          maxWidth: 540,
-          minHeight: 260,
-          maxHeight: 900,
+          minWidth: 200, maxWidth: 560,
+          minHeight: 260, maxHeight: 900,
           showCover: false,
           usePortrait: true,
           mobileScrollSupport: true,
           maxShadowOpacity: 0.35,
           drawShadow: true,
-          flippingTime: 600
+          flippingTime: 700
         });
 
         this.pageFlip.loadFromHTML(this.dom.book.querySelectorAll('.page'));
+        this._lastFitWidth = width;
+        this.setupFlipUIEvents();
+      }
 
-        // Render halaman awal (1 & 2) secara instan
-        this.renderAdjacentPages(1);
-
+      setupFlipUIEvents() {
         this.dom.pageIndicator.hidden = false;
         this.dom.progressTrack.hidden = false;
         this.dom.navPrev.hidden = false;
         this.dom.navNext.hidden = false;
 
-        const updateUI = (current) => {
-          const clamped = Math.max(1, Math.min(current, this.totalPages));
-          this.dom.pageIndicator.textContent = `Halaman ${clamped} / ${this.totalPages}`;
-          this.dom.progressFill.style.width = `${(clamped / this.totalPages) * 100}%`;
-          this.dom.navPrev.disabled = clamped <= 1;
-          this.dom.navNext.disabled = clamped >= this.totalPages;
+        const updateUI = (currentSheetIndex) => {
+          // Koreksi Index karena kita punya blankLeaf di index 0
+          const realPageNum = Math.max(1, Math.min(currentSheetIndex, this.totalPagesContent));
           
-          // Panggil Lazy Renderer untuk halaman aktif
-          this.renderAdjacentPages(clamped);
+          this.dom.pageIndicator.textContent = `Halaman ${realPageNum} / ${this.totalPagesContent}`;
+          this.dom.progressFill.style.width = `${(realPageNum / this.totalPagesContent) * 100}%`;
+          this.dom.navPrev.disabled = realPageNum <= 1;
+          this.dom.navNext.disabled = realPageNum >= this.totalPagesContent;
+
+          // Eksekusi Logika Lazy Load saat flipping (Batch Render ke depan & ke belakang)
+          this.renderLazyCanvas(realPageNum - 1);
+          this.renderLazyCanvas(realPageNum);
+          this.renderLazyCanvas(realPageNum + 1);
+          this.renderLazyCanvas(realPageNum + 2);
         };
 
-        updateUI(1);
-        this.pageFlip.on('flip', (e) => updateUI(e.data));
+        // Event Listeners Flip State & Safeguards
+        this.pageFlip.on('flip', (e) => {
+          this.isProcessingFlip = true;
+          this.dom.navNext.disabled = true;
+          this.dom.navPrev.disabled = true;
+          updateUI(e.data);
+        });
 
-        // Event listener tombol navigasi
-        const rebindBtn = (btn, action) => {
+        this.pageFlip.on('changeState', (e) => {
+          if (e.data === "read") {
+            this.isProcessingFlip = false;
+            updateUI(this.pageFlip.getCurrentPageIndex());
+          }
+        });
+
+        updateUI(Math.max(1, this.pageFlip.getCurrentPageIndex()));
+
+        // Hapus duplikat listener nav
+        const rebind = (btn, action) => {
           const fresh = btn.cloneNode(true);
           btn.parentNode.replaceChild(fresh, btn);
-          fresh.addEventListener('click', () => this.pageFlip[action]());
+          fresh.addEventListener('click', () => {
+            if (!this.isProcessingFlip) this.pageFlip[action]();
+          });
           return fresh;
         };
-        this.dom.navPrev = rebindBtn(this.dom.navPrev, 'flipPrev');
-        this.dom.navNext = rebindBtn(this.dom.navNext, 'flipNext');
-
-        // Responsive Handler dengan ResizeObserver tanpa menghancurkan instance buku
-        if ('ResizeObserver' in window) {
-          let resizeTimer;
-          const observer = new ResizeObserver(() => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-              const newSize = this.computeFitSize();
-              if (this.pageFlip) {
-                // Gunakan update method bawaan PageFlip untuk stabilitas ukuran
-                this.pageFlip.update({ width: newSize.width, height: newSize.height });
-              }
-            }, 200);
-          });
-          observer.observe(this.dom.stageFrame);
-        }
-
-        Toast.show("Dokumen siap dibaca dengan Lazy-Rendering.", "success");
+        this.dom.navPrev = rebind(this.dom.navPrev, 'flipPrev');
+        this.dom.navNext = rebind(this.dom.navNext, 'flipNext');
       }
 
-      showError(msg) {
-        console.error("Viewer Error:", msg);
+      hideLoading() {
+        this.dom.loading.style.opacity = '0';
+        setTimeout(() => {
+          this.dom.loading.style.display = 'none';
+          this.dom.stageWrap.hidden = false;
+        }, 400);
+      }
+
+      showFatalError(msg) {
+        console.error("Critical Engine Failure:", msg);
         this.dom.loadingText.textContent = msg;
-        const spinner = this.dom.loading.querySelector('.w-11');
-        if (spinner) spinner.style.display = 'none';
-        this.dom.loadingText.className = "text-brandCoralDark font-bold text-sm sm:text-base px-4";
-        Toast.show(msg, "error");
+        this.dom.spinner.style.display = 'none';
+        this.dom.loadingText.style.color = 'var(--coral)';
+        UIManager.showToast('Gagal memuat dokumen ⚠️', 5000);
       }
     }
 
-    // Inisialisasi saat DOM siap
+    // App Bootstrapper
     document.addEventListener('DOMContentLoaded', () => {
-      const viewer = new LazyViewerEngine();
+      const viewer = new ViewerEngine();
       viewer.init();
     });
   </script>
