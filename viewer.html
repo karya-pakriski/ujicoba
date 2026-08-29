@@ -7,8 +7,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  
   <style>
-    /* ====== CSS SAMA ====== */
     :root {
       --bg: #EAFFD0;
       --surface: #FFFFFF;
@@ -233,7 +233,7 @@
   <main class="viewer-area">
     <div id="loadingScreen">
       <div class="spinner"></div>
-      <span id="loadingText">Mengunduh dokumen, mohon tunggu...</span>
+      <span id="loadingText">Menyiapkan mesin penampil dokumen...</span>
     </div>
 
     <div class="stage-wrap" id="stageWrap" hidden>
@@ -274,9 +274,6 @@
       </div>
     </div>
   </main>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
   <script>
     class ViewerEngine {
@@ -326,11 +323,9 @@
 
         this.ICON_EXPAND = '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
         this.ICON_COLLAPSE = '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>';
-
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
       }
 
-      init() {
+      async init() {
         this.dom.title.textContent = this.judul;
         this.dom.stageTitle.textContent = this.judul;
         this.setupFullscreen();
@@ -339,7 +334,31 @@
         this.setupZoomControls();
         this.setupResizeGuard();
         this.setupAudio();
-        this.loadDocument();
+
+        try {
+          // Dynamic Loading: Hanya memuat skrip eksternal yang benar-benar dibutuhkan
+          await this.loadScript("https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js");
+          
+          if (this.format === 'pdf') {
+            await this.loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js");
+            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+          }
+          
+          await this.loadDocument();
+        } catch (err) {
+          this.showError(`Sistem gagal melakukan inisialisasi: ${err.message}`);
+        }
+      }
+
+      loadScript(src) {
+        return new Promise((resolve, reject) => {
+          if (document.querySelector(`script[src="${src}"]`)) return resolve();
+          const script = document.createElement('script');
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error(`Gagal mengunduh sumber daya: ${src}`));
+          document.head.appendChild(script);
+        });
       }
 
       // --- Audio ---
@@ -349,12 +368,13 @@
             try {
               this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
               this.createNoiseBuffer();
-            } catch (e) { /* audio tidak didukung */ }
+            } catch (e) { /* Audio context tidak didukung peramban */ }
           }
           if (this.audioCtx && this.audioCtx.state === 'suspended') {
             this.audioCtx.resume();
           }
         };
+        // Menunggu interaksi pengguna pertama kali untuk menginisialisasi audio sesuai kebijakan peramban
         document.addEventListener('click', initAudio, { once: true });
         this.dom.navPrev.addEventListener('click', initAudio);
         this.dom.navNext.addEventListener('click', initAudio);
@@ -397,7 +417,7 @@
         source.stop(this.audioCtx.currentTime + 0.2);
       }
 
-      // --- Method lainnya ---
+      // --- Kendali & Navigasi ---
       setupKeyboardNav() {
         document.addEventListener('keydown', (e) => {
           if (!this.pageFlip) return;
@@ -451,7 +471,7 @@
           '<title>' + this.judul + '</title></head><body>' + body +
           '<script>window.onload=function(){setTimeout(function(){window.print();},400);};<\/script></body></html>';
         const w = window.open('', '_blank');
-        if (!w) { alert('Popup diblokir browser. Izinkan popup untuk mengunduh sebagai PDF.'); return; }
+        if (!w) { alert('Sistem browser memblokir tautan popup. Izinkan popup untuk mengunduh dokumen sebagai PDF.'); return; }
         w.document.write(doc);
         w.document.close();
       }
@@ -499,38 +519,45 @@
 
       refreshFlipLayout() {
         if (this.pageFlip) {
-          try { this.pageFlip.update(); } catch (e) { /* abaikan */ }
+          try { this.pageFlip.update(); } catch (e) { /* abaikan error kalkulasi saat resize */ }
         }
       }
 
+      // --- Pengambilan Dokumen API ---
       async loadDocument() {
         const fileId = this.params.get('id');
-        if (!fileId) { this.showError("Parameter ID file tidak ditemukan."); return; }
+        if (!fileId) { this.showError("Parameter ID file tidak ditemukan di dalam tautan."); return; }
+        
+        this.dom.loadingText.textContent = "Mengunduh sumber data dari server...";
+        
         try {
           const res = await fetch(`${this.API_URL}?action=getfile&id=${encodeURIComponent(fileId)}&format=${encodeURIComponent(this.format)}`);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          if (!res.ok) throw new Error(`Kegagalan HTTP server dengan status: ${res.status}`);
+          
           const data = await res.json();
           if (!data.ok) throw new Error(data.error);
 
           if (this.format === 'html') this.buildHtmlPages(data.content);
           else if (this.format === 'pdf') await this.buildPdfPages(data.content);
-          else throw new Error('Format tidak dikenal: ' + this.format);
+          else throw new Error('Sistem tidak mengenali format dokumen: ' + this.format);
 
           this.mountBook();
         } catch (err) {
-          this.showError(`Gagal memuat dokumen: ${err.message}`);
+          this.showError(`Gagal mengekstrak isi dokumen: ${err.message}`);
         }
       }
 
       buildHtmlPages(htmlText) {
+        this.dom.loadingText.textContent = "Menyusun struktur lembar HTML...";
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         this.originalHead = doc.head ? doc.head.innerHTML : '';
         let nodes = doc.querySelectorAll('.page, .halaman, [data-page]');
+        
         this.pageFragments = nodes.length
           ? Array.from(nodes).map(n => n.outerHTML)
           : [doc.body ? doc.body.innerHTML : htmlText];
 
-        this.aspectRatio = 0.72;
+        this.aspectRatio = 0.72; // Rasio standar A4 Potret
         this.pageElements = this.pageFragments.map(frag => {
           const wrapper = document.createElement('div');
           wrapper.className = 'page';
@@ -545,7 +572,7 @@
       }
 
       async buildPdfPages(base64) {
-        this.dom.loadingText.textContent = "Membuka dokumen...";
+        this.dom.loadingText.textContent = "Mendekode susunan biner PDF...";
         const binary = atob(base64.replace(/\s/g, ""));
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
@@ -556,7 +583,9 @@
         this.totalPages = totalPages;
 
         const targetWidth = Math.round(Math.min(700, Math.max(320, window.innerWidth - 60)));
-        const outputScale = Math.min(window.devicePixelRatio || 1, 2);
+        // Optimasi Skala Rendering: Mengamankan kapasitas memori perangkat seluler
+        const isMobile = window.innerWidth < 768;
+        const outputScale = Math.min(window.devicePixelRatio || 1, isMobile ? 1.2 : 2.0);
 
         const pageWrappers = new Array(totalPages);
         let rendered = 0;
@@ -589,9 +618,10 @@
           pageWrappers[pageNum - 1] = wrapper;
 
           rendered++;
-          this.dom.loadingText.textContent = `Merender halaman ${rendered} dari ${totalPages}...`;
+          this.dom.loadingText.textContent = `Merender grafis halaman ${rendered} dari ${totalPages}...`;
         };
 
+        // Render berkelompok (Batching) untuk meminimalisasi kemacetan CPU
         const BATCH_SIZE = 4;
         for (let start = 1; start <= totalPages; start += BATCH_SIZE) {
           const batch = [];
@@ -606,16 +636,15 @@
       mountBook() {
         const fragment = document.createDocumentFragment();
 
-        // --- Tambahkan blank di AWAL ---
+        // Lembar kosong awal (sampul dalam)
         const blankStart = document.createElement('div');
         blankStart.className = 'page page-blank';
         fragment.appendChild(blankStart);
 
-        // Halaman asli
+        // Sisipkan elemen halaman asli hasil render
         this.pageElements.forEach(el => fragment.appendChild(el));
 
-        // --- Tambahkan blank di AKHIR jika jumlah asli GANJIL ---
-        // agar total selalu genap dan simetris
+        // Pengamanan simetris: Tambahkan lembar kosong di akhir jika total lembar halaman asli ganjil
         if (this.pageElements.length % 2 === 1) {
           const blankEnd = document.createElement('div');
           blankEnd.className = 'page page-blank';
@@ -623,8 +652,7 @@
         }
 
         this.dom.book.appendChild(fragment);
-        // totalPages mencakup semua halaman (termasuk blank yang tidak terlihat)
-        this.totalPages = fragment.children.length;
+        this.totalPages = fragment.children.length; // Mengalkulasi ulang total berdasarkan DOM nodes akhir
 
         this.dom.loading.style.opacity = '0';
         setTimeout(() => {
@@ -638,7 +666,7 @@
       }
 
       initFlipEngine() {
-        this.pageFlip = new St.PageFlip(this.dom.book, {
+        this.pageFlip = new window.St.PageFlip(this.dom.book, {
           width: 400,
           height: Math.round(400 / this.aspectRatio),
           size: "stretch",
@@ -663,17 +691,17 @@
 
         const visiblePages = this.pageElements.length;
         const updateUI = (current) => {
-          // current adalah indeks halaman 0-based termasuk blank di awal
-          // Kita kurangi 1 karena blank di awal tidak terhitung
-          let actual = current; // indeks halaman aktual (0-based di antara visiblePages)
+          let actual = current; 
           if (actual < 1) actual = 1;
           if (actual > visiblePages) actual = visiblePages;
+          
           this.dom.pageIndicator.textContent = `Halaman ${actual} / ${visiblePages}`;
           this.dom.progressFill.style.width = `${(actual / visiblePages) * 100}%`;
-          this.dom.navPrev.disabled = (current <= 1); // tidak bisa ke kiri jika sudah di halaman pertama (indeks 1)
-          this.dom.navNext.disabled = (current >= this.totalPages - 2); // tidak bisa ke kanan jika sudah di halaman terakhir visible
+          this.dom.navPrev.disabled = (current <= 1); 
+          this.dom.navNext.disabled = (current >= this.totalPages - 2); 
         };
-        updateUI(1); // mulai dari indeks 1 (halaman pertama asli)
+        
+        updateUI(1); 
 
         this.pageFlip.on('flip', (e) => {
           updateUI(e.data);
@@ -687,7 +715,7 @@
       }
 
       showError(msg) {
-        console.error("Viewer Error:", msg);
+        console.error("Viewer Engine Error:", msg);
         this.dom.loadingText.textContent = msg;
         this.dom.spinner.style.display = 'none';
         this.dom.loadingText.style.color = 'var(--coral)';
@@ -696,7 +724,7 @@
       cleanup() {
         this.objectUrls.forEach(u => URL.revokeObjectURL(u));
         if (this.audioCtx) {
-          try { this.audioCtx.close(); } catch (e) {}
+          try { this.audioCtx.close(); } catch (e) { /* abaikan error penutupan */ }
         }
       }
     }
