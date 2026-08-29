@@ -136,7 +136,8 @@
     .spinner { width: 44px; height: 44px; border: 4px solid rgba(243,129,129,0.2); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4,0,0.2,1) infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .flip-book { display: none; box-shadow: 0 15px 40px rgba(43,58,58,0.18); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
+    .flip-book { display: none; box-shadow: 0 15px 40px rgba(43,58,58,0.18); }
+    .book-zoom-wrap { display: flex; align-items: center; justify-content: center; transition: transform 0.2s cubic-bezier(0.4,0,0.2,1); }
     .page { background-color: var(--surface); overflow: hidden; border: 1px solid var(--border); }
     .page img, .page iframe { width: 100%; height: 100%; object-fit: contain; display: block; border: none; background: #fff; }
 
@@ -200,7 +201,9 @@
       </div>
       <div class="progress-track" id="progressTrack" hidden><div class="progress-fill" id="progressFill"></div></div>
       <div class="stage-frame" id="stageFrame">
-        <div id="book" class="flip-book"></div>
+        <div id="bookZoomWrap" class="book-zoom-wrap">
+          <div id="book" class="flip-book"></div>
+        </div>
         <button class="nav-btn nav-prev" id="navPrev" title="Halaman sebelumnya (←)" hidden>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
@@ -229,15 +232,19 @@
     //    di rasio layar tertentu (mis. 100% zoom) buku jadi lebih tinggi
     //    dari ruang yang ada dan kepotong/meluber (bug yang pernah terjadi).
     // 3. Flipbook dibangun ulang (destroy + create baru) hanya saat wadahnya
-    //    BENAR-BENAR berubah ukuran, dideteksi lewat ResizeObserver pada
-    //    stage-frame — API ini secara desain tidak bereaksi pada pinch-zoom
-    //    (yang murni visual, layout-nya tidak berubah), beda dari event
-    //    'resize' pada window yang di sebagian browser malah ikut menyala
-    //    saat pinch-zoom. Rebuild ini murah karena halaman sudah berupa
-    //    elemen statis (gambar/iframe) — tidak ada render ulang konten.
+    //    BENAR-BENAR berubah ukuran (window resize / orientationchange /
+    //    fullscreenchange), didebounce, dan dicek dulu lewat
+    //    window.visualViewport.scale supaya event resize yang kadang ikut
+    //    menyala saat pinch-zoom (terutama di iOS Safari) tidak dianggap
+    //    perubahan layar sungguhan. Rebuild ini murah karena halaman sudah
+    //    berupa elemen statis (gambar/iframe) — tidak ada render ulang konten.
+    //    (Sempat dicoba pakai ResizeObserver, tapi itu "menembak" otomatis
+    //    sekali begitu mulai diamati sehingga memicu rebuild tak perlu tepat
+    //    setelah buku dipasang — jadi dikembalikan ke pendekatan ini.)
     // 4. Zoom in/out manual (tombol +/-) memakai CSS transform scale() pada
-    //    elemen buku, terpisah dari ukuran "asli" yang dihitung autofit —
-    //    jadi tidak pernah memicu render ulang atau rebuild PageFlip.
+    //    WRAPPER terpisah di luar elemen buku (bukan elemen buku itu sendiri)
+    //    — supaya tidak mengganggu perhitungan koordinat drag/flip internal
+    //    PageFlip, dan sepenuhnya terpisah dari mekanisme autofit di atas.
     // =====================================================================
 
     class ViewerEngine {
@@ -284,7 +291,8 @@
           zoomInBtn: document.getElementById('zoomInBtn'),
           zoomOutBtn: document.getElementById('zoomOutBtn'),
           zoomLevelLabel: document.getElementById('zoomLevelLabel'),
-          book: document.getElementById('book')
+          book: document.getElementById('book'),
+          bookZoomWrap: document.getElementById('bookZoomWrap')
         };
 
         this.ICON_EXPAND = '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>';
@@ -375,8 +383,12 @@
 
       applyZoom(level) {
         this.zoomLevel = Math.min(this.ZOOM_MAX, Math.max(this.ZOOM_MIN, level));
-        this.dom.book.style.transform = `scale(${this.zoomLevel})`;
-        this.dom.book.style.transformOrigin = 'top center';
+        // PENTING: transform diterapkan ke wrapper pembungkus (bookZoomWrap),
+        // BUKAN ke elemen #book yang langsung dikelola PageFlip. Kalau
+        // transform dipasang di elemen yang sama dengan yang dipakai PageFlip
+        // untuk menghitung posisi drag/flip, koordinatnya bisa kacau.
+        this.dom.bookZoomWrap.style.transform = `scale(${this.zoomLevel})`;
+        this.dom.bookZoomWrap.style.transformOrigin = 'top center';
 
         const zoomed = this.zoomLevel > 1.001;
         this.dom.stageFrame.classList.toggle('is-zoomed', zoomed);
@@ -555,29 +567,39 @@
         // (rotasi HP, resize jendela, masuk/keluar fullscreen). Halaman sudah
         // berupa elemen statis, jadi rebuild ini murah — cuma menata ulang.
         //
-        // Dipakai ResizeObserver (bukan window 'resize') karena secara desain
-        // TIDAK bereaksi pada pinch-zoom (murni perbesaran visual, layout-nya
-        // tidak berubah) — beda dari event 'resize' yang di sebagian browser
-        // (terutama iOS Safari) malah ikut menyala saat pinch-zoom, sehingga
-        // buku bisa sempat "collapse" jadi kosong/putih di tengah gestur zoom.
-        const scheduleRebuild = () => {
-          clearTimeout(this._fitResizeT);
-          this._fitResizeT = setTimeout(() => this.buildFlipBook(true), 220);
-        };
+        // Dipakai window 'resize' + pengaman visualViewport (BUKAN
+        // ResizeObserver) — ini mekanisme yang sudah terbukti stabil
+        // sebelumnya. ResizeObserver sempat dicoba tapi memicu regresi:
+        // ResizeObserver "menembak" sekali secara otomatis begitu mulai
+        // diamati (bagian dari spesifikasinya), yang bisa memicu rebuild
+        // tambahan tepat setelah buku pertama kali dipasang — jadi
+        // dikembalikan ke pendekatan yang sudah teruji.
+        //
+        // Pinch-zoom (cubit dua jari) kadang memicu event 'resize' juga
+        // (terutama di iOS Safari), padahal itu bukan perubahan layar
+        // sungguhan — makanya dicek dulu via visualViewport.scale, dan
+        // dilewati kalau sedang dalam mode zoom, supaya buku tidak sempat
+        // dibangun ulang di tengah gestur zoom.
+        const vv = window.visualViewport;
+        const isZooming = () => !!(vv && Math.abs(vv.scale - 1) > 0.02);
 
-        if ('ResizeObserver' in window) {
-          this._resizeObserver = new ResizeObserver(() => scheduleRebuild());
-          this._resizeObserver.observe(this.dom.stageFrame);
-        } else {
-          window.addEventListener('resize', scheduleRebuild); // fallback browser lama
-        }
+        const scheduleRebuild = () => {
+          if (isZooming()) return;
+          clearTimeout(this._fitResizeT);
+          this._fitResizeT = setTimeout(() => {
+            if (isZooming()) return; // cek ulang setelah jeda, siapa tahu masih zoom
+            this.buildFlipBook(true);
+          }, 250);
+        };
+        window.addEventListener('resize', scheduleRebuild);
+        window.addEventListener('orientationchange', scheduleRebuild);
         document.addEventListener('fullscreenchange', scheduleRebuild);
         document.addEventListener('webkitfullscreenchange', scheduleRebuild);
 
-        // Tombol prev/next & keyboard dipasang SEKALI di sini, dan selalu
-        // memanggil this.pageFlip di saat diklik (bukan menyimpan referensi
-        // lama) — jadi otomatis mengikuti instance PageFlip terbaru setiap
-        // kali dibangun ulang, tanpa perlu pasang-lepas listener berulang.
+        // Tombol prev/next dipasang SEKALI di sini, dan selalu memanggil
+        // this.pageFlip di saat diklik (bukan menyimpan referensi lama) —
+        // otomatis mengikuti instance PageFlip terbaru setiap kali dibangun
+        // ulang, tanpa perlu pasang-lepas listener berulang.
         this.dom.navPrev.addEventListener('click', () => this.pageFlip && this.pageFlip.flipPrev());
         this.dom.navNext.addEventListener('click', () => this.pageFlip && this.pageFlip.flipNext());
       }
