@@ -86,7 +86,6 @@
     .icon-btn:disabled { opacity: 0.35; cursor: default; }
     .icon-btn svg { width: 17px; height: 17px; }
 
-    /* Grup zoom */
     .zoom-group {
       display: flex;
       align-items: center;
@@ -120,7 +119,6 @@
       box-shadow: 0 20px 50px rgba(43,58,58,0.10); display: flex; align-items: center; justify-content: center;
       padding: clamp(14px, 3vw, 34px); position: relative; overflow: hidden;
     }
-    /* Saat zoom aktif, aktifkan scroll untuk menggeser */
     .stage-frame.is-zoomed { overflow: auto; align-items: flex-start; justify-content: flex-start; cursor: grab; }
     .stage-frame.is-zoomed:active { cursor: grabbing; }
 
@@ -141,7 +139,6 @@
     .nav-btn svg { width: 19px; height: 19px; }
     .nav-prev { left: 14px; }
     .nav-next { right: 14px; }
-    /* Sembunyikan tombol navigasi saat zoom agar tidak mengganggu scroll */
     .stage-frame.is-zoomed .nav-btn { display: none; }
 
     #loadingScreen {
@@ -152,9 +149,9 @@
     .spinner { width: 44px; height: 44px; border: 4px solid rgba(243,129,129,0.2); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4,0,0.2,1) infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .flip-book { display: none; box-shadow: none; } /* flat: tanpa shadow */
+    .flip-book { display: none; box-shadow: none; }
 
-    /* Pembungkus untuk zoom */
+    /* Wrapper zoom - HARUS 100% tinggi dan lebar */
     .book-zoom-wrap {
       width: 100%;
       height: 100%;
@@ -163,6 +160,8 @@
       justify-content: center;
       transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       transform-origin: center center;
+      /* Pastikan tidak overflow */
+      overflow: visible;
     }
 
     .page { background-color: var(--surface); overflow: hidden; border: 1px solid var(--border); }
@@ -205,8 +204,6 @@
         <span class="stage-title" id="stageTitle">Dokumen</span>
         <div class="stage-actions">
           <span class="page-indicator" id="pageIndicator" hidden></span>
-
-          <!-- Grup zoom -->
           <div class="zoom-group" id="zoomGroup" hidden>
             <button class="icon-btn" id="zoomOutBtn" title="Perkecil">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
@@ -216,7 +213,6 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
             </button>
           </div>
-
           <button class="icon-btn" id="downloadBtn" title="Unduh" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
           </button>
@@ -229,7 +225,6 @@
       </div>
       <div class="progress-track" id="progressTrack" hidden><div class="progress-fill" id="progressFill"></div></div>
       <div class="stage-frame" id="stageFrame">
-        <!-- Pembungkus untuk zoom -->
         <div id="bookZoomWrap" class="book-zoom-wrap">
           <div id="book" class="flip-book"></div>
         </div>
@@ -247,16 +242,6 @@
   <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 
   <script>
-    // =====================================================================
-    // ATURAN STABILISASI TETAP DIJAGA:
-    // 1. size:"stretch" + batasan min/max
-    // 2. Tidak pernah rebuild, hanya pageFlip.update() saat resize/fullscreen
-    // 3. Tidak mendeteksi pinch-zoom
-    // 4. Konten digambar sekali menjadi gambar statis
-    // 5. Zoom manual diterapkan pada wrapper terpisah (bookZoomWrap) dengan CSS transform
-    // 6. Efek flat: drawShadow:false, maxShadowOpacity:0
-    // =====================================================================
-
     class ViewerEngine {
       constructor() {
         this.API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
@@ -269,8 +254,6 @@
         this.pageFlip = null;
         this.totalPages = 0;
         this.objectUrls = [];
-
-        // State zoom manual
         this.zoomLevel = 1;
         this.ZOOM_MIN = 1;
         this.ZOOM_MAX = 2.5;
@@ -375,7 +358,6 @@
         w.document.close();
       }
 
-      // ---------- Kontrol Zoom ----------
       setupZoomControls() {
         this.dom.zoomInBtn.addEventListener('click', () => this.applyZoom(this.zoomLevel + this.ZOOM_STEP));
         this.dom.zoomOutBtn.addEventListener('click', () => this.applyZoom(this.zoomLevel - this.ZOOM_STEP));
@@ -387,9 +369,7 @@
         const zoomed = this.zoomLevel > 1.001;
         const wrap = this.dom.bookZoomWrap;
 
-        // Terapkan scale pada wrapper
         wrap.style.transform = 'scale(' + this.zoomLevel + ')';
-        // Atur transform-origin agar buku tetap terpusat saat 100%, dan kiri-atas saat zoom
         if (zoomed) {
           wrap.style.transformOrigin = 'top left';
           wrap.style.alignItems = 'flex-start';
@@ -400,18 +380,15 @@
           wrap.style.justifyContent = 'center';
         }
 
-        // Aktifkan scroll pada stage-frame
         this.dom.stageFrame.classList.toggle('is-zoomed', zoomed);
         this.dom.zoomLevelLabel.textContent = Math.round(this.zoomLevel * 100) + '%';
         this.dom.zoomOutBtn.disabled = this.zoomLevel <= this.ZOOM_MIN + 0.001;
         this.dom.zoomInBtn.disabled = this.zoomLevel >= this.ZOOM_MAX - 0.001;
 
-        // Reset scroll ke kiri-atas agar tidak "nyasar"
         this.dom.stageFrame.scrollTop = 0;
         this.dom.stageFrame.scrollLeft = 0;
       }
 
-      // ---------- Resize Guard ----------
       setupResizeGuard() {
         let t;
         const onResize = () => {
@@ -428,7 +405,6 @@
         }
       }
 
-      // ---------- Muat Dokumen ----------
       async loadDocument() {
         const fileId = this.params.get('id');
         if (!fileId) { this.showError("Parameter ID file tidak ditemukan."); return; }
@@ -448,7 +424,6 @@
         }
       }
 
-      // ---------- HTML ----------
       buildHtmlPages(htmlText) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         this.originalHead = doc.head ? doc.head.innerHTML : '';
@@ -471,7 +446,6 @@
         this.totalPages = this.pageElements.length;
       }
 
-      // ---------- PDF ----------
       async buildPdfPages(base64) {
         this.dom.loadingText.textContent = "Membuka dokumen...";
         const binary = atob(base64.replace(/\s/g, ""));
@@ -531,7 +505,6 @@
         this.pageElements = pageWrappers;
       }
 
-      // ---------- Pasang Buku ----------
       mountBook() {
         const fragment = document.createDocumentFragment();
         const blank = document.createElement('div');
@@ -551,17 +524,17 @@
         }, 250);
       }
 
-      // ---------- Inisialisasi PageFlip (FLAT) ----------
       initFlipEngine() {
-        // Efek FLAT: drawShadow:false, maxShadowOpacity:0
+        // Hilangkan batasan maxHeight agar buku bisa memenuhi tinggi kontainer
         this.pageFlip = new St.PageFlip(this.dom.book, {
           width: 400,
           height: Math.round(400 / this.aspectRatio),
           size: "stretch",
           minWidth: 220,
           maxWidth: 700,
-          minHeight: 280,
-          maxHeight: 1000,
+          minHeight: 200,
+          // maxHeight dihilangkan (atau set ke 0 agar tidak membatasi)
+          maxHeight: 0,
           showCover: false,
           usePortrait: true,
           mobileScrollSupport: true,
@@ -590,7 +563,7 @@
         this.dom.navPrev.addEventListener('click', () => this.pageFlip.flipPrev());
         this.dom.navNext.addEventListener('click', () => this.pageFlip.flipNext());
 
-        // Reset zoom ke 100% setelah buku terpasang
+        // Reset zoom ke 100%
         this.applyZoom(1);
       }
 
