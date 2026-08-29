@@ -101,7 +101,13 @@
   .btn .icon { width: 15px; height: 15px; }
 
   /* Catalog View */
-  .tagline { text-align: center; padding: 22px 20px 6px; color: var(--ink-muted); font-size: 15px; font-weight: 600; max-width: 56ch; margin: 0 auto; }
+  .hero { text-align: center; padding: 34px 20px 4px; }
+  .hero-title {
+    font-family: 'Fredoka', sans-serif; font-weight: 700; color: var(--ink);
+    font-size: clamp(22px, 4vw, 32px); margin: 0 0 8px; line-height: 1.2;
+  }
+  .hero-title span { color: var(--coral); }
+  .tagline { text-align: center; padding: 0 20px; color: var(--ink-muted); font-size: 14.5px; font-weight: 600; max-width: 52ch; margin: 0 auto; line-height: 1.6; }
   .wrap { max-width: 1320px; margin: 0 auto; padding: 22px 28px 80px; }
   .toolbar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 18px; box-shadow: 0 10px 26px rgba(43,58,58,0.06); }
   .toolbar-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -125,6 +131,24 @@
   .active-search-chip button svg { width: 11px; height: 11px; display: block; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
+
+  .pagination { display: flex; justify-content: center; margin-top: 28px; }
+  .pagination-inner { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px; box-shadow: 0 8px 20px rgba(43,58,58,0.06); }
+  .page-btn {
+    min-width: 36px; height: 36px; padding: 0 6px; border-radius: 50%; border: none; background: transparent; color: var(--ink);
+    font-family: 'Nunito', sans-serif; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all .15s ease;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .page-btn:hover:not(:disabled):not(.active) { background: var(--surface-2); }
+  .page-btn.active { background: var(--coral); color: #fff; box-shadow: 0 6px 14px rgba(243,129,129,0.35); }
+  .page-btn:disabled { opacity: 0.35; cursor: default; }
+  .page-btn svg { width: 15px; height: 15px; }
+  .page-ellipsis { width: 24px; text-align: center; color: var(--ink-muted); font-weight: 800; font-size: 13px; }
+
+  @media (max-width: 480px) {
+    .pagination-inner { gap: 2px; padding: 5px; }
+    .page-btn { min-width: 32px; height: 32px; font-size: 13px; }
+  }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; transition: all .15s ease; box-shadow: 0 8px 20px rgba(43,58,58,0.06); }
   .card:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(243,129,129,0.16); }
   .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -263,7 +287,10 @@
 </header>
 
 <section id="catalogView">
-  <p class="tagline">Kumpulan materi ajar dan soal Pendidikan Agama Islam, siap dibaca atau diunduh secara interaktif.</p>
+  <div class="hero">
+    <h1 class="hero-title">Bank Materi &amp; Soal <span>PAI</span></h1>
+    <p class="tagline">Kumpulan materi ajar dan soal Pendidikan Agama Islam, siap dibaca atau diunduh secara interaktif.</p>
+  </div>
   <div class="wrap">
     <div class="toolbar">
       <div class="toolbar-row">
@@ -283,6 +310,7 @@
       </div>
     </div>
     <div id="listArea" class="loading"><span class="spinner"></span>Memuat katalog...</div>
+    <nav class="pagination" id="paginationArea" aria-label="Navigasi halaman"></nav>
   </div>
 </section>
 
@@ -407,6 +435,9 @@ class CatalogApp {
     this.API_URL = "https://script.google.com/macros/s/AKfycbyJnpdt56Iu9zOlIQdbp00vapGrRYTyAAcvLFGLrh3hah04n6EwK_tgbrc5A1kUNw5y9A/exec";
     this.MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
     this.allItems = [];
+    this.filteredItems = [];
+    this.currentPage = 1;
+    this.itemsPerPage = 12;
     this.currentFile = { format: '', pages: '' };
     
     // Inisialisasi PDF.js worker
@@ -416,7 +447,7 @@ class CatalogApp {
       views: { catalog: document.getElementById('catalogView'), upload: document.getElementById('uploadView') },
       auth: { loginBtn: document.getElementById('loginBtn'), logoutBtn: document.getElementById('logoutBtn'), uploadNav: document.getElementById('uploadNavBtn') },
       modal: { overlay: document.getElementById('loginModal'), input: document.getElementById('loginPasscode'), err: document.getElementById('loginError'), submit: document.getElementById('loginSubmit'), cancel: document.getElementById('loginCancel') },
-      catalog: { list: document.getElementById('listArea'), count: document.getElementById('count'), search: document.getElementById('search'), searchBtn: document.getElementById('searchBtn'), fKelas: document.getElementById('filterKelas'), fFase: document.getElementById('filterFase'), fTipe: document.getElementById('filterTipe'), reset: document.getElementById('resetFiltersBtn') },
+      catalog: { list: document.getElementById('listArea'), count: document.getElementById('count'), search: document.getElementById('search'), searchBtn: document.getElementById('searchBtn'), fKelas: document.getElementById('filterKelas'), fFase: document.getElementById('filterFase'), fTipe: document.getElementById('filterTipe'), reset: document.getElementById('resetFiltersBtn'), pagination: document.getElementById('paginationArea') },
       upload: { form: document.getElementById('uploadForm'), input: document.getElementById('fileInput'), name: document.getElementById('fileName'), meta: document.getElementById('fileMeta'), btn: document.getElementById('submitBtn'), status: document.getElementById('uploadStatus'), back: document.getElementById('backToCatalog') }
     };
   }
@@ -453,6 +484,17 @@ class CatalogApp {
       this.dom.catalog.search.value = '';
       this.dom.catalog.fKelas.value = ''; this.dom.catalog.fFase.value = ''; this.dom.catalog.fTipe.value = '';
       this.renderCatalog();
+    });
+
+    // Delegasi klik tombol paginasi (tombol dibangun ulang tiap render, jadi listener dipasang sekali di kontainernya)
+    this.dom.catalog.pagination.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-page]');
+      if (!btn || btn.disabled) return;
+      const page = parseInt(btn.dataset.page, 10);
+      if (!page || page === this.currentPage) return;
+      this.currentPage = page;
+      this.renderPage();
+      this.dom.catalog.list.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     // Form Unggah
@@ -554,7 +596,7 @@ class CatalogApp {
     const fF = this.dom.catalog.fFase.value;
     const fT = this.dom.catalog.fTipe.value;
 
-    const filtered = this.allItems.filter(item => {
+    this.filteredItems = this.allItems.filter(item => {
       if (fK && String(item.Kelas) !== fK) return false;
       if (fF && item.Fase !== fF) return false;
       if (fT && item.Tipe !== fT) return false;
@@ -562,16 +604,63 @@ class CatalogApp {
       return true;
     });
 
-    this.dom.catalog.count.textContent = `${filtered.length} konten`;
+    // Setiap kali filter/pencarian berubah, selalu kembali ke halaman 1
+    this.currentPage = 1;
+    this.renderPage();
+  }
 
-    if (filtered.length === 0) {
+  renderPage() {
+    const total = this.filteredItems.length;
+    this.dom.catalog.count.textContent = `${total} konten`;
+
+    if (total === 0) {
       this.dom.catalog.list.className = '';
       this.dom.catalog.list.innerHTML = `<div class="empty"><span class="icon">${this.icons.empty}</span>Belum ada materi yang cocok.<br>Coba ubah filter atau kata kunci.</div>`;
+      this.dom.catalog.pagination.innerHTML = '';
       return;
     }
-    
+
+    const totalPages = Math.max(1, Math.ceil(total / this.itemsPerPage));
+    this.currentPage = Math.min(Math.max(1, this.currentPage), totalPages);
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    const pageItems = this.filteredItems.slice(start, start + this.itemsPerPage);
+
     this.dom.catalog.list.className = 'grid';
-    this.dom.catalog.list.innerHTML = filtered.map(item => this.buildCard(item)).join('');
+    this.dom.catalog.list.innerHTML = pageItems.map(item => this.buildCard(item)).join('');
+    this.dom.catalog.pagination.innerHTML = this.buildPagination(totalPages, this.currentPage);
+  }
+
+  // Bangun daftar nomor halaman dengan elipsis ("...") untuk halaman yang banyak,
+  // selalu menampilkan halaman pertama, terakhir, dan sekitar halaman aktif.
+  buildPageList(totalPages, current) {
+    const delta = 1;
+    const range = [];
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= current - delta && i <= current + delta)) range.push(i);
+    }
+    const withEllipsis = [];
+    let prev = 0;
+    range.forEach(p => {
+      if (prev && p - prev > 1) withEllipsis.push('...');
+      withEllipsis.push(p);
+      prev = p;
+    });
+    return withEllipsis;
+  }
+
+  buildPagination(totalPages, current) {
+    if (totalPages <= 1) return '';
+    const pageBtn = (page, label, opts = {}) =>
+      `<button type="button" class="page-btn ${opts.active ? 'active' : ''}" data-page="${page}" ${opts.disabled ? 'disabled' : ''} aria-label="${opts.ariaLabel || ('Halaman ' + page)}">${label}</button>`;
+
+    let html = '<div class="pagination-inner">';
+    html += pageBtn(current - 1, this.icons.chevronLeft, { disabled: current <= 1, ariaLabel: 'Halaman sebelumnya' });
+    this.buildPageList(totalPages, current).forEach(p => {
+      html += p === '...' ? `<span class="page-ellipsis">…</span>` : pageBtn(p, p, { active: p === current });
+    });
+    html += pageBtn(current + 1, this.icons.chevronRight, { disabled: current >= totalPages, ariaLabel: 'Halaman berikutnya' });
+    html += '</div>';
+    return html;
   }
 
   buildCard(item) {
@@ -719,7 +808,9 @@ class CatalogApp {
       book: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2-1.4-5-1.9-8-1v14c3-.9 6-.4 8 1 2-1.4 5-1.9 8-1V4c-3-.9-6-.4-8 1z"/><path d="M12 5v14"/></svg>`,
       empty: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6.5"/><path d="M20 20l-4.3-4.3"/></svg>`,
       ok: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.4 2.4L16 9"/></svg>`,
-      err: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>`
+      err: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16h.01"/></svg>`,
+      chevronLeft: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
+      chevronRight: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`
     };
   }
 }
