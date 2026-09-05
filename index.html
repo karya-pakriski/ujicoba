@@ -448,22 +448,43 @@
         }
         .modal-login .modal-brand h2 { font-size:22px; font-weight:700; letter-spacing:-0.3px; }
         .modal-login .modal-brand p { color:var(--text-muted); font-size:14px; margin-top:4px; }
-        .modal-login .input-wrap { position:relative; }
+        .modal-login .input-wrap { position:relative; width:100%; }
         .modal-login .input-wrap i {
-            position:absolute; left:16px; top:50%; transform:translateY(-50%);
-            color:var(--text-muted); font-size:16px;
+            position:absolute; left:14px; top:50%; transform:translateY(-50%);
+            color:var(--text-muted); font-size:16px; z-index:2; pointer-events:none;
+            transition:color 0.25s ease;
         }
-        .modal-login .input-wrap input { padding-left:46px; }
-        .btn-login {
+        .modal-login .input-wrap input {
+            width:100%; padding:14px 16px 14px 44px; border:1.5px solid var(--border);
+            border-radius:var(--radius-sm); font-size:15px; font-family:var(--font);
+            background:var(--bg); transition:border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+            color:var(--text-primary); height:52px; box-sizing:border-box;
+        }
+        .modal-login .input-wrap input::placeholder { color:var(--text-muted); font-weight:400; opacity:0.7; }
+        .modal-login .input-wrap input:focus {
+            outline:none; border-color:var(--primary); background:var(--card-bg);
+            box-shadow:0 0 0 4px rgba(30,43,79,0.08);
+        }
+        .modal-login .input-wrap input:focus + i,
+        .modal-login .input-wrap input:focus ~ i { color:var(--primary); }
+        .modal-login .input-wrap input:hover { border-color:var(--primary-light); }
+        .modal-login .btn-login {
             width:100%; padding:14px; background:linear-gradient(135deg,var(--primary),var(--primary-light));
             color:#fff; border:none; border-radius:var(--radius-sm); font-size:16px; font-weight:600;
-            font-family:var(--font); cursor:pointer; transition:var(--transition);
-            box-shadow:0 8px 24px rgba(30,43,79,0.2);
+            font-family:var(--font); cursor:pointer; transition:transform 0.25s ease, box-shadow 0.25s ease;
+            box-shadow:0 8px 24px rgba(30,43,79,0.2); height:52px; display:flex; align-items:center;
+            justify-content:center; gap:10px;
         }
-        .btn-login:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(30,43,79,0.3); }
-        .modal-footer { text-align:center; margin-top:20px; font-size:14px; color:var(--text-muted); }
-        .modal-footer a { color:var(--primary); font-weight:600; text-decoration:none; cursor:pointer; transition:var(--transition); }
-        .modal-footer a:hover { color:var(--accent-dark); }
+        .modal-login .btn-login:hover { transform:translateY(-2px); box-shadow:0 12px 32px rgba(30,43,79,0.3); }
+        .modal-login .btn-login:active { transform:translateY(0); }
+        .modal-login .modal-footer { text-align:center; margin-top:20px; font-size:14px; color:var(--text-muted); }
+        .modal-login .modal-footer a { color:var(--primary); font-weight:600; text-decoration:none; cursor:pointer; transition:color 0.25s ease; }
+        .modal-login .modal-footer a:hover { color:var(--accent-dark); text-decoration:underline; }
+        .modal-login .input-wrap input[type="password"] { letter-spacing:2px; }
+        @media (max-width:480px) {
+            .modal-login .input-wrap input { padding:12px 14px 12px 40px; font-size:14px; height:48px; }
+            .modal-login .btn-login { height:48px; font-size:15px; }
+        }
 
         /* TOAST */
         .toast-container {
@@ -521,7 +542,6 @@
             .hero-actions { flex-direction:column; width:100%; }
             .stat-card .stat-number { font-size:22px; }
             .modal-box { padding:20px 16px; }
-            .login-box { padding:24px 16px; }
         }
 
         /* PRINT */
@@ -546,7 +566,6 @@
 <!-- ============================================================ -->
 <div id="landingPage">
     <div class="app-wrapper">
-        <!-- NAVBAR -->
         <header class="navbar">
             <a href="#" class="brand">
                 <div class="brand-icon"><i class="fas fa-users"></i></div>
@@ -559,7 +578,6 @@
             </div>
         </header>
 
-        <!-- HERO -->
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-badge"><i class="fas fa-calendar-check"></i> Presensi Digital</div>
@@ -573,25 +591,21 @@
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-user-group"></i></div><div class="stat-number">128</div><div class="stat-label">Total Anggota</div></div>
-                <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-calendar-day"></i></div><div class="stat-number">84%</div><div class="stat-label">Kehadiran Bulan Ini</div></div>
-                <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-number">312</div><div class="stat-label">Hadir Bulan Ini</div></div>
-                <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-clock"></i></div><div class="stat-number">12</div><div class="stat-label">Kegiatan Aktif</div></div>
+                <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-user-group"></i></div><div class="stat-number" id="landingAnggota">0</div><div class="stat-label">Total Anggota</div></div>
+                <div class="stat-card"><div class="stat-icon gold"><i class="fas fa-calendar-day"></i></div><div class="stat-number" id="landingKehadiran">0%</div><div class="stat-label">Kehadiran Bulan Ini</div></div>
+                <div class="stat-card"><div class="stat-icon green"><i class="fas fa-check-circle"></i></div><div class="stat-number" id="landingHadir">0</div><div class="stat-label">Hadir Bulan Ini</div></div>
+                <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-clock"></i></div><div class="stat-number" id="landingKegiatan">0</div><div class="stat-label">Kegiatan Aktif</div></div>
             </div>
         </section>
 
-        <!-- DASHBOARD PREVIEW -->
         <div class="dashboard-preview">
             <div class="preview-card">
                 <div class="card-header">
                     <h3><i class="fas fa-list-ul" style="margin-right:8px;color:var(--accent-dark);"></i> Aktivitas Terbaru</h3>
                     <a href="#" class="badge-link">Lihat semua <i class="fas fa-chevron-right"></i></a>
                 </div>
-                <div class="activity-list">
-                    <div class="activity-item"><div class="avatar a1">A</div><div class="info"><div class="name">Ahmad Fauzi</div><div class="detail">Hadir · Rapat Rutin</div></div><div class="time">10:30</div></div>
-                    <div class="activity-item"><div class="avatar a2">S</div><div class="info"><div class="name">Siti Rahma</div><div class="detail">Izin · Sakit</div></div><div class="time">09:15</div></div>
-                    <div class="activity-item"><div class="avatar a3">R</div><div class="info"><div class="name">Rizky Pratama</div><div class="detail">Hadir · Kerja Bakti</div></div><div class="time">08:00</div></div>
-                    <div class="activity-item"><div class="avatar a4">D</div><div class="info"><div class="name">Dewi Lestari</div><div class="detail">Hadir · Pelatihan</div></div><div class="time">07:45</div></div>
+                <div class="activity-list" id="landingAktivitas">
+                    <p class="text-muted">Belum ada aktivitas</p>
                 </div>
             </div>
             <div class="preview-card">
@@ -599,11 +613,8 @@
                     <h3><i class="fas fa-calendar-alt" style="margin-right:8px;color:var(--accent-dark);"></i> Jadwal Kegiatan</h3>
                     <a href="#" class="badge-link">Lihat semua <i class="fas fa-chevron-right"></i></a>
                 </div>
-                <div class="schedule-list">
-                    <div class="schedule-item"><span class="time-badge">08:00</span><div class="schedule-info"><div class="title">Rapat Rutin</div><div class="place">📍 Aula Utama</div></div><span class="status-badge done">Selesai</span></div>
-                    <div class="schedule-item"><span class="time-badge">10:00</span><div class="schedule-info"><div class="title">Kerja Bakti</div><div class="place">📍 Lapangan</div></div><span class="status-badge done">Selesai</span></div>
-                    <div class="schedule-item"><span class="time-badge">13:00</span><div class="schedule-info"><div class="title">Pelatihan Kepemimpinan</div><div class="place">📍 Ruang Serbaguna</div></div><span class="status-badge">Berlangsung</span></div>
-                    <div class="schedule-item"><span class="time-badge">15:00</span><div class="schedule-info"><div class="title">Diskusi Kelompok</div><div class="place">📍 Gazebo</div></div><span class="status-badge soon">Segera</span></div>
+                <div class="schedule-list" id="landingJadwal">
+                    <p class="text-muted">Tidak ada jadwal hari ini</p>
                 </div>
             </div>
         </div>
@@ -615,7 +626,7 @@
 </div>
 
 <!-- ============================================================ -->
-<!-- LOGIN MODAL (muncul dari landing) -->
+<!-- LOGIN MODAL -->
 <!-- ============================================================ -->
 <div class="modal-overlay" id="loginModal">
     <div class="modal-box modal-login">
@@ -630,7 +641,7 @@
                 <label>ID Anggota</label>
                 <div class="input-wrap">
                     <i class="fas fa-id-card"></i>
-                    <input type="text" id="loginId" placeholder="BNK24001" required />
+                    <input type="text" id="loginId" placeholder="Contoh: BNK24001" required />
                 </div>
             </div>
             <div class="form-group">
@@ -640,7 +651,7 @@
                     <input type="password" id="loginPassword" placeholder="••••" maxlength="4" required />
                 </div>
             </div>
-            <button type="submit" class="btn-login"><i class="fas fa-arrow-right-to-bracket" style="margin-right:10px;"></i> Masuk</button>
+            <button type="submit" class="btn-login"><i class="fas fa-arrow-right-to-bracket"></i> Masuk</button>
         </form>
         <div class="modal-footer">
             Belum punya akun? <a onclick="showRegisterInModal()">Daftar sekarang</a>
@@ -668,7 +679,6 @@
 <!-- LAYER 2 – DASHBOARD APP -->
 <!-- ============================================================ -->
 <div id="dashboardApp">
-    <!-- SIDEBAR -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <div class="brand-icon"><i class="fas fa-users"></i></div>
@@ -680,9 +690,7 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <div class="main-content">
-        <!-- TOPBAR -->
         <header class="topbar">
             <div class="topbar-left">
                 <button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
@@ -699,7 +707,6 @@
             </div>
         </header>
 
-        <!-- VIEWS -->
         <div class="view-container">
             <!-- ========================================================== -->
             <!-- VIEW: DASHBOARD ANGGOTA -->
@@ -779,7 +786,6 @@
                     <div class="stat-card-dash"><div class="stat-icon purple"><i class="fas fa-calendar-day"></i></div><div class="stat-number" id="adminTotalKegiatan">0</div><div class="stat-label">Total Kegiatan</div></div>
                 </div>
 
-                <!-- Scan Kartu Anggota (Admin only) -->
                 <div class="card" style="margin-bottom:20px;">
                     <div class="card-header">
                         <h3><i class="fas fa-qrcode"></i> Scan Kartu Anggota</h3>
@@ -915,10 +921,10 @@
             <div class="view" id="viewInisialisasi">
                 <div class="card">
                     <div class="card-header"><h3><i class="fas fa-database"></i> Inisialisasi Sistem</h3></div>
-                    <p class="text-muted" style="margin-bottom:16px;">Hapus semua data dan reset sistem ke kondisi awal. Tindakan ini tidak dapat dibatalkan!</p>
+                    <p class="text-muted" style="margin-bottom:16px;">Hapus semua data dan reset sistem ke kondisi awal. Tindakan ini tidak dapat dibatalkan! Pastikan Anda sudah melakukan backup data di Google Sheets.</p>
                     <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                        <button class="btn btn-danger" onclick="initSystem()"><i class="fas fa-trash-alt"></i> Reset Semua Data</button>
-                        <button class="btn btn-secondary" onclick="seedDummyData()"><i class="fas fa-seedling"></i> Isi Data Dummy</button>
+                        <button class="btn btn-danger" onclick="if(confirm('Yakin reset semua data? Aksi ini tidak bisa dibatalkan!')) initSystem()"><i class="fas fa-trash-alt"></i> Reset Semua Data</button>
+                        <button class="btn btn-primary" onclick="refreshAllData(); toast('Data berhasil dimuat ulang!', 'success');"><i class="fas fa-sync"></i> Muat Ulang Data</button>
                         <button class="btn btn-warning" onclick="clearCacheFrontend()"><i class="fas fa-eraser"></i> Hapus Cache Lokal</button>
                     </div>
                 </div>
@@ -969,10 +975,8 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbwL9TUWLSofZyY42mArn4Z6
 // ================================================================
 let currentUser = null;
 let isProcessing = false;
-let scanDebounceTimer = null;
 let html5QrCode = null;
 
-// Data cache dari backend
 let appData = {
     anggota: [],
     kegiatan: [],
@@ -1022,7 +1026,6 @@ function openModal(html) {
     document.getElementById('modalContent').innerHTML = html;
     document.getElementById('modalOverlay').classList.add('active');
 }
-
 function closeModal() {
     document.getElementById('modalOverlay').classList.remove('active');
 }
@@ -1039,22 +1042,18 @@ document.addEventListener('keydown', function(e) {
 function openLoginModal() {
     document.getElementById('loginModal').classList.add('active');
 }
-
 function closeLoginModal() {
     document.getElementById('loginModal').classList.remove('active');
 }
-
 function showRegisterInModal() {
     document.querySelector('#loginForm').style.display = 'none';
     document.getElementById('registerFormModal').style.display = 'block';
 }
-
 function showLoginInModal() {
     document.querySelector('#loginForm').style.display = 'block';
     document.getElementById('registerFormModal').style.display = 'none';
 }
 
-// Login handler
 document.getElementById('loginForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const id = document.getElementById('loginId').value.trim();
@@ -1079,7 +1078,6 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     toast(`Selamat datang, ${currentUser.nama}!`, 'success');
 });
 
-// Register handler
 document.getElementById('registerForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const nama = document.getElementById('regName').value.trim();
@@ -1107,6 +1105,7 @@ function logout() {
     document.getElementById('viewMemberDash').classList.add('active');
     document.getElementById('sidebar').classList.remove('open');
     if (html5QrCode) { html5QrCode.clear(); }
+    renderLandingStats();
 }
 
 // ================================================================
@@ -1177,7 +1176,6 @@ function navigateTo(view) {
     document.getElementById('pageTitle').textContent = titles[view] || 'Dashboard';
     document.getElementById('pageSub').textContent = '';
 
-    // Render data
     if (view === 'adminDash') renderAdminDashboard();
     if (view === 'kelolaAnggota') renderAnggota();
     if (view === 'kelolaKegiatan') renderKegiatan();
@@ -1188,11 +1186,11 @@ function navigateTo(view) {
 }
 
 // ================================================================
-// REFRESH DATA DARI BACKEND
+// REFRESH DATA & LANDING STATS
 // ================================================================
 async function refreshAllData() {
     try {
-        const [anggotaRes, kegiatanRes, presensiRes, configRes] = await Promise.all([
+        const [anggotaRes, kegiatanRes, presensiRes, statusRes] = await Promise.all([
             callApi('getAnggota'),
             callApi('getKegiatan'),
             callApi('getPresensi'),
@@ -1201,9 +1199,65 @@ async function refreshAllData() {
         if (anggotaRes.success) appData.anggota = anggotaRes.data || [];
         if (kegiatanRes.success) appData.kegiatan = kegiatanRes.data || [];
         if (presensiRes.success) appData.presensi = presensiRes.data || [];
-        if (configRes.success) appData.config = configRes.data || {};
+        if (statusRes.success) appData.config = statusRes.data || {};
+        renderLandingStats();
+        return true;
     } catch (err) {
         console.error('Refresh data error:', err);
+        toast('Gagal memuat data. Periksa koneksi internet.', 'error');
+        return false;
+    }
+}
+
+function renderLandingStats() {
+    const anggota = appData.anggota.filter(a => a.Status !== 'Nonaktif');
+    const presensi = appData.presensi;
+    const kegiatan = appData.kegiatan.filter(k => k.Status === 'Aktif');
+    document.getElementById('landingAnggota').textContent = anggota.length;
+    document.getElementById('landingKegiatan').textContent = kegiatan.length;
+
+    const bulanIni = new Date().getMonth() + 1;
+    const tahunIni = new Date().getFullYear();
+    const presensiBulan = presensi.filter(p => {
+        if (!p.Tanggal_Checkin) return false;
+        const d = new Date(p.Tanggal_Checkin);
+        return d.getMonth() + 1 === bulanIni && d.getFullYear() === tahunIni;
+    });
+    const hadirBulan = presensiBulan.filter(p => p.Status_Kehadiran === 'Hadir');
+    document.getElementById('landingHadir').textContent = hadirBulan.length;
+    const persen = presensiBulan.length > 0 ? Math.round((hadirBulan.length / presensiBulan.length) * 100) : 0;
+    document.getElementById('landingKehadiran').textContent = persen + '%';
+
+    // Aktivitas terbaru (5 terakhir)
+    const aktivitas = [...presensi].sort((a,b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin)).slice(0,5);
+    const aktivitasDiv = document.getElementById('landingAktivitas');
+    if (aktivitas.length === 0) {
+        aktivitasDiv.innerHTML = '<p class="text-muted">Belum ada aktivitas</p>';
+    } else {
+        aktivitasDiv.innerHTML = aktivitas.map(p => {
+            const nama = appData.anggota.find(a => a.ID_Anggota === p.ID_Anggota)?.Nama_Lengkap || p.ID_Anggota;
+            return `<div class="activity-item">
+                <div class="avatar a${Math.floor(Math.random()*4)+1}">${nama ? nama[0].toUpperCase() : 'U'}</div>
+                <div class="info"><div class="name">${nama}</div><div class="detail">${p.Status_Kehadiran || 'Hadir'} · ${p.ID_Kegiatan || 'Kegiatan'}</div></div>
+                <div class="time">${p.Waktu_Checkin || ''}</div>
+            </div>`;
+        }).join('');
+    }
+
+    // Jadwal hari ini
+    const today = new Date().toISOString().slice(0,10);
+    const jadwal = appData.kegiatan.filter(k => k.Tanggal === today && k.Status === 'Aktif');
+    const jadwalDiv = document.getElementById('landingJadwal');
+    if (jadwal.length === 0) {
+        jadwalDiv.innerHTML = '<p class="text-muted">Tidak ada jadwal hari ini</p>';
+    } else {
+        jadwalDiv.innerHTML = jadwal.map(k => `
+            <div class="schedule-item">
+                <span class="time-badge">${k.Waktu_Mulai || '--:--'}</span>
+                <div class="schedule-info"><div class="title">${k.Nama_Kegiatan}</div><div class="place">📍 ${k.Tempat || '-'}</div></div>
+                <span class="status-badge">Aktif</span>
+            </div>
+        `).join('');
     }
 }
 
@@ -1243,11 +1297,10 @@ function loadMemberDashboard(user) {
 
     const presensi = appData.presensi.filter(p => p.ID_Anggota === user.id);
     const hadir = presensi.filter(p => p.Status_Kehadiran === 'Hadir');
-    const totalHadir = hadir.length;
-    const totalPoin = presensi.reduce((sum, p) => sum + (parseInt(p.Poin) || 0), 0);
-    const persen = presensi.length > 0 ? Math.round((totalHadir / presensi.length) * 100) : 0;
-    document.getElementById('statHadir').textContent = totalHadir;
+    document.getElementById('statHadir').textContent = hadir.length;
+    const totalPoin = presensi.reduce((s, p) => s + (parseInt(p.Poin) || 0), 0);
     document.getElementById('statPoin').textContent = totalPoin;
+    const persen = presensi.length > 0 ? Math.round((hadir.length / presensi.length) * 100) : 0;
     document.getElementById('statPersen').textContent = persen + '%';
 
     const sorted = [...presensi].sort((a, b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin)).slice(0, 20);
@@ -1322,7 +1375,6 @@ async function prosesScanAdmin() {
         isProcessing = false;
         return;
     }
-    // Cek sudah check-in hari ini
     const todayStr = new Date().toISOString().slice(0, 10);
     const existing = appData.presensi.find(p => p.ID_Anggota === input && p.Tanggal_Checkin === todayStr);
     if (existing) {
@@ -1873,7 +1925,7 @@ document.getElementById('formTambahPoin').addEventListener('submit', async funct
 });
 
 // ================================================================
-// INISIALISASI
+// INISIALISASI & CACHE
 // ================================================================
 async function initSystem() {
     if (!confirm('RESET SEMUA DATA? Tindakan ini tidak dapat dibatalkan!')) return;
@@ -1885,52 +1937,17 @@ async function initSystem() {
     location.reload();
 }
 
-async function seedDummyData() {
-    if (appData.anggota.length > 0) {
-        if (!confirm('Data sudah ada. Tambahkan data dummy? (tidak akan menghapus data existing)')) return;
-    }
-    const names = ['Ahmad Fauzi', 'Siti Rahma', 'Rizky Pratama', 'Dewi Lestari', 'Budi Santoso', 'Ani Wijaya', 'Eko Prasetyo', 'Rina Sari'];
-    const alamat = ['Jl. Merdeka No.1', 'Jl. Sudirman No.2', 'Jl. Gatot Subroto No.3', 'Jl. Ahmad Yani No.4'];
-    const statuses = ['Aktif', 'Aktif', 'Sementara', 'Aktif', 'Nonaktif', 'Aktif', 'Sementara', 'Aktif'];
-    for (let i = 0; i < 8; i++) {
-        await callApi('addAnggota', {
-            nama_lengkap: names[i % names.length] + (i > 3 ? ' ' + (i + 1) : ''),
-            alamat: alamat[i % alamat.length],
-            status: statuses[i % statuses.length]
-        });
-    }
-    const today = new Date().toISOString().slice(0, 10);
-    const kegiatanData = [
-        { nama_kegiatan: 'Rapat Rutin', tanggal: today, tempat: 'Aula Utama', status: 'Aktif' },
-        { nama_kegiatan: 'Kerja Bakti', tanggal: today, tempat: 'Lapangan', status: 'Aktif' },
-        { nama_kegiatan: 'Pelatihan Kepemimpinan', tanggal: today, tempat: 'Ruang Serbaguna', status: 'Aktif' },
-    ];
-    for (const k of kegiatanData) {
-        await callApi('addKegiatan', k);
-    }
-    toast('Data dummy berhasil ditambahkan!', 'success');
-    await refreshAllData();
-    renderAdminDashboard();
-    renderAnggota();
-    renderKegiatan();
-    renderPresensi();
-    renderLaporanAnggota();
-    renderLaporanKegiatan();
-    renderLaporanBulanan();
-    if (currentUser && currentUser.role !== 'admin') loadMemberDashboard(currentUser);
-}
-
 function clearCacheFrontend() {
-    if (!confirm('Hapus semua cache lokal dan refresh data?')) return;
+    if (!confirm('Hapus cache lokal dan refresh data dari server?')) return;
     localStorage.removeItem('appData');
     refreshAllData().then(() => {
         toast('Cache dihapus! Data terbaru dimuat.', 'success');
-        if (currentUser.role === 'admin') {
+        if (currentUser && currentUser.role === 'admin') {
             renderAdminDashboard();
             renderAnggota();
             renderKegiatan();
             renderPresensi();
-        } else {
+        } else if (currentUser) {
             loadMemberDashboard(currentUser);
         }
     });
@@ -1940,20 +1957,28 @@ function clearCacheFrontend() {
 // BOOT
 // ================================================================
 (async function boot() {
+    await refreshAllData();
     const saved = localStorage.getItem('currentUser');
     if (saved) {
         try {
             currentUser = JSON.parse(saved);
-            await refreshAllData();
-            document.getElementById('landingPage').style.display = 'none';
-            document.getElementById('dashboardApp').style.display = 'block';
-            initApp(currentUser);
+            const userExists = appData.anggota.some(a => a.ID_Anggota === currentUser.id);
+            if (!userExists) {
+                localStorage.removeItem('currentUser');
+                currentUser = null;
+            }
         } catch (e) {
             localStorage.removeItem('currentUser');
         }
+    }
+    if (currentUser) {
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('dashboardApp').style.display = 'block';
+        initApp(currentUser);
     } else {
         document.getElementById('landingPage').style.display = 'block';
         document.getElementById('dashboardApp').style.display = 'none';
+        renderLandingStats();
     }
     console.log('🟢 Karang Taruna System loaded');
     console.log('📦 Data:', appData.anggota.length, 'anggota,', appData.kegiatan.length, 'kegiatan,', appData.presensi.length, 'presensi');
