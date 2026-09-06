@@ -716,7 +716,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- ============================================================ JAVASCRIPT ============================================================ -->
-    <script>
+   <script>
         // ================================================================
         // KONFIGURASI & STATE
         // ================================================================
@@ -727,7 +727,7 @@
         let scanState = { idKegiatan: null, namaKegiatan: null, mode: 'kamera', html5QrCode: null };
 
         // ================================================================
-        // ESCAPING (anti-XSS) — WAJIB dipakai untuk semua data pengguna yang dirender ke innerHTML
+        // ESCAPING (anti-XSS)
         // ================================================================
         function esc(val) {
             if (val === null || val === undefined) return '';
@@ -735,7 +735,7 @@
         }
 
         // ================================================================
-        // AUDIO: beep berbeda untuk berhasil / gagal / sudah check-in
+        // AUDIO BEEP
         // ================================================================
         let audioCtx = null;
         function beep(type) {
@@ -760,11 +760,11 @@
                     osc.stop(t + seg.d);
                     t += seg.d;
                 });
-            } catch (e) { /* audio tidak tersedia, abaikan */ }
+            } catch (e) { /* abaikan */ }
         }
 
         // ================================================================
-        // API HELPER — adminId disisipkan otomatis ke setiap request
+        // API HELPER
         // ================================================================
         async function callApi(action, data = {}) {
             try {
@@ -824,8 +824,6 @@
 
             currentUser = { id: result.data.id_anggota, nama: result.data.nama, role: result.data.role || 'member', status: result.data.status || 'Aktif' };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            // Data dimuat dulu SEBELUM modal ditutup (spinner tetap terlihat di modal),
-            // supaya tidak ada jeda "kembali ke landing page" sebelum dashboard tampil.
             await refreshAllData();
             closeLoginModal();
             initApp(currentUser);
@@ -905,47 +903,66 @@
         const VIEW_MAP = { memberDash: 'viewMemberDash', adminDash: 'viewAdminDash', kelolaAnggota: 'viewKelolaAnggota', approval: 'viewApproval', kelolaKegiatan: 'viewKelolaKegiatan', kelolaPresensi: 'viewKelolaPresensi', laporan: 'viewLaporan', tambahPoin: 'viewTambahPoin', inisialisasi: 'viewInisialisasi', profilAnggota: 'viewProfilAnggota' };
         const VIEW_TITLES = { memberDash: 'Dashboard Anggota', adminDash: 'Dashboard Admin', kelolaAnggota: 'Kelola Anggota', approval: 'Persetujuan Anggota', kelolaKegiatan: 'Kelola Kegiatan', kelolaPresensi: 'Kelola Presensi', laporan: 'Laporan & Rekap', tambahPoin: 'Sesuaikan Poin', inisialisasi: 'Inisialisasi Sistem', profilAnggota: 'Profil Anggota' };
 
+        // ================================================================
+        // NAVIGATE — DIPERBAIKI dengan pengecekan null
+        // ================================================================
         function navigateTo(view) {
+            // Sembunyikan semua view
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             const el = document.getElementById(VIEW_MAP[view]);
             if (el) el.classList.add('active');
+
+            // Update menu aktif
             document.querySelectorAll('.sidebar-menu .menu-item').forEach(m => m.classList.remove('active'));
             const menuItem = document.querySelector(`.sidebar-menu .menu-item[data-view="${view}"]`);
             if (menuItem) menuItem.classList.add('active');
-            document.getElementById('pageTitle').textContent = VIEW_TITLES[view] || 'Dashboard';
-            document.getElementById('pageSub').textContent = '';
 
+            // Update judul halaman dengan pengecekan null
+            const titleEl = document.getElementById('pageTitle');
+            const subEl = document.getElementById('pageSub');
+            if (titleEl) titleEl.textContent = VIEW_TITLES[view] || 'Dashboard';
+            if (subEl) subEl.textContent = '';
+
+            // Render view yang sesuai
             if (view === 'adminDash') renderAdminDashboard();
             if (view === 'kelolaAnggota') renderAnggota();
             if (view === 'approval') renderApproval();
             if (view === 'kelolaKegiatan') renderKegiatan();
             if (view === 'kelolaPresensi') renderPresensi();
-            if (view === 'laporan') { renderLaporanPeriode(); renderLaporanKegiatan(); renderLaporanBulanan(); }
+            if (view === 'laporan') {
+                renderLaporanPeriode();
+                renderLaporanKegiatan();
+                renderLaporanBulanan();
+            }
             if (view === 'tambahPoin') populatePoinAnggota();
             if (view === 'memberDash' && currentUser) loadMemberDashboard(currentUser);
         }
 
         // ================================================================
-        // REFRESH DATA & LANDING STATS
+        // REFRESH DATA — menggunakan getAllData (satu endpoint)
         // ================================================================
         async function refreshAllData() {
-  try {
-    const res = await callApi('getAllData');
-    if (res.success) {
-      appData.anggota   = res.data.anggota || [];
-      appData.kegiatan  = res.data.kegiatan || [];
-      appData.presensi  = res.data.presensi || [];
-      appData.kontribusi = res.data.kontribusi || []; // tambahkan state ini
-      renderLandingStats();
-      return true;
-    }
-    return false;
-  } catch (err) {
-    console.error(err);
-    toast('Gagal memuat data.', 'error');
-    return false;
-  }
-}
+            try {
+                const res = await callApi('getAllData');
+                if (res.success) {
+                    appData.anggota   = res.data.anggota || [];
+                    appData.kegiatan  = res.data.kegiatan || [];
+                    appData.presensi  = res.data.presensi || [];
+                    appData.kontribusi = res.data.kontribusi || [];
+                    renderLandingStats();
+                    return true;
+                }
+                return false;
+            } catch (err) {
+                console.error(err);
+                toast('Gagal memuat data.', 'error');
+                return false;
+            }
+        }
+
+        // ================================================================
+        // LANDING STATS
+        // ================================================================
         function renderLandingStats() {
             const anggota = appData.anggota.filter(a => a.Status === 'Aktif' || a.Status === 'Sementara');
             const kegiatan = appData.kegiatan.filter(k => k.Status === 'Aktif');
@@ -1004,9 +1021,9 @@
         }
 
         // ================================================================
-        // MEMBER DASHBOARD
+        // MEMBER DASHBOARD — DIPERBAIKI: hitung dari appData lokal
         // ================================================================
-        async function loadMemberDashboard(user) {
+        function loadMemberDashboard(user) {
             const anggota = appData.anggota.find(a => a.ID_Anggota === user.id);
             if (!anggota) return;
             document.getElementById('memberName').textContent = anggota.Nama_Lengkap;
@@ -1023,6 +1040,7 @@
             const persen = presensi.length > 0 ? Math.round((hadir.length / presensi.length) * 100) : 0;
             document.getElementById('statPersen').textContent = persen + '%';
 
+            // Riwayat kehadiran
             const riwayat = document.getElementById('riwayatTable');
             const sorted = [...presensi].sort((a, b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin)).slice(0, 20);
             riwayat.innerHTML = sorted.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat</td></tr>' : sorted.map(p => `
@@ -1030,16 +1048,16 @@
                 <td><span class="badge-status ${esc((p.Status_Kehadiran || 'alfa').toLowerCase())}">${esc(p.Status_Kehadiran || 'Alfa')}</span></td>
                 <td class="poin-value ${(parseInt(p.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(p.Poin)}</td></tr>`).join('');
 
-            // Riwayat & total poin lifetime (dari kontribusi, sesuai keputusan: selalu lifetime)
-            const histori = await callApi('getKontribusiHistori', { id_anggota: user.id });
-            if (histori.success) {
-                document.getElementById('statPoin').textContent = histori.data.total;
-                const tbody = document.getElementById('riwayatPoinTable');
-                const rows = histori.data.riwayat;
-                tbody.innerHTML = rows.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat poin</td></tr>' : rows.map(k => `
-                    <tr><td>${esc(k.Tanggal)}</td><td>${esc(k.Jenis)}</td><td>${esc(k.Keterangan)}</td>
-                    <td class="poin-value ${(parseInt(k.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(k.Poin)}</td></tr>`).join('');
-            }
+            // Total poin dan riwayat poin dari kontribusi (lokal)
+            const histori = appData.kontribusi.filter(k => k.ID_Anggota === user.id);
+            const totalPoin = histori.reduce((s, k) => s + (parseInt(k.Poin) || 0), 0);
+            document.getElementById('statPoin').textContent = totalPoin;
+
+            const tbody = document.getElementById('riwayatPoinTable');
+            const rows = histori.sort((a, b) => (b.Tanggal || '').localeCompare(a.Tanggal || ''));
+            tbody.innerHTML = rows.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat poin</td></tr>' : rows.map(k => `
+                <tr><td>${esc(k.Tanggal)}</td><td>${esc(k.Jenis)}</td><td>${esc(k.Keterangan)}</td>
+                <td class="poin-value ${(parseInt(k.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(k.Poin)}</td></tr>`).join('');
         }
 
         function kegiatanNama(id) { const k = appData.kegiatan.find(x => String(x.ID_Kegiatan) === String(id)); return k ? k.Nama_Kegiatan : (id || '-'); }
@@ -1080,7 +1098,7 @@
         }
 
         // ================================================================
-        // SCAN KARTU — 2 LANGKAH: PILIH KEGIATAN -> SCANNER (KAMERA/MANUAL) -> HASIL
+        // SCAN
         // ================================================================
         function showScanStep(step) {
             document.querySelectorAll('.scan-step').forEach(s => s.classList.remove('active'));
@@ -1191,17 +1209,20 @@
         document.getElementById('scanModal').addEventListener('click', function (e) { if (e.target === this) closeScanModal(); });
 
         // ================================================================
-        // ADMIN DASHBOARD
+        // ADMIN DASHBOARD — DIPERBAIKI: hitung dari appData lokal
         // ================================================================
-        async function renderAdminDashboard() {
-            const stats = await callApi('getDashboardStats');
-            if (stats.success && stats.data) {
-                document.getElementById('adminTotalAnggota').textContent = stats.data.totalAnggota || 0;
-                document.getElementById('adminTotalHadir').textContent = stats.data.totalKehadiran || 0;
-                document.getElementById('adminTotalAlfa').textContent = stats.data.totalAlfa || 0;
-                document.getElementById('adminTotalPoin').textContent = stats.data.totalPoin || 0;
-                document.getElementById('adminPendingApproval').textContent = stats.data.pendingApproval || 0;
-            }
+        function renderAdminDashboard() {
+            const anggotaAktif = appData.anggota.filter(a => a.Status === 'Aktif' || a.Status === 'Sementara');
+            const totalHadir = appData.presensi.filter(p => p.Status_Kehadiran === 'Hadir').length;
+            const totalAlfa = appData.presensi.filter(p => p.Status_Kehadiran === 'Alfa').length;
+            const totalPoin = appData.kontribusi.reduce((s, k) => s + (parseInt(k.Poin, 10) || 0), 0);
+            const pendingApproval = appData.anggota.filter(a => a.Status === 'Pending').length;
+
+            document.getElementById('adminTotalAnggota').textContent = anggotaAktif.length;
+            document.getElementById('adminTotalHadir').textContent = totalHadir;
+            document.getElementById('adminTotalAlfa').textContent = totalAlfa;
+            document.getElementById('adminTotalPoin').textContent = totalPoin;
+            document.getElementById('adminPendingApproval').textContent = pendingApproval;
         }
 
         // ================================================================
@@ -1243,7 +1264,6 @@
         // KELOLA ANGGOTA (CRUD)
         // ================================================================
         function totalPoinAnggota(id) {
-            // dihitung sederhana dari presensi (cepat, tanpa panggilan tambahan); untuk histori lengkap lihat profil
             return appData.presensi.filter(p => p.ID_Anggota === id).reduce((s, p) => s + (parseInt(p.Poin) || 0), 0);
         }
 
@@ -1365,9 +1385,11 @@
             const data = appData.anggota.find(a => a.ID_Anggota === id);
             if (!data) return;
             navigateTo('profilAnggota');
-            const histori = await callApi('getKontribusiHistori', { id_anggota: id });
-            const totalPoin = histori.success ? histori.data.total : 0;
-            const riwayatPoin = histori.success ? histori.data.riwayat : [];
+
+            // Hitung dari data lokal
+            const histori = appData.kontribusi.filter(k => k.ID_Anggota === id);
+            const totalPoin = histori.reduce((s, k) => s + (parseInt(k.Poin, 10) || 0), 0);
+            const riwayatPoin = histori.sort((a, b) => (b.Tanggal || '').localeCompare(a.Tanggal || ''));
             const presensi = appData.presensi.filter(p => p.ID_Anggota === id);
             const hadir = presensi.filter(p => p.Status_Kehadiran === 'Hadir').length;
             const persen = presensi.length > 0 ? Math.round((hadir / presensi.length) * 100) : 0;
@@ -1517,7 +1539,7 @@
         }
 
         // ================================================================
-        // LAPORAN (periode manual, default lifetime)
+        // LAPORAN
         // ================================================================
         async function renderLaporanPeriode() {
             const dateFrom = document.getElementById('periodeDari').value || null;
@@ -1567,7 +1589,7 @@
         }
 
         // ================================================================
-        // SESUAIKAN POIN (input tunggal, boleh negatif)
+        // SESUAIKAN POIN
         // ================================================================
         function populatePoinAnggota() {
             const sel = document.getElementById('poinAnggota');
@@ -1642,6 +1664,6 @@
             }
             console.log('🟢 Karang Taruna BONKAR-IN v6.0 loaded —', appData.anggota.length, 'anggota,', appData.kegiatan.length, 'kegiatan,', appData.presensi.length, 'presensi');
         })();
-    </script>
+</script>
 </body>
 </html>
