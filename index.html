@@ -723,7 +723,7 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycbwL9TUWLSofZyY42mArn4Z61fsFJKLVGDK6GDpk5j5PX-89QvxNj5a2tSnBlbQkj91ByA/exec';
         let currentUser = null;
         let isProcessing = false;
-        let appData = { anggota: [], kegiatan: [], presensi: [] };
+        let appData = { anggota: [], kegiatan: [], presensi: [], kontribusi: [] };
         let scanState = { idKegiatan: null, namaKegiatan: null, mode: 'kamera', html5QrCode: null };
 
         // ================================================================
@@ -824,8 +824,10 @@
 
             currentUser = { id: result.data.id_anggota, nama: result.data.nama, role: result.data.role || 'member', status: result.data.status || 'Aktif' };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            closeLoginModal();
+            // Data dimuat dulu SEBELUM modal ditutup (spinner tetap terlihat di modal),
+            // supaya tidak ada jeda "kembali ke landing page" sebelum dashboard tampil.
             await refreshAllData();
+            closeLoginModal();
             initApp(currentUser);
             toast(`Selamat datang, ${currentUser.nama}!`, 'success');
         });
@@ -927,20 +929,23 @@
         // REFRESH DATA & LANDING STATS
         // ================================================================
         async function refreshAllData() {
-            try {
-                const [anggotaRes, kegiatanRes, presensiRes] = await Promise.all([callApi('getAnggota'), callApi('getKegiatan'), callApi('getPresensi')]);
-                if (anggotaRes.success) appData.anggota = anggotaRes.data || [];
-                if (kegiatanRes.success) appData.kegiatan = kegiatanRes.data || [];
-                if (presensiRes.success) appData.presensi = presensiRes.data || [];
-                renderLandingStats();
-                return true;
-            } catch (err) {
-                console.error('Refresh data error:', err);
-                toast('Gagal memuat data. Periksa koneksi internet.', 'error');
-                return false;
-            }
-        }
-
+  try {
+    const res = await callApi('getAllData');
+    if (res.success) {
+      appData.anggota   = res.data.anggota || [];
+      appData.kegiatan  = res.data.kegiatan || [];
+      appData.presensi  = res.data.presensi || [];
+      appData.kontribusi = res.data.kontribusi || []; // tambahkan state ini
+      renderLandingStats();
+      return true;
+    }
+    return false;
+  } catch (err) {
+    console.error(err);
+    toast('Gagal memuat data.', 'error');
+    return false;
+  }
+}
         function renderLandingStats() {
             const anggota = appData.anggota.filter(a => a.Status === 'Aktif' || a.Status === 'Sementara');
             const kegiatan = appData.kegiatan.filter(k => k.Status === 'Aktif');
