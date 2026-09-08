@@ -102,25 +102,26 @@
         .sidebar-brand .brand-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent), var(--accent-light)); color: #fff; font-size: 18px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
         .sidebar-brand .brand-text { font-weight: 700; font-size: 18px; color: #fff; }
         .sidebar-brand .brand-text span { color: var(--accent); }
-        .sidebar-menu { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 4px 0; }
-        .sidebar-menu .menu-label { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.6px; padding: 12px 12px 6px 12px; }
-        .sidebar-menu .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--radius-sm); color: rgba(255,255,255,0.7); font-weight: 500; font-size: 14px; transition: var(--transition); background: transparent; width: 100%; text-align: left; position: relative; }
-        .sidebar-menu .menu-item i { width: 20px; font-size: 16px; color: rgba(255,255,255,0.5); transition: var(--transition); }
+        .sidebar-menu { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 4px 0; }
+        .sidebar-menu .menu-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.6px; padding: 10px 12px 4px 12px; }
+        .sidebar-menu .menu-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-sm); color: rgba(255,255,255,0.7); font-weight: 500; font-size: 13px; transition: var(--transition); background: transparent; width: 100%; text-align: left; position: relative; }
+        .sidebar-menu .menu-item i { width: 18px; font-size: 14px; color: rgba(255,255,255,0.5); transition: var(--transition); }
         .sidebar-menu .menu-item:hover { background: var(--sidebar-hover); color: #fff; }
         .sidebar-menu .menu-item:hover i { color: #fff; }
         .sidebar-menu .menu-item.active { background: rgba(245,176,65,0.15); color: var(--accent); font-weight: 600; }
         .sidebar-menu .menu-item.active i { color: var(--accent); }
-        .sidebar-menu .menu-item .badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 50px; }
+        .sidebar-menu .menu-item .badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 10px; font-weight: 600; padding: 1px 8px; border-radius: 50px; }
         .sidebar-menu .menu-item .badge.pulse { animation: pulseBadge 1.6s infinite; }
         @keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
         .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px; margin-top: 4px; }
 
         .main-content { margin-left: var(--sidebar-width); flex: 1; min-height: 100vh; padding: 24px 32px 32px 32px; transition: margin 0.3s ease; }
         .topbar { display: flex; align-items: center; justify-content: space-between; padding: 8px 0 20px 0; flex-wrap: wrap; gap: 12px; }
-        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .topbar-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .topbar-left .hamburger { display: none; background: none; font-size: 22px; color: var(--text-primary); padding: 4px; }
-        .topbar-left h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
+        .topbar-left h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .topbar-left h1 small { font-weight: 400; font-size: 14px; color: var(--text-muted); margin-left: 8px; }
+        .topbar-left .btn-refresh { font-size: 13px; padding: 4px 14px; margin-left: 4px; }
         .topbar-right { display: flex; align-items: center; gap: 14px; position: relative; }
         .topbar-right .user-badge {
             display: flex;
@@ -353,7 +354,22 @@
         .scan-mode-toggle { display: flex; gap: 8px; margin-bottom: 14px; }
         .scan-mode-toggle button { flex: 1; padding: 8px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); background: var(--bg); color: var(--text-secondary); font-weight: 600; font-size: 13px; }
         .scan-mode-toggle button.active { background: var(--primary); color: #fff; border-color: var(--primary); }
-        #qrReaderBox { width: 100%; border-radius: var(--radius-sm); overflow: hidden; background: #000; min-height: 240px; }
+        #qrReaderBox { width: 100%; border-radius: var(--radius-sm); overflow: hidden; background: #000; min-height: 240px; position: relative; }
+        .scan-loading-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: var(--radius-sm);
+        }
+        .scan-loading-overlay.active { display: flex; }
+        .scan-loading-overlay .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .scan-loading-overlay .text { color: #fff; margin-top: 10px; font-weight: 500; font-size: 14px; }
+
         .scan-result-box { text-align: center; padding: 24px 16px; border-radius: var(--radius); }
         .scan-result-box.success { background: rgba(39,174,96,0.1); }
         .scan-result-box.error { background: rgba(231,76,60,0.1); }
@@ -411,20 +427,67 @@
             padding: 10px;
             width: 100%;
         }
-        /* QR BESAR */
         #qrCodeBesarContainer img {
             width: 200px;
             height: 200px;
             display: block;
         }
 
-        /* ===== PROFIL DISPLAY ===== */
+        /* ===== PROFIL DISPLAY (KOTAK) ===== */
         #profilFotoDisplay {
+            border-radius: 8px !important;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            color: #fff;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
         }
         #profilFotoDisplay:hover {
             transform: scale(1.02);
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        #fotoPreview {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px !important;
+            background: #e2e9f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            flex-shrink: 0;
+        }
+        #fotoPreview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #fotoPreview #fotoPlaceholder {
+            font-size: 32px;
+            color: var(--text-muted);
+        }
+
+        /* ===== ID PASSWORD MODAL ===== */
+        #passwordModal .password-display .code {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent-dark);
+            letter-spacing: 2px;
+            background: var(--bg);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
         }
 
         /* ===== RESPONSIVE ===== */
@@ -486,7 +549,7 @@
         <header class="navbar">
             <a href="#" class="brand">
                 <div class="brand-icon"><i class="fas fa-users"></i></div>
-                <div class="brand-text">BONKAR-<span>IN</span></div>
+                <div class="brand-text">Karang<span>Taruna</span></div>
             </a>
             <div class="nav-actions">
                 <button class="btn-outline" onclick="openLoginModal()"><i class="fas fa-sign-in-alt" style="margin-right:6px;"></i> Masuk</button>
@@ -522,7 +585,7 @@
             </div>
         </div>
 
-        <footer><i class="fas fa-code" style="margin-right:6px;"></i> Karang Taruna Presensi BONKAR-IN · v6.0</footer>
+        <footer><i class="fas fa-code" style="margin-right:6px;"></i> Karang Taruna Presensi BONKAR-IN · v7.1</footer>
     </div>
 </div>
 
@@ -602,7 +665,6 @@
             <div class="brand-text">Karang<span>Taruna</span></div>
         </div>
         <div class="sidebar-menu" id="sidebarMenu"></div>
-        <!-- SIDEBAR FOOTER TANPA LOGOUT -->
         <div class="sidebar-footer"></div>
     </nav>
 
@@ -610,7 +672,11 @@
         <header class="topbar">
             <div class="topbar-left">
                 <button class="hamburger" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-                <h1 id="pageTitle">Dashboard <small id="pageSub">Ringkasan</small></h1>
+                <h1 id="pageTitle">Dashboard <small id="pageSub">Ringkasan</small>
+                    <button class="btn btn-secondary btn-sm btn-refresh" id="btnRefresh" onclick="refreshWithLoader()" title="Refresh data">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </h1>
             </div>
             <div class="topbar-right">
                 <div class="user-badge" id="userBadge" onclick="toggleDropdown()">
@@ -621,7 +687,6 @@
                     </div>
                     <i class="fas fa-chevron-down dropdown-icon" id="dropdownIcon"></i>
                 </div>
-                <!-- DROPDOWN LOGOUT -->
                 <div class="dropdown-menu" id="dropdownMenu">
                     <div class="item danger" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Keluar
@@ -631,13 +696,12 @@
         </header>
 
         <div class="view-container">
-            <!-- ========== MEMBER DASHBOARD (BERANDA) ========== -->
+            <!-- ========== MEMBER DASHBOARD ========== -->
             <div class="view active" id="viewMemberDash">
                 <div class="card" style="margin-bottom:20px;background:linear-gradient(135deg, #f0f4f9, #e2e9f2);">
                     <div style="font-size:20px;font-weight:600;" id="sambutan">Selamat Datang di Sistem Presensi Karang Taruna</div>
                     <p class="text-muted">Pantau kehadiran dan aktivitas Anda di sini.</p>
                 </div>
-
                 <div class="grid-2" style="margin-bottom:20px;">
                     <div class="card">
                         <div class="card-header"><h3><i class="fas fa-user-circle"></i> Profil Anggota</h3><span class="badge-status hadir" id="memberStatusBadge">Aktif</span></div>
@@ -671,50 +735,36 @@
                         </button>
                     </div>
 
-                    <!-- DISPLAY MODE (dengan foto & ikon) -->
                     <div id="profilDisplay" style="display:block;">
                         <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; background:var(--bg); padding:20px; border-radius:var(--radius-sm);">
-                            <!-- FOTO KIRI -->
                             <div style="flex-shrink:0; text-align:center;">
-                                <div id="profilFotoDisplay" style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg, var(--primary), var(--primary-light)); display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:700; color:#fff; overflow:hidden; background-size:cover; background-position:center; border:3px solid var(--accent); box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+                                <div id="profilFotoDisplay">
                                     U
                                 </div>
                                 <div style="margin-top:8px; font-size:12px; color:var(--text-muted); font-weight:500;">Foto Profil</div>
                             </div>
-
-                            <!-- DATA KANAN -->
                             <div style="flex:1; min-width:200px;">
                                 <div style="display:grid; grid-template-columns:120px 1fr; gap:6px 16px;">
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-id-card" style="width:18px;"></i> ID</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdId">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-user" style="width:18px;"></i> Nama</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdNama">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-user-tag" style="width:18px;"></i> Panggilan</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdPanggilan">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-map-pin" style="width:18px;"></i> Tempat Lahir</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdTempatLahir">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-calendar-alt" style="width:18px;"></i> Tanggal Lahir</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdTanggalLahir">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-home" style="width:18px;"></i> Alamat</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdAlamat">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-pray" style="width:18px;"></i> Agama</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdAgama">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-phone" style="width:18px;"></i> No. HP</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdNoHP">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-envelope" style="width:18px;"></i> Email</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdEmail">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-circle" style="width:18px; color:var(--status-hadir);"></i> Status</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdStatus">-</div>
-
                                     <div style="font-weight:600; color:var(--text-secondary); font-size:13px;"><i class="fas fa-user-shield" style="width:18px;"></i> Role</div>
                                     <div style="font-weight:500; color:var(--text-primary); font-size:13px;" id="pdRole">-</div>
                                 </div>
@@ -722,35 +772,18 @@
                         </div>
                     </div>
 
-                    <!-- EDIT MODE -->
                     <div id="profilEdit" style="display:none;">
-                        <form id="formProfilSaya" style="max-width:600px;">
-                            <div class="form-group"><label>ID Anggota</label><input type="text" id="psId" class="form-control" disabled /></div>
-                            <div class="form-group"><label>Nama Lengkap <span style="color:red;">*</span></label><input type="text" id="psNama" class="form-control" required /></div>
-                            <div class="form-group"><label>Nama Panggilan</label><input type="text" id="psPanggilan" class="form-control" /></div>
-                            <div class="form-row">
-                                <div class="form-group"><label>Tempat Lahir</label><input type="text" id="psTempatLahir" class="form-control" /></div>
-                                <div class="form-group"><label>Tanggal Lahir</label><input type="date" id="psTanggalLahir" class="form-control" /></div>
+                        <form id="formProfilSaya" style="max-width:480px;">
+                            <div class="form-group">
+                                <label>ID Anggota</label>
+                                <input type="text" id="psId" class="form-control" disabled />
                             </div>
-                            <div class="form-group"><label>Alamat</label><select id="psAlamat" class="form-control"></select></div>
-                            <div class="form-group"><label>Agama</label>
-                                <select id="psAgama" class="form-control">
-                                    <option value="">Pilih</option>
-                                    <option value="Islam">Islam</option><option value="Kristen">Kristen</option>
-                                    <option value="Katolik">Katolik</option><option value="Hindu">Hindu</option>
-                                    <option value="Buddha">Buddha</option><option value="Konghucu">Konghucu</option>
-                                    <option value="Lainnya">Lainnya</option>
-                                </select>
-                            </div>
-                            <div class="form-group"><label>No. HP <span style="color:red;">*</span></label><input type="text" id="psNoHP" class="form-control" required /></div>
-                            <div class="form-group"><label>Email</label><input type="email" id="psEmail" class="form-control" /></div>
-                            <!-- Upload Foto -->
                             <div class="form-group">
                                 <label>Foto Profil</label>
                                 <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-                                    <div id="fotoPreview" style="width:80px; height:80px; border-radius:50%; background:#e2e9f2; display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid var(--border); flex-shrink:0;">
-                                        <img id="fotoPreviewImg" src="" alt="Foto" style="width:100%; height:100%; object-fit:cover; display:none;" />
-                                        <span id="fotoPlaceholder" style="font-size:32px; color:var(--text-muted);"><i class="fas fa-user"></i></span>
+                                    <div id="fotoPreview">
+                                        <img id="fotoPreviewImg" src="" alt="Foto" style="display:none;" />
+                                        <span id="fotoPlaceholder"><i class="fas fa-user"></i></span>
                                     </div>
                                     <div>
                                         <input type="file" id="fotoInput" accept="image/*" style="display:none;" onchange="previewFoto(this)" />
@@ -780,7 +813,7 @@
                 </div>
             </div>
 
-            <!-- ========== KARTU & QR CODE (DESAIN FINAL) ========== -->
+            <!-- ========== KARTU & QR CODE ========== -->
             <div class="view" id="viewKartuQr">
                 <div class="card" style="max-width:720px; margin:0 auto;">
                     <div class="card-header"><h3><i class="fas fa-id-card"></i> Kartu Anggota</h3></div>
@@ -792,8 +825,6 @@
                         <button class="btn btn-secondary" onclick="unduhKartu()"><i class="fas fa-download"></i> Unduh Kartu (PNG)</button>
                     </div>
                 </div>
-
-                <!-- QR CODE BESAR -->
                 <div class="card" style="max-width:720px; margin:20px auto 0 auto;">
                     <div class="card-header"><h3><i class="fas fa-qrcode"></i> QR Code untuk Scan</h3></div>
                     <div style="display:flex; flex-direction:column; align-items:center; padding:16px 0;">
@@ -829,7 +860,6 @@
                     <div class="stat-card-dash"><div class="stat-icon red"><i class="fas fa-user-xmark"></i></div><div class="stat-number" id="adminTotalAlfa">0</div><div class="stat-label">Total Alfa</div></div>
                     <div class="stat-card-dash"><div class="stat-icon purple"><i class="fas fa-user-clock"></i></div><div class="stat-number" id="adminPendingApproval">0</div><div class="stat-label">Menunggu Approval</div></div>
                 </div>
-
                 <div class="card" style="margin-bottom:20px;">
                     <div class="card-header"><h3><i class="fas fa-qrcode"></i> Scan Kartu Anggota</h3></div>
                     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
@@ -837,7 +867,6 @@
                         <span class="text-muted" style="font-size:13px;">Pilih kegiatan dulu, lalu scan QR kartu atau input ID manual</span>
                     </div>
                 </div>
-
                 <div class="card">
                     <div class="card-header"><h3><i class="fas fa-chart-bar"></i> Ringkasan Cepat</h3></div>
                     <p class="text-muted">Gunakan menu navigasi di sidebar untuk mengelola anggota, kegiatan, presensi, laporan, dan lainnya.</p>
@@ -907,14 +936,8 @@
                 <div class="card" style="margin-bottom:20px;">
                     <div class="card-header"><h3><i class="fas fa-calendar-week"></i> Rekap Berdasarkan Periode</h3></div>
                     <div style="display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px;">
-                        <div class="form-group" style="margin-bottom:0; flex:1 1 160px;">
-                            <label>Dari Tanggal</label>
-                            <input type="date" id="periodeDari" class="form-control" />
-                        </div>
-                        <div class="form-group" style="margin-bottom:0; flex:1 1 160px;">
-                            <label>Sampai Tanggal</label>
-                            <input type="date" id="periodeSampai" class="form-control" />
-                        </div>
+                        <div class="form-group" style="margin-bottom:0; flex:1 1 160px;"><label>Dari Tanggal</label><input type="date" id="periodeDari" class="form-control" /></div>
+                        <div class="form-group" style="margin-bottom:0; flex:1 1 160px;"><label>Sampai Tanggal</label><input type="date" id="periodeSampai" class="form-control" /></div>
                         <button class="btn btn-primary" onclick="goToPageAnggota(1)"><i class="fas fa-search"></i> Tampilkan</button>
                         <button class="btn btn-secondary" onclick="resetPeriode()"><i class="fas fa-rotate-left"></i> Semua</button>
                         <div style="display:flex; gap:8px; margin-left:auto;">
@@ -923,31 +946,20 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="card" style="margin-bottom:20px;">
-                    <div class="card-header">
-                        <h3><i class="fas fa-ranking-star"></i> Rekap Per Anggota</h3>
-                        <span class="text-muted" style="font-size:13px;" id="infoAnggota"></span>
-                    </div>
+                    <div class="card-header"><h3><i class="fas fa-ranking-star"></i> Rekap Per Anggota</h3><span class="text-muted" style="font-size:13px;" id="infoAnggota"></span></div>
                     <div class="table-wrap"><table><thead><tr><th>Nama</th><th>Hadir</th><th>Alfa</th><th>%</th><th>Poin</th></tr></thead><tbody id="laporanAnggotaTable"></tbody></table></div>
                     <div id="paginationAnggota" class="pagination"></div>
                 </div>
-
                 <div class="card" style="margin-bottom:20px;">
-                    <div class="card-header">
-                        <h3><i class="fas fa-calendar-alt"></i> Rekap Per Kegiatan</h3>
-                        <div style="display:flex; gap:8px;">
-                            <span class="text-muted" style="font-size:13px;" id="infoKegiatan"></span>
-                            <button class="btn btn-secondary btn-sm" onclick="exportLaporan('kegiatan','both')"><i class="fas fa-download"></i> Export</button>
-                        </div>
+                    <div class="card-header"><h3><i class="fas fa-calendar-alt"></i> Rekap Per Kegiatan</h3>
+                        <div style="display:flex; gap:8px;"><span class="text-muted" style="font-size:13px;" id="infoKegiatan"></span><button class="btn btn-secondary btn-sm" onclick="exportLaporan('kegiatan','both')"><i class="fas fa-download"></i> Export</button></div>
                     </div>
                     <div class="table-wrap"><table><thead><tr><th>Kegiatan</th><th>Tanggal</th><th>Hadir</th></tr></thead><tbody id="laporanKegiatanTable"></tbody></table></div>
                     <div id="paginationKegiatan" class="pagination"></div>
                 </div>
-
                 <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-line"></i> Laporan Bulanan</h3>
+                    <div class="card-header"><h3><i class="fas fa-chart-line"></i> Laporan Bulanan</h3>
                         <button class="btn btn-secondary btn-sm" onclick="exportLaporan('bulanan','both')"><i class="fas fa-download"></i> Export</button>
                     </div>
                     <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
@@ -962,7 +974,7 @@
             <div class="view" id="viewTambahPoin">
                 <div class="card">
                     <div class="card-header"><h3><i class="fas fa-star-half-stroke"></i> Sesuaikan Poin Anggota</h3></div>
-                    <p class="text-muted mb-2">Gunakan tombol +/- atau ketik langsung. Nilai positif menambah poin, nilai negatif mengurangi (misalnya untuk pelanggaran).</p>
+                    <p class="text-muted mb-2">Gunakan tombol +/- atau ketik langsung. Nilai positif menambah poin, nilai negatif mengurangi.</p>
                     <form id="formTambahPoin" style="max-width:480px;">
                         <div class="form-group">
                             <label>Pilih Anggota</label>
@@ -972,7 +984,6 @@
                                 <div id="poinSuggestions" class="suggestions"></div>
                             </div>
                         </div>
-
                         <div id="poinAnggotaInfo" style="display:none; background:var(--bg); padding:12px 16px; border-radius:var(--radius-sm); margin-bottom:16px;">
                             <div style="display:flex; flex-wrap:wrap; gap:16px;">
                                 <div><span style="font-weight:600; color:var(--text-secondary);">Nama:</span> <span id="poinInfoNama">-</span></div>
@@ -980,7 +991,6 @@
                                 <div><span style="font-weight:600; color:var(--text-secondary);">Total Poin Saat Ini:</span> <span id="poinInfoTotal" style="font-weight:700; color:var(--accent-dark);">0</span></div>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label>Jumlah Poin (boleh negatif)</label>
                             <div class="stepper-input">
@@ -998,8 +1008,13 @@
 
             <!-- ========== INISIALISASI ========== -->
             <div class="view" id="viewInisialisasi">
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="card-header"><h3><i class="fas fa-rocket"></i> Inisialisasi Sistem (Pertama Kali)</h3></div>
+                    <p class="text-muted" style="margin-bottom:16px;">Jalankan ini <strong>satu kali saja</strong> saat Spreadsheet masih kosong — membuat semua sheet (anggota, kegiatan, presensi, kontribusi, config, log, alamat) beserta header kolomnya. Jika sistem sudah pernah diinisialisasi, aksi ini otomatis ditolak server (aman diklik berkali-kali).</p>
+                    <button class="btn btn-primary" onclick="openInitModal()"><i class="fas fa-rocket"></i> Inisialisasi Sistem</button>
+                </div>
                 <div class="card">
-                    <div class="card-header"><h3><i class="fas fa-database"></i> Inisialisasi Sistem</h3></div>
+                    <div class="card-header"><h3><i class="fas fa-database"></i> Reset & Pemeliharaan</h3></div>
                     <p class="text-muted" style="margin-bottom:16px;">Hapus semua data dan reset sistem ke kondisi awal. Tindakan ini tidak dapat dibatalkan! Pastikan Anda sudah melakukan backup data di Google Sheets.</p>
                     <div style="display:flex;gap:12px;flex-wrap:wrap;">
                         <button class="btn btn-danger" onclick="openResetModal()"><i class="fas fa-trash-alt"></i> Reset Semua Data</button>
@@ -1026,14 +1041,12 @@
         <button class="modal-close" onclick="closeScanModal()"><i class="fas fa-xmark"></i></button>
         <div class="scan-step active" id="scanStepKegiatan">
             <h2><i class="fas fa-calendar-check"></i> Pilih Kegiatan</h2>
-            <p class="sub">Pilih kegiatan yang sedang berlangsung sebelum mulai scan, supaya presensi tidak salah tercatat.</p>
+            <p class="sub">Pilih kegiatan yang sedang berlangsung sebelum mulai scan.</p>
             <div class="scan-kegiatan-list" id="scanKegiatanList"></div>
         </div>
         <div class="scan-step" id="scanStepScanner">
             <h2><i class="fas fa-qrcode"></i> Scan Kartu Anggota</h2>
             <div class="scan-kegiatan-badge" id="scanKegiatanBadge"><i class="fas fa-calendar-day"></i> <span></span></div>
-
-            <!-- DROPDOWN STATUS KEHADIRAN -->
             <div style="margin-bottom:12px;">
                 <label style="font-size:13px; font-weight:600; color:var(--text-secondary);">Status Kehadiran</label>
                 <select id="scanStatus" class="form-control" style="width:100%; padding:8px 12px;">
@@ -1043,12 +1056,18 @@
                     <option value="Sakit">Sakit</option>
                 </select>
             </div>
-
             <div class="scan-mode-toggle">
                 <button type="button" id="btnModeKamera" class="active" onclick="switchScanMode('kamera')"><i class="fas fa-camera"></i> Kamera</button>
                 <button type="button" id="btnModeManual" onclick="switchScanMode('manual')"><i class="fas fa-keyboard"></i> Manual</button>
             </div>
-            <div id="qrReaderBox"></div>
+            <div id="qrReaderBox">
+                <div class="scan-loading-overlay" id="scanLoader">
+                    <div style="display:flex; flex-direction:column; align-items:center;">
+                        <div class="spinner"></div>
+                        <div class="text">Memproses...</div>
+                    </div>
+                </div>
+            </div>
             <div class="scan-area hidden" id="scanManualBox">
                 <div style="font-size:36px;color:var(--text-muted);"><i class="fas fa-id-card"></i></div>
                 <p>Ketik ID Anggota</p>
@@ -1080,7 +1099,7 @@
         <button class="modal-close" onclick="closeResetModal()"><i class="fas fa-xmark"></i></button>
         <div class="warning-icon"><i class="fas fa-triangle-exclamation"></i></div>
         <h2 style="text-align:center; color:#e74c3c;">Peringatan Kritis!</h2>
-        <p class="sub text-center" style="margin-bottom:20px;">Anda akan <strong>MENGHAPUS SELURUH DATA</strong> (Anggota, Kegiatan, Presensi, dan lainnya). Tindakan ini <strong>tidak dapat dibatalkan</strong>!</p>
+        <p class="sub text-center" style="margin-bottom:20px;">Anda akan <strong>MENGHAPUS SELURUH DATA</strong>. Tindakan ini <strong>tidak dapat dibatalkan</strong>!</p>
         <div class="form-group" style="background: rgba(231,76,60,0.06); padding: 16px; border-radius: var(--radius-sm);">
             <label style="color: #c0392b; text-align: center; display:block;">Ketik <strong>RESET</strong> di bawah ini untuk melanjutkan</label>
             <input type="text" id="resetConfirmInput" class="form-control reset-input" placeholder="RESET" oninput="validateResetInput()" />
@@ -1092,6 +1111,41 @@
     </div>
 </div>
 
+<!-- ========================== INISIALISASI CONFIRM MODAL ========================== -->
+<div class="modal-overlay" id="initModal">
+    <div class="modal-box" style="max-width:480px;">
+        <button class="modal-close" onclick="closeInitModal()"><i class="fas fa-xmark"></i></button>
+        <div style="font-size:44px; color:var(--primary); text-align:center; margin-bottom:12px;"><i class="fas fa-rocket"></i></div>
+        <h2 style="text-align:center;">Inisialisasi Sistem</h2>
+        <p class="sub text-center">Jalankan ini <strong>satu kali saja</strong> saat Spreadsheet masih kosong — membuat semua sheet beserta header kolomnya. Jika sistem sudah pernah diinisialisasi, aksi ini akan ditolak otomatis oleh server.</p>
+        <div style="display:flex; gap:12px; margin-top:20px;">
+            <button class="btn btn-secondary w-full" style="justify-content:center; padding:12px;" onclick="closeInitModal()">Batal</button>
+            <button class="btn btn-primary w-full" style="justify-content:center; padding:12px;" onclick="executeInitializeSystem()"><i class="fas fa-check"></i> Jalankan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========================== ID & PASSWORD MODAL ========================== -->
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-box password-modal" style="max-width:440px;">
+        <button class="modal-close" onclick="closePasswordModal()"><i class="fas fa-xmark"></i></button>
+        <h2 style="text-align:center;" id="passwordModalTitle">Akun Berhasil Dibuat</h2>
+        <div style="text-align:center; padding:12px 0;" id="passwordModalBody">
+            <div style="font-size:14px; color:var(--text-secondary);" id="passwordModalMessage">Simpan data berikut:</div>
+            <div style="margin-top:12px; background:var(--bg); padding:16px; border-radius:var(--radius-sm);">
+                <div style="font-size:12px; color:var(--text-muted);">ID Anggota</div>
+                <div id="passwordModalId" style="font-size:24px; font-weight:700; color:var(--primary);">-</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Password</div>
+                <div id="passwordModalPassword" style="font-size:24px; font-weight:700; color:var(--accent-dark); letter-spacing:2px;">-</div>
+            </div>
+            <p class="text-muted" style="margin-top:12px; font-size:13px;">Bagikan ID dan password ini kepada anggota.</p>
+        </div>
+        <button class="btn btn-primary w-full" onclick="closePasswordModal()" style="justify-content:center; padding:12px;">
+            <i class="fas fa-check"></i> Saya sudah mencatat
+        </button>
+    </div>
+</div>
+
 <!-- ========================== TOAST ========================== -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1100,12 +1154,11 @@
     // ================================================================
     // KONFIGURASI & STATE
     // ================================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwL9TUWLSofZyY42mArn4Z61fsFJKLVGDK6GDpk5j5PX-89QvxNj5a2tSnBlbQkj91ByA/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx9AqEouMcXLjBUBt_3V_9QR2y06O8cscIDBCMwaOXRZ8pO079RzFkVfGrPp4bpM3hN/exec';
     let currentUser = null;
     let isProcessing = false;
     let appData = { anggota: [], kegiatan: [], presensi: [], kontribusi: [] };
     let scanState = { idKegiatan: null, namaKegiatan: null, mode: 'kamera', html5QrCode: null };
-    // Pagination states
     let pageKelolaAnggota = 1, pageKelolaKegiatan = 1, pageKelolaPresensi = 1, pageApproval = 1, pageRiwayatMember = 1;
     let pageAnggota = 1, pageKegiatan = 1;
     const PER_PAGE = 10;
@@ -1113,6 +1166,24 @@
     let poinAnggotaList = [];
     let fotoChanged = false;
     let fotoBase64 = null;
+    let fotoMimeType = 'image/jpeg';
+
+    // ================================================================
+    // INLINE-LOADER HELPER
+    // ================================================================
+    function setButtonLoading(btn, loading, text) {
+        if (!btn) return;
+        if (loading) {
+            btn._originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (text || 'Memproses...');
+        } else {
+            btn.disabled = false;
+            if (btn._originalText) {
+                btn.innerHTML = btn._originalText;
+            }
+        }
+    }
 
     // ================================================================
     // DROPDOWN LOGOUT
@@ -1133,6 +1204,37 @@
     });
 
     // ================================================================
+    // MODAL ID & PASSWORD
+    // ================================================================
+    function showPasswordModal(id, password, title, message) {
+        document.getElementById('passwordModalTitle').textContent = title || 'Akun Berhasil Dibuat';
+        document.getElementById('passwordModalMessage').textContent = message || 'Simpan data berikut untuk diberikan ke anggota:';
+        document.getElementById('passwordModalId').textContent = id || '-';
+        document.getElementById('passwordModalPassword').textContent = password || '-';
+        document.getElementById('passwordModal').classList.add('active');
+    }
+    function closePasswordModal() {
+        document.getElementById('passwordModal').classList.remove('active');
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') { closePasswordModal(); closeResetModal(); closeInitModal(); }
+    });
+
+    // ================================================================
+    // INISIALISASI SISTEM MODAL
+    // ================================================================
+    function openInitModal() { document.getElementById('initModal').classList.add('active'); }
+    function closeInitModal() { document.getElementById('initModal').classList.remove('active'); }
+    async function executeInitializeSystem() {
+        closeInitModal();
+        toast('Menjalankan inisialisasi sistem...', 'warning');
+        const result = await callApi('initializeSystem');
+        if (!result.success) { toast(result.message || 'Inisialisasi gagal (mungkin sistem sudah pernah diinisialisasi).', 'error'); return; }
+        toast(result.message || 'Sistem berhasil diinisialisasi!', 'success');
+        await refreshAllData();
+    }
+
+    // ================================================================
     // RESET CONFIRM MODAL
     // ================================================================
     function openResetModal() {
@@ -1146,15 +1248,17 @@
     }
     function validateResetInput() {
         const input = document.getElementById('resetConfirmInput').value.trim().toUpperCase();
-        const btn = document.getElementById('resetExecuteBtn');
-        btn.disabled = (input !== 'RESET');
+        document.getElementById('resetExecuteBtn').disabled = (input !== 'RESET');
     }
     async function executeReset() {
         const input = document.getElementById('resetConfirmInput').value.trim().toUpperCase();
         if (input !== 'RESET') return;
+        const btn = document.getElementById('resetExecuteBtn');
+        setButtonLoading(btn, true, 'Menghapus...');
         closeResetModal();
         toast('Memulai penghapusan data...', 'warning');
         const result = await callApi('resetAllData');
+        setButtonLoading(btn, false);
         if (!result.success) {
             toast(result.message || 'Gagal menghapus data.', 'error');
             return;
@@ -1173,35 +1277,25 @@
     }
 
     // ================================================================
-    // DATE FORMATTER (DD-MM-YYYY)
+    // DATE FORMATTER
     // ================================================================
     function formatTanggal(iso) {
         if (!iso) return '-';
         try {
             let d = new Date(iso);
             if (isNaN(d.getTime())) return '-';
-            const tgl = String(d.getDate()).padStart(2, '0');
-            const bln = String(d.getMonth() + 1).padStart(2, '0');
-            const thn = d.getFullYear();
-            return `${tgl}-${bln}-${thn}`;
-        } catch (e) { return '-'; }
+            return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear();
+        } catch(e) { return '-'; }
     }
     function formatTanggalWaktu(tanggal, waktu) {
         if (!tanggal) return '-';
         let tgl = formatTanggal(tanggal);
-        if (waktu) return `${tgl} ${waktu}`;
+        if (waktu) return tgl + ' ' + waktu;
         return tgl;
     }
     function formatTanggalLahir(iso) {
         if (!iso) return '-';
-        try {
-            let d = new Date(iso);
-            if (isNaN(d.getTime())) return '-';
-            const tgl = String(d.getDate()).padStart(2, '0');
-            const bln = String(d.getMonth() + 1).padStart(2, '0');
-            const thn = d.getFullYear();
-            return `${tgl}-${bln}-${thn}`;
-        } catch (e) { return '-'; }
+        try { let d = new Date(iso); if (isNaN(d.getTime())) return '-'; return String(d.getDate()).padStart(2,'0') + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + d.getFullYear(); } catch(e) { return '-'; }
     }
 
     // ================================================================
@@ -1226,7 +1320,7 @@
                 osc.stop(t + seg.d);
                 t += seg.d;
             });
-        } catch (e) { /* abaikan */ }
+        } catch(e) {}
     }
 
     // ================================================================
@@ -1237,7 +1331,7 @@
             const payload = { action, data: Object.assign({}, data, { _adminId: currentUser ? currentUser.id : null }) };
             const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
             return await response.json();
-        } catch (err) {
+        } catch(err) {
             console.error('API Error:', err);
             return { success: false, message: 'Gagal terhubung ke server: ' + err.message };
         }
@@ -1249,7 +1343,7 @@
     function toast(msg, type = 'success') {
         const container = document.getElementById('toastContainer');
         const el = document.createElement('div');
-        el.className = `toast ${type}`;
+        el.className = 'toast ' + type;
         el.textContent = msg;
         container.appendChild(el);
         setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(40px)'; setTimeout(() => el.remove(), 400); }, 3200);
@@ -1263,8 +1357,8 @@
         document.getElementById('modalOverlay').classList.add('active');
     }
     function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
-    document.getElementById('modalOverlay').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); closeResetModal(); } });
+    document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); } });
 
     // ================================================================
     // SHOW/HIDE PASSWORD
@@ -1305,7 +1399,7 @@
     function showRegisterInModal() { document.querySelector('#loginForm').style.display = 'none'; document.getElementById('registerFormModal').style.display = 'block'; populateAlamatDropdown('regAlamat'); }
     function showLoginInModal() { document.querySelector('#loginForm').style.display = 'block'; document.getElementById('registerFormModal').style.display = 'none'; }
 
-    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = document.getElementById('loginBtn'), btnText = document.getElementById('loginBtnText'), loader = document.getElementById('loginLoader');
         btn.disabled = true; btnText.style.display = 'none'; loader.style.display = 'inline-block';
@@ -1313,17 +1407,17 @@
         const pass = document.getElementById('loginPassword').value.trim();
         if (!id || !pass) { toast('Harap isi ID dan password!', 'error'); btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none'; return; }
         const result = await callApi('login', { idAnggota: id, password: pass });
-        if (!result.success) { toast(result.message || 'Login gagal!', 'error'); btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none'; return; }
+        btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none';
+        if (!result.success) { toast(result.message || 'Login gagal!', 'error'); return; }
         currentUser = { id: result.data.id_anggota, nama: result.data.nama, role: result.data.role || 'member', status: result.data.status || 'Aktif' };
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
         await refreshAllData();
         closeLoginModal();
         initApp(currentUser);
-        btn.disabled = false; btnText.style.display = 'inline'; loader.style.display = 'none';
-        toast(`Selamat datang, ${currentUser.nama}!`, 'success');
+        toast('Selamat datang, ' + currentUser.nama + '!', 'success');
     });
 
-    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = this.querySelector('button[type="submit"]');
         const originalText = btn.innerHTML;
@@ -1344,7 +1438,7 @@
         const result = await callApi('daftarMandiri', payload);
         if (!result.success) { toast(result.message || 'Registrasi gagal!', 'error'); btn.disabled = false; btn.innerHTML = originalText; return; }
         const d = result.data;
-        toast(`Pendaftaran berhasil! ID: ${d.id}, Password: ${d.password}. Menunggu persetujuan admin.`, 'success');
+        showPasswordModal(d.id, d.password, 'Pendaftaran Berhasil!', 'Akun sudah dibuat, menunggu persetujuan admin.');
         document.getElementById('registerForm').reset();
         showLoginInModal();
         document.getElementById('loginId').value = d.id;
@@ -1354,6 +1448,7 @@
 
     function logout() {
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('lastView');
         currentUser = null;
         document.getElementById('dashboardApp').style.display = 'none';
         document.getElementById('landingPage').style.display = 'block';
@@ -1366,6 +1461,33 @@
     }
 
     // ================================================================
+    // REFRESH WITH LOADER
+    // ================================================================
+    async function refreshWithLoader() {
+        const btn = document.getElementById('btnRefresh');
+        setButtonLoading(btn, true, 'Memuat...');
+        const result = await refreshAllData();
+        setButtonLoading(btn, false);
+        if (result) toast('Data diperbarui!', 'success');
+    }
+
+    async function refreshAllData() {
+        try {
+            const res = await callApi('getAllData');
+            if (res.success) {
+                appData.anggota = res.data.anggota || [];
+                appData.kegiatan = res.data.kegiatan || [];
+                appData.presensi = res.data.presensi || [];
+                appData.kontribusi = res.data.kontribusi || [];
+                renderLandingStats();
+                poinAnggotaList = appData.anggota.filter(a => a.Status === 'Aktif' || a.Status === 'Sementara');
+                return true;
+            }
+            return false;
+        } catch(err) { console.error(err); toast('Gagal memuat data.', 'error'); return false; }
+    }
+
+    // ================================================================
     // SIDEBAR & NAVIGASI
     // ================================================================
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
@@ -1375,37 +1497,38 @@
         let html = '';
         if (isAdmin) {
             const pendingCount = appData.anggota.filter(a => a.Status === 'Pending').length;
-            html = `
-                <div class="menu-label">Administrator</div>
-                <button class="menu-item active" data-view="adminDash"><i class="fas fa-chart-pie"></i> Dashboard</button>
-                <button class="menu-item" data-view="kelolaAnggota"><i class="fas fa-users"></i> Kelola Anggota</button>
-                <button class="menu-item" data-view="approval"><i class="fas fa-user-clock"></i> Persetujuan ${pendingCount > 0 ? `<span class="badge pulse">${pendingCount}</span>` : ''}</button>
-                <button class="menu-item" data-view="kelolaKegiatan"><i class="fas fa-calendar-plus"></i> Kelola Kegiatan</button>
-                <button class="menu-item" data-view="kelolaPresensi"><i class="fas fa-clipboard-list"></i> Kelola Presensi</button>
-                <button class="menu-item" data-view="laporan"><i class="fas fa-file-alt"></i> Laporan &amp; Rekap</button>
-                <button class="menu-item" data-view="tambahPoin"><i class="fas fa-star-half-stroke"></i> Sesuaikan Poin</button>
-                <button class="menu-item" data-view="inisialisasi"><i class="fas fa-cog"></i> Inisialisasi</button>
-                <div class="menu-label" style="margin-top:12px;">Profil & Riwayat</div>
-                <button class="menu-item" data-view="profilSaya"><i class="fas fa-user"></i> Profil Saya</button>
-                <button class="menu-item" data-view="kartuQr"><i class="fas fa-qrcode"></i> Kartu & QR Code</button>
-                <button class="menu-item" data-view="riwayatMember"><i class="fas fa-history"></i> Riwayat</button>
-            `;
+            html = '<div class="menu-label">Administrator</div>' +
+                '<button class="menu-item active" data-view="adminDash"><i class="fas fa-chart-pie"></i> Dashboard</button>' +
+                '<button class="menu-item" data-view="kelolaAnggota"><i class="fas fa-users"></i> Kelola Anggota</button>' +
+                '<button class="menu-item" data-view="approval"><i class="fas fa-user-clock"></i> Persetujuan' + (pendingCount > 0 ? '<span class="badge pulse">'+pendingCount+'</span>' : '') + '</button>' +
+                '<button class="menu-item" data-view="kelolaKegiatan"><i class="fas fa-calendar-plus"></i> Kelola Kegiatan</button>' +
+                '<button class="menu-item" data-view="kelolaPresensi"><i class="fas fa-clipboard-list"></i> Kelola Presensi</button>' +
+                '<button class="menu-item" data-view="laporan"><i class="fas fa-file-alt"></i> Laporan &amp; Rekap</button>' +
+                '<button class="menu-item" data-view="tambahPoin"><i class="fas fa-star-half-stroke"></i> Sesuaikan Poin</button>' +
+                '<button class="menu-item" data-view="inisialisasi"><i class="fas fa-cog"></i> Inisialisasi</button>' +
+                '<div class="menu-label" style="margin-top:12px;">Profil & Riwayat</div>' +
+                '<button class="menu-item" data-view="profilSaya"><i class="fas fa-user"></i> Profil Saya</button>' +
+                '<button class="menu-item" data-view="kartuQr"><i class="fas fa-qrcode"></i> Kartu & QR Code</button>' +
+                '<button class="menu-item" data-view="riwayatMember"><i class="fas fa-history"></i> Riwayat</button>';
         } else {
-            html = `
-                <div class="menu-label">Menu</div>
-                <button class="menu-item active" data-view="memberDash"><i class="fas fa-home"></i> Beranda</button>
-                <button class="menu-item" data-view="profilSaya"><i class="fas fa-user"></i> Profil Saya</button>
-                <button class="menu-item" data-view="kartuQr"><i class="fas fa-qrcode"></i> Kartu & QR Code</button>
-                <button class="menu-item" data-view="riwayatMember"><i class="fas fa-history"></i> Riwayat</button>
-            `;
+            html = '<div class="menu-label">Menu</div>' +
+                '<button class="menu-item active" data-view="memberDash"><i class="fas fa-home"></i> Beranda</button>' +
+                '<button class="menu-item" data-view="profilSaya"><i class="fas fa-user"></i> Profil Saya</button>' +
+                '<button class="menu-item" data-view="kartuQr"><i class="fas fa-qrcode"></i> Kartu & QR Code</button>' +
+                '<button class="menu-item" data-view="riwayatMember"><i class="fas fa-history"></i> Riwayat</button>';
         }
         menu.innerHTML = html;
         menu.querySelectorAll('.menu-item').forEach(el => {
-            el.addEventListener('click', function () {
+            el.addEventListener('click', function() {
                 navigateTo(this.dataset.view);
                 if (window.innerWidth <= 820) document.getElementById('sidebar').classList.remove('open');
             });
         });
+        const lastView = localStorage.getItem('lastView');
+        if (lastView) {
+            const activeItem = menu.querySelector('.menu-item[data-view="'+lastView+'"]');
+            if (activeItem) { menu.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active')); activeItem.classList.add('active'); }
+        }
     }
 
     const VIEW_MAP = {
@@ -1422,17 +1545,18 @@
     };
 
     function navigateTo(view) {
+        localStorage.setItem('lastView', view);
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         const el = document.getElementById(VIEW_MAP[view]);
         if (el) el.classList.add('active');
         document.querySelectorAll('.sidebar-menu .menu-item').forEach(m => m.classList.remove('active'));
-        const menuItem = document.querySelector(`.sidebar-menu .menu-item[data-view="${view}"]`);
+        const menuItem = document.querySelector('.sidebar-menu .menu-item[data-view="'+view+'"]');
         if (menuItem) menuItem.classList.add('active');
         const titleEl = document.getElementById('pageTitle');
-        const subEl = document.getElementById('pageSub');
-        if (titleEl) titleEl.textContent = VIEW_TITLES[view] || 'Dashboard';
-        if (subEl) subEl.textContent = '';
-
+        if (titleEl) {
+            const titleText = VIEW_TITLES[view] || 'Dashboard';
+            titleEl.innerHTML = titleText + ' <small></small> <button class="btn btn-secondary btn-sm btn-refresh" id="btnRefresh" onclick="refreshWithLoader()" title="Refresh data"><i class="fas fa-sync"></i> Refresh</button>';
+        }
         if (view === 'adminDash') renderAdminDashboard();
         if (view === 'kelolaAnggota') renderAnggota();
         if (view === 'approval') renderApproval();
@@ -1447,25 +1571,6 @@
     }
 
     // ================================================================
-    // REFRESH DATA
-    // ================================================================
-    async function refreshAllData() {
-        try {
-            const res = await callApi('getAllData');
-            if (res.success) {
-                appData.anggota   = res.data.anggota || [];
-                appData.kegiatan  = res.data.kegiatan || [];
-                appData.presensi  = res.data.presensi || [];
-                appData.kontribusi = res.data.kontribusi || [];
-                renderLandingStats();
-                poinAnggotaList = appData.anggota.filter(a => a.Status === 'Aktif' || a.Status === 'Sementara');
-                return true;
-            }
-            return false;
-        } catch (err) { console.error(err); toast('Gagal memuat data.', 'error'); return false; }
-    }
-
-    // ================================================================
     // LANDING STATS
     // ================================================================
     function renderLandingStats() {
@@ -1474,21 +1579,21 @@
         document.getElementById('landingAnggota').textContent = anggota.length;
         document.getElementById('landingKegiatan').textContent = kegiatan.length;
         const bulanIni = new Date().getMonth() + 1, tahunIni = new Date().getFullYear();
-        const presensiBulan = appData.presensi.filter(p => { if (!p.Tanggal_Checkin) return false; const d = new Date(p.Tanggal_Checkin); return d.getMonth() + 1 === bulanIni && d.getFullYear() === tahunIni; });
+        const presensiBulan = appData.presensi.filter(p => { if (!p.Tanggal_Checkin) return false; const d = new Date(p.Tanggal_Checkin); return d.getMonth()+1 === bulanIni && d.getFullYear() === tahunIni; });
         const hadirBulan = presensiBulan.filter(p => p.Status_Kehadiran === 'Hadir');
         document.getElementById('landingHadir').textContent = hadirBulan.length;
-        document.getElementById('landingKehadiran').textContent = (presensiBulan.length > 0 ? Math.round((hadirBulan.length / presensiBulan.length) * 100) : 0) + '%';
-        const aktivitas = [...appData.presensi].sort((a, b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin)).slice(0, 5);
+        document.getElementById('landingKehadiran').textContent = (presensiBulan.length > 0 ? Math.round(hadirBulan.length / presensiBulan.length * 100) : 0) + '%';
+        const aktivitas = [...appData.presensi].sort((a,b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin)).slice(0,5);
         const aktivitasDiv = document.getElementById('landingAktivitas');
         aktivitasDiv.innerHTML = aktivitas.length === 0 ? '<p class="text-muted">Belum ada aktivitas</p>' : aktivitas.map(p => {
             const nama = appData.anggota.find(a => a.ID_Anggota === p.ID_Anggota)?.Nama_Lengkap || p.ID_Anggota;
-            const randomClass = ['a1', 'a2', 'a3', 'a4'][Math.floor(Math.random() * 4)];
-            return `<div class="activity-item"><div class="avatar ${randomClass}">${esc((nama || 'U')[0].toUpperCase())}</div><div class="info"><div class="name">${esc(nama)}</div><div class="detail">${esc(p.Status_Kehadiran || 'Hadir')} · ${esc(p.ID_Kegiatan || 'Kegiatan')}</div></div><div class="time">${esc(p.Waktu_Checkin || '')}</div></div>`;
+            const randomClass = ['a1','a2','a3','a4'][Math.floor(Math.random() * 4)];
+            return '<div class="activity-item"><div class="avatar '+randomClass+'">'+esc((nama||'U')[0].toUpperCase())+'</div><div class="info"><div class="name">'+esc(nama)+'</div><div class="detail">'+esc(p.Status_Kehadiran||'Hadir')+' · '+esc(p.ID_Kegiatan||'Kegiatan')+'</div></div><div class="time">'+esc(p.Waktu_Checkin||'')+'</div></div>';
         }).join('');
-        const today = new Date().toISOString().slice(0, 10);
+        const today = new Date().toISOString().slice(0,10);
         const jadwal = appData.kegiatan.filter(k => k.Tanggal === today && k.Status === 'Aktif');
         const jadwalDiv = document.getElementById('landingJadwal');
-        jadwalDiv.innerHTML = jadwal.length === 0 ? '<p class="text-muted">Tidak ada jadwal hari ini</p>' : jadwal.map(k => `<div class="schedule-item"><span class="time-badge">${esc(k.Waktu_Mulai || '--:--')}</span><div class="schedule-info"><div class="title">${esc(k.Nama_Kegiatan)}</div><div class="place">📍 ${esc(k.Tempat || '-')}</div></div><span class="status-badge">Aktif</span></div>`).join('');
+        jadwalDiv.innerHTML = jadwal.length === 0 ? '<p class="text-muted">Tidak ada jadwal hari ini</p>' : jadwal.map(k => '<div class="schedule-item"><span class="time-badge">'+esc(k.Waktu_Mulai||'--:--')+'</span><div class="schedule-info"><div class="title">'+esc(k.Nama_Kegiatan)+'</div><div class="place">📍 '+esc(k.Tempat||'-')+'</div></div><span class="status-badge">Aktif</span></div>').join('');
     }
 
     // ================================================================
@@ -1502,15 +1607,18 @@
         document.getElementById('userName').textContent = user.nama;
         document.getElementById('userRole').textContent = isAdmin ? 'Administrator' : 'Anggota';
         updateUserAvatar(user.id);
-        if (isAdmin) { navigateTo('adminDash'); } else { navigateTo('memberDash'); }
+        const lastView = localStorage.getItem('lastView');
+        if (lastView && VIEW_MAP[lastView]) navigateTo(lastView);
+        else if (isAdmin) navigateTo('adminDash');
+        else navigateTo('memberDash');
         const now = new Date();
-        document.getElementById('laporanBulan').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        document.getElementById('laporanBulan').value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
         const jam = now.getHours();
         let salam = 'Selamat Pagi';
         if (jam >= 12 && jam < 15) salam = 'Selamat Siang';
         else if (jam >= 15 && jam < 19) salam = 'Selamat Sore';
         else if (jam >= 19) salam = 'Selamat Malam';
-        document.getElementById('sambutan').innerHTML = `${salam}, ${esc(user.nama)}! Selamat Datang di Sistem Presensi Karang Taruna`;
+        document.getElementById('sambutan').innerHTML = salam + ', ' + esc(user.nama) + '! Selamat Datang di Sistem Presensi Karang Taruna';
     }
 
     // ================================================================
@@ -1520,7 +1628,7 @@
         const sel = document.getElementById(selectId);
         const result = await callApi('getAlamatList');
         const list = result.success ? (result.data || []) : [];
-        sel.innerHTML = '<option value="">Pilih alamat...</option>' + list.map(a => `<option value="${esc(a)}">${esc(a)}</option>`).join('');
+        sel.innerHTML = '<option value="">Pilih alamat...</option>' + list.map(a => '<option value="'+esc(a)+'">'+esc(a)+'</option>').join('');
         if (selectedValue) sel.value = selectedValue;
     }
 
@@ -1538,11 +1646,9 @@
         const presensi = appData.presensi.filter(p => p.ID_Anggota === user.id);
         const hadir = presensi.filter(p => p.Status_Kehadiran === 'Hadir');
         document.getElementById('statHadir').textContent = hadir.length;
-        const persen = presensi.length > 0 ? Math.round((hadir.length / presensi.length) * 100) : 0;
-        document.getElementById('statPersen').textContent = persen + '%';
+        document.getElementById('statPersen').textContent = (presensi.length > 0 ? Math.round(hadir.length / presensi.length * 100) : 0) + '%';
         const histori = appData.kontribusi.filter(k => k.ID_Anggota === user.id);
-        const totalPoin = histori.reduce((s, k) => s + (parseInt(k.Poin) || 0), 0);
-        document.getElementById('statPoin').textContent = totalPoin;
+        document.getElementById('statPoin').textContent = histori.reduce((s,k) => s + (parseInt(k.Poin)||0), 0);
     }
 
     function updateUserAvatar(id) {
@@ -1551,7 +1657,7 @@
         const avatarEl = document.getElementById('userAvatar');
         const fotoUrl = anggota.Foto_Url || '';
         if (fotoUrl) {
-            avatarEl.style.backgroundImage = `url(${fotoUrl})`;
+            avatarEl.style.backgroundImage = 'url('+fotoUrl+')';
             avatarEl.style.backgroundSize = 'cover';
             avatarEl.style.backgroundPosition = 'center';
             avatarEl.textContent = '';
@@ -1565,7 +1671,7 @@
         const avatarEl = document.getElementById('memberAvatar');
         const fotoUrl = anggota.Foto_Url || '';
         if (fotoUrl) {
-            avatarEl.style.backgroundImage = `url(${fotoUrl})`;
+            avatarEl.style.backgroundImage = 'url('+fotoUrl+')';
             avatarEl.style.backgroundSize = 'cover';
             avatarEl.style.backgroundPosition = 'center';
             avatarEl.textContent = '';
@@ -1595,11 +1701,10 @@
         document.getElementById('pdStatus').textContent = anggota.Status || '-';
         document.getElementById('pdRole').textContent = anggota.Role === 'admin' ? 'Admin' : 'Anggota';
 
-        // Update foto display
         const fotoDisplay = document.getElementById('profilFotoDisplay');
         const fotoUrlDisplay = anggota.Foto_Url || '';
         if (fotoUrlDisplay) {
-            fotoDisplay.style.backgroundImage = `url(${fotoUrlDisplay})`;
+            fotoDisplay.style.backgroundImage = 'url('+fotoUrlDisplay+')';
             fotoDisplay.style.backgroundSize = 'cover';
             fotoDisplay.style.backgroundPosition = 'center';
             fotoDisplay.textContent = '';
@@ -1609,14 +1714,6 @@
         }
 
         document.getElementById('psId').value = anggota.ID_Anggota;
-        document.getElementById('psNama').value = anggota.Nama_Lengkap || '';
-        document.getElementById('psPanggilan').value = anggota.Nama_Panggilan || '';
-        document.getElementById('psTempatLahir').value = anggota.Tempat_Lahir || '';
-        document.getElementById('psTanggalLahir').value = anggota.Tanggal_Lahir || '';
-        document.getElementById('psNoHP').value = anggota.No_HP || '';
-        document.getElementById('psEmail').value = anggota.Email || '';
-        populateAlamatDropdown('psAlamat', anggota.Alamat || '');
-        document.getElementById('psAgama').value = anggota.Agama || '';
         document.getElementById('psPassword').value = '';
 
         const fotoUrl = anggota.Foto_Url || '';
@@ -1635,6 +1732,7 @@
         document.getElementById('fotoInput').value = '';
         fotoChanged = false;
         fotoBase64 = null;
+        fotoMimeType = 'image/jpeg';
 
         if (isProfilEditMode) cancelEditProfil();
         else showProfilDisplay();
@@ -1661,14 +1759,6 @@
         showProfilDisplay();
         const anggota = appData.anggota.find(a => a.ID_Anggota === currentUser.id);
         if (anggota) {
-            document.getElementById('psNama').value = anggota.Nama_Lengkap || '';
-            document.getElementById('psPanggilan').value = anggota.Nama_Panggilan || '';
-            document.getElementById('psTempatLahir').value = anggota.Tempat_Lahir || '';
-            document.getElementById('psTanggalLahir').value = anggota.Tanggal_Lahir || '';
-            document.getElementById('psNoHP').value = anggota.No_HP || '';
-            document.getElementById('psEmail').value = anggota.Email || '';
-            populateAlamatDropdown('psAlamat', anggota.Alamat || '');
-            document.getElementById('psAgama').value = anggota.Agama || '';
             document.getElementById('psPassword').value = '';
             const fotoUrl = anggota.Foto_Url || '';
             const img = document.getElementById('fotoPreviewImg');
@@ -1686,6 +1776,7 @@
             document.getElementById('fotoInput').value = '';
             fotoChanged = false;
             fotoBase64 = null;
+            fotoMimeType = 'image/jpeg';
         }
     }
 
@@ -1695,15 +1786,11 @@
     function previewFoto(input) {
         const file = input.files[0];
         if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-            toast('Ukuran foto maksimal 2MB!', 'error');
-            input.value = '';
-            return;
-        }
+        if (file.size > 2 * 1024 * 1024) { toast('Ukuran foto maksimal 2MB!', 'error'); input.value = ''; return; }
+        fotoMimeType = file.type || 'image/jpeg';
         const reader = new FileReader();
         reader.onload = function(e) {
-            const base64 = e.target.result.split(',')[1];
-            fotoBase64 = base64;
+            fotoBase64 = e.target.result.split(',')[1];
             fotoChanged = true;
             const img = document.getElementById('fotoPreviewImg');
             const placeholder = document.getElementById('fotoPlaceholder');
@@ -1722,187 +1809,112 @@
         document.getElementById('btnHapusFoto').style.display = 'none';
         fotoChanged = false;
         fotoBase64 = null;
+        fotoMimeType = 'image/jpeg';
         toast('Foto dihapus. Simpan perubahan untuk menghapus dari server.', 'warning');
     }
 
-    document.getElementById('formProfilSaya').addEventListener('submit', async function (e) {
+    document.getElementById('formProfilSaya').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = this.querySelector('button[type="submit"]');
         const original = btn.innerHTML;
         btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
         if (fotoChanged && fotoBase64) {
-            const fotoResult = await callApi('uploadFotoAnggota', { id: currentUser.id, foto: fotoBase64 });
-            if (!fotoResult.success) {
-                toast('Gagal mengunggah foto: ' + fotoResult.message, 'error');
-                btn.disabled = false; btn.innerHTML = original;
-                return;
-            }
+            const fotoResult = await callApi('uploadFotoAnggota', { id: currentUser.id, foto: fotoBase64, mimeType: fotoMimeType });
+            if (!fotoResult.success) { toast('Gagal mengunggah foto: ' + fotoResult.message, 'error'); btn.disabled = false; btn.innerHTML = original; return; }
             toast('Foto berhasil diunggah!', 'success');
         }
 
-        const payload = {
-            nama_lengkap: document.getElementById('psNama').value.trim(),
-            nama_panggilan: document.getElementById('psPanggilan').value.trim(),
-            tempat_lahir: document.getElementById('psTempatLahir').value.trim(),
-            tanggal_lahir: document.getElementById('psTanggalLahir').value,
-            alamat: document.getElementById('psAlamat').value,
-            agama: document.getElementById('psAgama').value,
-            no_hp: document.getElementById('psNoHP').value.trim(),
-            email: document.getElementById('psEmail').value.trim(),
-            password: document.getElementById('psPassword').value.trim()
-        };
-        if (!payload.nama_lengkap || !payload.no_hp) { toast('Nama dan No HP wajib diisi!', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
-        if (payload.password && !/^\d{4}$/.test(payload.password)) {
-            toast('Password baru harus 4 digit angka!', 'error');
-            btn.disabled = false; btn.innerHTML = original;
-            return;
+        const password = document.getElementById('psPassword').value.trim();
+        const payload = {};
+        if (password) {
+            if (!/^\d{4}$/.test(password)) { toast('Password baru harus 4 digit angka!', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
+            payload.password = password;
         }
-        if (!payload.password) delete payload.password;
+        if (!fotoChanged && !password) { toast('Tidak ada perubahan yang disimpan.', 'warning'); btn.disabled = false; btn.innerHTML = original; return; }
 
-        const result = await callApi('updateProfilSendiri', { id: currentUser.id, data: payload });
-        if (!result.success) { toast(result.message || 'Gagal memperbarui profil.', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
-        toast('Profil berhasil diperbarui!', 'success');
+        if (password) {
+            const result = await callApi('updateProfilSendiri', { id: currentUser.id, data: payload });
+            if (!result.success) { toast(result.message || 'Gagal memperbarui password.', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
+            toast('Password berhasil diperbarui!', 'success');
+        }
+
         await refreshAllData();
         const user = appData.anggota.find(a => a.ID_Anggota === currentUser.id);
-        if (user) {
-            document.getElementById('userName').textContent = user.Nama_Lengkap;
-            updateUserAvatar(currentUser.id);
-        }
+        if (user) { document.getElementById('userName').textContent = user.Nama_Lengkap; updateUserAvatar(currentUser.id); }
         loadProfilSaya();
         showProfilDisplay();
         btn.disabled = false; btn.innerHTML = original;
     });
 
     // ================================================================
-    // GENERATOR KARTU (DESAIN FINAL PROPORSIONAL)
+    // GENERATOR KARTU
     // ================================================================
     function buildKartuHtml(anggota) {
-        const qr = anggota.QR_Code || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${anggota.ID_Anggota}`;
+        const qr = anggota.QR_Code || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(anggota.ID_Anggota);
         const initial = (anggota.Nama_Lengkap || 'U')[0].toUpperCase();
-        const colors = ['#1e2b4f', '#f5b041', '#27ae60', '#8e44ad', '#e74c3c', '#2a3b6b', '#3498db', '#9b59b6'];
+        const colors = ['#1e2b4f','#f5b041','#27ae60','#8e44ad','#e74c3c','#2a3b6b','#3498db','#9b59b6'];
         const colorIndex = initial.charCodeAt(0) % colors.length;
         const avatarColor = colors[colorIndex];
-
         const fotoUrl = anggota.Foto_Url || '';
-        const fotoHtml = fotoUrl ?
-            `<img src="${fotoUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:4px;" />` :
-            `<span style="font-size:36px; font-weight:700; color:#fff;">${initial}</span>`;
+        const fotoHtml = fotoUrl ? '<img src="'+fotoUrl+'" style="width:100%; height:100%; object-fit:cover; border-radius:4px;" />' : '<span style="font-size:36px; font-weight:700; color:#fff;">'+initial+'</span>';
         const fotoBg = fotoUrl ? 'transparent' : avatarColor;
 
-        return `
-            <div id="kartuContainer" style="
-                background: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.10);
-                width: 324px;
-                height: 204px;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                border: 1px solid #dce3ec;
-                font-family: 'Inter', sans-serif;
-            ">
-                <!-- HEADER (RAMPING) -->
-                <div style="background: linear-gradient(135deg, #1e2b4f, #2a3b6b); padding: 4px 14px 3px 14px; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;">
-                            <i class="fas fa-users" style="margin-right: 4px; font-size: 10px;"></i> KARANG TARUNA
-                        </div>
-                        <div style="color: #f5b041; font-size: 10px; font-weight: 700;">BONKAR</div>
-                    </div>
-                    <div style="color: rgba(255,255,255,0.45); font-size: 6px; letter-spacing: 0.3px; margin-top: 0px;">Bodowaluh-Karang Poncosari</div>
-                </div>
-
-                <!-- JUDUL (padding top 8px agar turun & berjarak) -->
-                <div style="background: #f8fafc; padding: 8px 14px 8px 14px; text-align: center; font-size: 8px; font-weight: 700; color: #1e2b4f; letter-spacing: 0.8px; border-bottom: 1px solid #e2e9f2; flex-shrink: 0;">KARTU IDENTITAS ANGGOTA</div>
-
-                <!-- BODY -->
-                <div style="flex: 1; padding: 4px 12px 3px 12px; display: flex; gap: 10px; align-items: stretch; background: #ffffff;">
-                    <!-- FOTO 4:6 (60x80) -->
-                    <div style="flex: 0 0 64px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <div style="width: 60px; height: 80px; border-radius: 4px; background: ${fotoBg}; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); flex-shrink: 0;">
-                            ${fotoHtml}
-                        </div>
-                        <div style="font-size: 5px; color: #8a9bb0; margin-top: 2px; background: #f0f4f9; padding: 0 8px; border-radius: 6px; font-weight: 500;">Anggota</div>
-                    </div>
-
-                    <!-- DATA -->
-                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 2px; min-width: 0;">
-                        <div style="font-size: 14px; font-weight: 700; color: #1a2639; line-height: 1.2; margin-bottom: 1px;">${esc(anggota.Nama_Lengkap)}</div>
-                        <div style="font-size: 9px; color: #4a5a72; display: flex; gap: 4px; flex-wrap: wrap;">
-                            <span style="font-weight: 500; color: #8a9bb0; min-width: 44px;">ID</span>
-                            <span style="font-weight: 500; color: #1a2639;">${esc(anggota.ID_Anggota)}</span>
-                        </div>
-                        <div style="font-size: 9px; color: #4a5a72; display: flex; gap: 4px; flex-wrap: wrap;">
-                            <span style="font-weight: 500; color: #8a9bb0; min-width: 44px;">Tempat</span>
-                            <span style="font-weight: 500; color: #1a2639;">${esc(anggota.Tempat_Lahir || '-')}</span>
-                        </div>
-                        <div style="font-size: 9px; color: #4a5a72; display: flex; gap: 4px; flex-wrap: wrap;">
-                            <span style="font-weight: 500; color: #8a9bb0; min-width: 44px;">Lahir</span>
-                            <span style="font-weight: 500; color: #1a2639;">${formatTanggalLahir(anggota.Tanggal_Lahir)}</span>
-                        </div>
-                        <div style="font-size: 9px; color: #4a5a72; display: flex; gap: 4px; flex-wrap: wrap;">
-                            <span style="font-weight: 500; color: #8a9bb0; min-width: 44px;">Status</span>
-                            <span style="background:rgba(46,204,113,0.12); color:#27ae60; padding:0 8px; border-radius:8px; font-weight:600; font-size:7px; display:inline-block;">${esc(anggota.Status || 'Aktif')}</span>
-                        </div>
-                        <div style="font-size: 9px; color: #4a5a72; display: flex; gap: 4px; flex-wrap: wrap;">
-                            <span style="font-weight: 500; color: #8a9bb0; min-width: 44px;">Alamat</span>
-                            <span style="font-weight: 500; color: #1a2639;">${esc(anggota.Alamat || '-')}</span>
-                        </div>
-                    </div>
-
-                    <!-- QR (64x64) -->
-                    <div style="flex: 0 0 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;">
-                        <div class="qr-wrapper" style="width: 64px; height: 64px;">
-                            <div class="qr-loader"></div>
-                            <img
-                                src="${qr}"
-                                alt="QR"
-                                onload="this.previousElementSibling.style.display='none'"
-                                onerror="this.previousElementSibling.style.display='none'; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect width=%2280%22 height=%2280%22 fill=%22%23f0f4f9%22/%3E%3Ctext x=%2216%22 y=%2244%22 font-family=%22Inter%22 font-size=%2212%22 fill=%22%238a9bb0%22%3EQR Error%3C/text%3E%3C/svg%3E'"
-                            />
-                        </div>
-                        <div style="font-size: 5px; color: #8a9bb0; letter-spacing: 0.3px; font-weight: 500;">${esc(anggota.ID_Anggota)}</div>
-                    </div>
-                </div>
-
-                <!-- FOOTER -->
-                <div style="background: #f8fafc; padding: 2px 14px; text-align: center; font-size: 5px; color: #8a9bb0; border-top: 1px solid #e2e9f2; flex-shrink: 0; letter-spacing: 0.3px;">
-                    <i class="fas fa-id-card" style="margin-right: 3px; font-size: 4px;"></i> Bawa kartu ini setiap mengikuti kegiatan
-                </div>
-            </div>
-        `;
+        return '<div id="kartuContainer" style="background:#ffffff; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.10); width:324px; height:204px; overflow:hidden; display:flex; flex-direction:column; border:1px solid #dce3ec; font-family:\'Inter\', sans-serif;">' +
+            '<div style="background:linear-gradient(135deg, #1e2b4f, #2a3b6b); padding:4px 14px 3px 14px; flex-shrink:0; border-bottom:1px solid rgba(255,255,255,0.08);">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center;">' +
+                    '<div style="color:#fff; font-size:11px; font-weight:700; letter-spacing:0.5px;"><i class="fas fa-users" style="margin-right:4px; font-size:10px;"></i> KARANG TARUNA</div>' +
+                    '<div style="color:#f5b041; font-size:10px; font-weight:700;">BONKAR</div>' +
+                '</div>' +
+                '<div style="color:rgba(255,255,255,0.45); font-size:6px; letter-spacing:0.3px; margin-top:0px;">Bodowaluh-Karang Poncosari</div>' +
+            '</div>' +
+            '<div style="background:#f8fafc; padding:8px 14px 4px 14px; text-align:center; font-size:8px; font-weight:700; color:#1e2b4f; letter-spacing:0.8px; border-bottom:1px solid #e2e9f2; flex-shrink:0;">KARTU IDENTITAS ANGGOTA</div>' +
+            '<div style="flex:1; padding:4px 12px 3px 12px; display:flex; gap:10px; align-items:stretch; background:#ffffff;">' +
+                '<div style="flex:0 0 64px; display:flex; flex-direction:column; align-items:center; justify-content:center;">' +
+                    '<div style="width:60px; height:80px; border-radius:4px; background:'+fotoBg+'; display:flex; align-items:center; justify-content:center; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.06); flex-shrink:0;">'+fotoHtml+'</div>' +
+                    '<div style="font-size:5px; color:#8a9bb0; margin-top:2px; background:#f0f4f9; padding:0 8px; border-radius:6px; font-weight:500;">Anggota</div>' +
+                '</div>' +
+                '<div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:2px; min-width:0;">' +
+                    '<div style="font-size:14px; font-weight:700; color:#1a2639; line-height:1.2; margin-bottom:1px;">'+esc(anggota.Nama_Lengkap)+'</div>' +
+                    '<div style="font-size:9px; color:#4a5a72; display:flex; gap:4px; flex-wrap:wrap;"><span style="font-weight:500; color:#8a9bb0; min-width:44px;">ID</span><span style="font-weight:500; color:#1a2639;">'+esc(anggota.ID_Anggota)+'</span></div>' +
+                    '<div style="font-size:9px; color:#4a5a72; display:flex; gap:4px; flex-wrap:wrap;"><span style="font-weight:500; color:#8a9bb0; min-width:44px;">Tempat</span><span style="font-weight:500; color:#1a2639;">'+esc(anggota.Tempat_Lahir||'-')+'</span></div>' +
+                    '<div style="font-size:9px; color:#4a5a72; display:flex; gap:4px; flex-wrap:wrap;"><span style="font-weight:500; color:#8a9bb0; min-width:44px;">Lahir</span><span style="font-weight:500; color:#1a2639;">'+formatTanggalLahir(anggota.Tanggal_Lahir)+'</span></div>' +
+                    '<div style="font-size:9px; color:#4a5a72; display:flex; gap:4px; flex-wrap:wrap;"><span style="font-weight:500; color:#8a9bb0; min-width:44px;">Status</span><span style="background:rgba(46,204,113,0.12); color:#27ae60; padding:0 8px; border-radius:8px; font-weight:600; font-size:7px; display:inline-block;">'+esc(anggota.Status||'Aktif')+'</span></div>' +
+                    '<div style="font-size:9px; color:#4a5a72; display:flex; gap:4px; flex-wrap:wrap;"><span style="font-weight:500; color:#8a9bb0; min-width:44px;">Alamat</span><span style="font-weight:500; color:#1a2639;">'+esc(anggota.Alamat||'-')+'</span></div>' +
+                '</div>' +
+                '<div style="flex:0 0 68px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">' +
+                    '<div class="qr-wrapper" style="width:64px; height:64px;"><div class="qr-loader"></div><img src="'+qr+'" alt="QR" onload="this.previousElementSibling.style.display=\'none\'" onerror="this.previousElementSibling.style.display=\'none\'; this.src=\'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22%3E%3Crect width=%2280%22 height=%2280%22 fill=%22%23f0f4f9%22/%3E%3Ctext x=%2216%22 y=%2244%22 font-family=%22Inter%22 font-size=%2212%22 fill=%22%238a9bb0%22%3EQR Error%3C/text%3E%3C/svg%3E\'" /></div>' +
+                    '<div style="font-size:5px; color:#8a9bb0; letter-spacing:0.3px; font-weight:500;">'+esc(anggota.ID_Anggota)+'</div>' +
+                '</div>' +
+            '</div>' +
+            '<div style="background:#f8fafc; padding:2px 14px; text-align:center; font-size:5px; color:#8a9bb0; border-top:1px solid #e2e9f2; flex-shrink:0; letter-spacing:0.3px;"><i class="fas fa-id-card" style="margin-right:3px; font-size:4px;"></i> Bawa kartu ini setiap mengikuti kegiatan</div>' +
+        '</div>';
     }
 
     // ================================================================
-    // KARTU & QR CODE (RENDER, CETAK, UNDUH, QR BESAR)
+    // KARTU & QR CODE
     // ================================================================
     function renderKartu() {
         const anggota = appData.anggota.find(a => a.ID_Anggota === currentUser.id);
         if (!anggota) return;
-
         const html = buildKartuHtml(anggota);
         const preview = document.getElementById('kartuPreview');
         preview.innerHTML = html;
-
         const container = document.getElementById('kartuContainer');
         const wrapper = container.parentElement;
         const wrapperWidth = wrapper.clientWidth || 600;
         let scale = Math.min(wrapperWidth / 324, 2.5);
         scale = Math.max(scale, 0.5);
-        container.style.transform = `scale(${scale})`;
+        container.style.transform = 'scale('+scale+')';
         container.style.transformOrigin = 'top left';
         wrapper.style.height = (204 * scale + 20) + 'px';
-
-        // Muat QR Code besar
         loadQrCodeBesar();
     }
 
     function loadQrCodeBesar() {
         const anggota = appData.anggota.find(a => a.ID_Anggota === currentUser.id);
         if (!anggota) return;
-        const qr = anggota.QR_Code || `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${anggota.ID_Anggota}`;
+        const qr = anggota.QR_Code || 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(anggota.ID_Anggota);
         document.getElementById('qrCodeBesarImg').src = qr;
     }
 
@@ -1911,31 +1923,7 @@
         if (!anggota) return;
         const kartuHtml = buildKartuHtml(anggota);
         const win = window.open('', '_blank', 'width=600,height=500');
-        win.document.write(`
-            <html><head><title>Kartu Anggota</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f0f4f9; font-family:'Inter',sans-serif; padding:20px; }
-                #kartuContainer {
-                    width: 85.6mm;
-                    height: 53.98mm;
-                    background: #ffffff;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    display: flex;
-                    flex-direction: column;
-                    border: 1px solid #dce3ec;
-                    font-family: 'Inter', sans-serif;
-                }
-                .fa-users, .fa-id-card { font-family: 'Font Awesome 6 Free'; font-weight: 900; }
-                @media print { body { background: #fff; padding: 20px; } #kartuContainer { box-shadow: none; border: 1px solid #ddd; } }
-            </style>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-            </head>
-            <body>${kartuHtml}
-            <script>window.onload=function(){window.print();setTimeout(function(){window.close();},1000);}<\/script>
-            </body></html>
-        `);
+        win.document.write('<html><head><title>Kartu Anggota</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f4f9;font-family:"Inter",sans-serif;padding:20px;}#kartuContainer{width:85.6mm;height:53.98mm;background:#ffffff;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;border:1px solid #dce3ec;font-family:"Inter",sans-serif;}.fa-users,.fa-id-card{font-family:"Font Awesome 6 Free";font-weight:900;}@media print{body{background:#fff;padding:20px;}#kartuContainer{box-shadow:none;border:1px solid #ddd;}}</style><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" /></head><body>'+kartuHtml+'<script>window.onload=function(){window.print();setTimeout(function(){window.close();},1000);}<\/script></body></html>');
         win.document.close();
     }
 
@@ -1944,180 +1932,217 @@
         const container = document.getElementById('kartuContainer');
         if (!container) return;
         toast('Membuat gambar...', 'warning');
-        html2canvas(container, {
-            scale: 3,
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            logging: false,
-            allowTaint: false,
-            useCORS: true
-        }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `Kartu_${currentUser.nama}_${currentUser.id}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            toast('Kartu berhasil diunduh!', 'success');
-        }).catch(err => {
-            console.error(err);
-            toast('Gagal membuat gambar. Gunakan Cetak Kartu.', 'error');
-        });
+        const originalTransform = container.style.transform;
+        container.style.transform = 'none';
+        container.style.width = '324px';
+        container.style.height = '204px';
+        html2canvas(container, { scale: 2, backgroundColor: '#ffffff', borderRadius: '8px', logging: false, allowTaint: false, useCORS: true, width: 324, height: 204 })
+            .then(canvas => {
+                container.style.transform = originalTransform;
+                const link = document.createElement('a');
+                link.download = 'Kartu_'+currentUser.nama+'_'+currentUser.id+'.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                toast('Kartu berhasil diunduh!', 'success');
+                renderKartu();
+            }).catch(err => { console.error(err); toast('Gagal membuat gambar. Gunakan Cetak Kartu.', 'error'); renderKartu(); });
     }
 
     function unduhQrCode() {
         const img = document.getElementById('qrCodeBesarImg');
-        if (!img || !img.src) {
-            toast('Tidak ada QR Code untuk diunduh.', 'error');
-            return;
-        }
+        if (!img || !img.src) { toast('Tidak ada QR Code untuk diunduh.', 'error'); return; }
         const qrUrl = img.src;
-        fetch(qrUrl)
-            .then(response => response.blob())
-            .then(blob => {
-                const link = document.createElement('a');
-                link.download = `QR_${currentUser.nama}_${currentUser.id}.png`;
-                link.href = URL.createObjectURL(blob);
-                link.click();
-                URL.revokeObjectURL(link.href);
-                toast('QR Code berhasil diunduh!', 'success');
-            })
-            .catch(() => {
-                window.open(qrUrl, '_blank');
-                toast('Gagal download otomatis. Buka tab baru untuk save.', 'warning');
-            });
+        fetch(qrUrl).then(r => r.blob()).then(blob => {
+            const link = document.createElement('a');
+            link.download = 'QR_'+currentUser.nama+'_'+currentUser.id+'.png';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            URL.revokeObjectURL(link.href);
+            toast('QR Code berhasil diunduh!', 'success');
+        }).catch(() => { window.open(qrUrl, '_blank'); toast('Gagal download otomatis. Buka tab baru untuk save.', 'warning'); });
     }
 
-    // ================================================================
-    // RESET PASSWORD ADMIN (MODAL, BUKAN TOAST)
-    // ================================================================
-    async function resetPasswordAdmin(idAnggota) {
-        if (!confirm('Yakin mereset password anggota ini? Password baru akan dibuat 4 digit acak.')) return;
-        const result = await callApi('resetPasswordAnggota', { id: idAnggota });
-        if (!result.success) {
-            toast(result.message || 'Gagal reset password.', 'error');
-            return;
-        }
-        const html = `
-            <div class="password-modal">
-                <h2 style="text-align:center;">Password Berhasil Direset</h2>
-                <div class="password-display">
-                    <div class="code">${result.data.password}</div>
-                    <p class="text-muted" style="margin-top:12px;">Salin password ini dan berikan kepada anggota.<br>Pastikan untuk mencatatnya.</p>
-                </div>
-                <button class="btn btn-primary w-full" onclick="closeModal()" style="justify-content:center; padding:12px;">
-                    <i class="fas fa-check"></i> Saya sudah mencatat
-                </button>
-            </div>
-        `;
-        openModal(html);
-    }
-
-    // ================================================================
-    // CETAK KARTU ADMIN (GUNAKAN buildKartuHtml)
-    // ================================================================
     function printCardAdmin(id) {
         const anggota = appData.anggota.find(a => a.ID_Anggota === id);
         if (!anggota) return;
         const kartuHtml = buildKartuHtml(anggota);
         const win = window.open('', '_blank', 'width=600,height=500');
-        win.document.write(`
-            <html><head><title>Kartu Anggota</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f0f4f9; font-family:'Inter',sans-serif; padding:20px; }
-                #kartuContainer {
-                    width: 85.6mm;
-                    height: 53.98mm;
-                    background: #ffffff;
-                    border-radius: 8px;
-                    overflow: hidden;
-                    display: flex;
-                    flex-direction: column;
-                    border: 1px solid #dce3ec;
-                    font-family: 'Inter', sans-serif;
-                }
-                .fa-users, .fa-id-card { font-family: 'Font Awesome 6 Free'; font-weight: 900; }
-                @media print { body { background: #fff; padding: 20px; } #kartuContainer { box-shadow: none; border: 1px solid #ddd; } }
-            </style>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-            </head>
-            <body>${kartuHtml}
-            <script>window.onload=function(){window.print();setTimeout(function(){window.close();},1000);}<\/script>
-            </body></html>
-        `);
+        win.document.write('<html><head><title>Kartu Anggota</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f4f9;font-family:"Inter",sans-serif;padding:20px;}#kartuContainer{width:85.6mm;height:53.98mm;background:#ffffff;border-radius:8px;overflow:hidden;display:flex;flex-direction:column;border:1px solid #dce3ec;font-family:"Inter",sans-serif;}.fa-users,.fa-id-card{font-family:"Font Awesome 6 Free";font-weight:900;}@media print{body{background:#fff;padding:20px;}#kartuContainer{box-shadow:none;border:1px solid #ddd;}}</style><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" /></head><body>'+kartuHtml+'<script>window.onload=function(){window.print();setTimeout(function(){window.close();},1000);}<\/script></body></html>');
         win.document.close();
     }
 
     // ================================================================
-    // RIWAYAT MEMBER
+    // RESET PASSWORD ADMIN (MODAL)
     // ================================================================
-    function loadRiwayatMember() {
-        const user = currentUser;
-        const presensi = appData.presensi.filter(p => p.ID_Anggota === user.id);
-        const sorted = [...presensi].sort((a, b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin));
-        const total = sorted.length;
-        const totalPages = Math.ceil(total / PER_PAGE) || 1;
-        if (pageRiwayatMember > totalPages) pageRiwayatMember = totalPages;
-        const start = (pageRiwayatMember - 1) * PER_PAGE;
-        const end = Math.min(start + PER_PAGE, total);
-        const pageData = sorted.slice(start, end);
-        const riwayatTable = document.getElementById('riwayatTableMember');
-        riwayatTable.innerHTML = pageData.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat</td></tr>' : pageData.map(p => `
-            <tr><td>${esc(formatTanggalWaktu(p.Tanggal_Checkin, p.Waktu_Checkin))}</td><td>${esc(kegiatanNama(p.ID_Kegiatan))}</td>
-            <td><span class="badge-status ${esc((p.Status_Kehadiran || 'alfa').toLowerCase())}">${esc(p.Status_Kehadiran || 'Alfa')}</span></td>
-            <td class="poin-value ${(parseInt(p.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(p.Poin)}</td></tr>`).join('');
-        let html = `<span class="info">Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}</span>`;
-        html += `<button onclick="goToPageRiwayatMember(${pageRiwayatMember - 1})" ${pageRiwayatMember <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPageRiwayatMember(${i})" class="${i === pageRiwayatMember ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPageRiwayatMember(${pageRiwayatMember + 1})" ${pageRiwayatMember >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
-        document.getElementById('paginationRiwayatMember').innerHTML = html;
+    async function resetPasswordAdmin(idAnggota) {
+        if (!confirm('Yakin mereset password anggota ini? Password baru akan dibuat 4 digit acak.')) return;
+        const result = await callApi('resetPasswordAnggota', { id: idAnggota });
+        if (!result.success) { toast(result.message || 'Gagal reset password.', 'error'); return; }
+        showPasswordModal(idAnggota, result.data.password, 'Password Berhasil Direset!', 'Password baru untuk anggota:');
+    }
 
-        // Riwayat Poin (format tanggal diperbaiki)
-        const histori = appData.kontribusi.filter(k => k.ID_Anggota === user.id);
-        const tbody = document.getElementById('riwayatPoinTableMember');
-        const rows = histori.sort((a, b) => (b.Tanggal || '').localeCompare(a.Tanggal || ''));
-        tbody.innerHTML = rows.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat poin</td></tr>' : rows.map(k => `
-            <tr><td>${esc(formatTanggal(k.Tanggal))}</td><td>${esc(k.Jenis)}</td><td>${esc(k.Keterangan)}</td>
-            <td class="poin-value ${(parseInt(k.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(k.Poin)}</td></tr>`).join('');
+    // ================================================================
+    // SCAN LOADER
+    // ================================================================
+    function showScanLoader(show) {
+        const overlay = document.getElementById('scanLoader');
+        if (!overlay) return;
+        if (show) overlay.classList.add('active');
+        else overlay.classList.remove('active');
     }
-    function goToPageRiwayatMember(page) {
-        const total = appData.presensi.filter(p => p.ID_Anggota === currentUser.id).length;
-        const totalPages = Math.ceil(total / PER_PAGE) || 1;
-        if (page < 1 || page > totalPages) return;
-        pageRiwayatMember = page;
-        loadRiwayatMember();
+
+    // ================================================================
+    // SCAN
+    // ================================================================
+    function showScanStep(step) {
+        document.querySelectorAll('.scan-step').forEach(s => s.classList.remove('active'));
+        document.getElementById(step).classList.add('active');
     }
+
+    function openScanAdmin() {
+        const list = appData.kegiatan.filter(k => k.Status === 'Aktif');
+        const box = document.getElementById('scanKegiatanList');
+        box.innerHTML = list.length === 0 ? '<p class="text-muted text-center">Tidak ada kegiatan berstatus Aktif. Tambah kegiatan dulu di menu Kelola Kegiatan.</p>' : list.map(k => '<div class="scan-kegiatan-item"><div><strong>'+esc(k.Nama_Kegiatan)+'</strong><div class="text-muted" style="font-size:12px;">'+esc(formatTanggal(k.Tanggal))+' · '+esc(k.Tempat||'-')+'</div></div><button class="btn btn-primary btn-sm" onclick="pilihKegiatanScan(\''+esc(k.ID_Kegiatan)+'\',\''+esc(k.Nama_Kegiatan).replace(/'/g,"\\'")+'\')"><i class="fas fa-arrow-right"></i></button></div>').join('');
+        showScanStep('scanStepKegiatan');
+        document.getElementById('scanModal').classList.add('active');
+    }
+
+    function pilihKegiatanScan(id, nama) {
+        scanState.idKegiatan = id;
+        scanState.namaKegiatan = nama;
+        document.getElementById('scanKegiatanBadge').querySelector('span').textContent = nama;
+        showScanStep('scanStepScanner');
+        switchScanMode('kamera');
+    }
+
+    function gantiKegiatanScan() { stopCamera(); showScanStep('scanStepKegiatan'); }
+
+    function switchScanMode(mode) {
+        scanState.mode = mode;
+        document.getElementById('btnModeKamera').classList.toggle('active', mode === 'kamera');
+        document.getElementById('btnModeManual').classList.toggle('active', mode === 'manual');
+        document.getElementById('qrReaderBox').classList.toggle('hidden', mode !== 'kamera');
+        document.getElementById('scanManualBox').classList.toggle('hidden', mode !== 'manual');
+        if (mode === 'kamera') startCamera(); else stopCamera();
+        if (mode === 'manual') setTimeout(() => document.getElementById('scanInputManual')?.focus(), 200);
+    }
+
+    function startCamera() {
+        stopCamera();
+        const readerBox = document.getElementById('qrReaderBox');
+        readerBox.innerHTML = '<div id="qrReaderInner" style="width:100%;"></div><div class="scan-loading-overlay" id="scanLoader"><div style="display:flex; flex-direction:column; align-items:center;"><div class="spinner"></div><div class="text">Memproses...</div></div></div>';
+        try {
+            scanState.html5QrCode = new Html5Qrcode('qrReaderInner');
+            scanState.html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 220, height: 220 } },
+                (decodedText) => { prosesScanId(decodedText.trim()); },
+                () => {}
+            ).catch(() => { readerBox.innerHTML = '<p class="text-muted" style="padding:24px;text-align:center;color:#fff;">Kamera tidak tersedia. Gunakan mode Manual.</p>'; });
+        } catch(e) { readerBox.innerHTML = '<p class="text-muted" style="padding:24px;text-align:center;color:#fff;">Kamera tidak tersedia. Gunakan mode Manual.</p>'; }
+    }
+
+    function stopCamera() {
+        if (scanState.html5QrCode) {
+            try { scanState.html5QrCode.stop().then(() => scanState.html5QrCode.clear()).catch(() => {}); } catch(e) {}
+            scanState.html5QrCode = null;
+        }
+    }
+
+    async function prosesScanId(inputId) {
+        if (!inputId || isProcessing) return;
+        isProcessing = true;
+        showScanLoader(true);
+        const btn = document.querySelector('#scanManualBox .btn-success');
+        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
+
+        const status = document.getElementById('scanStatus').value;
+        const anggota = appData.anggota.find(a => a.ID_Anggota === inputId);
+        if (!anggota) {
+            showScanLoader(false);
+            tampilkanHasilScan('error', 'ID Tidak Ditemukan', 'ID "'+esc(inputId)+'" tidak terdaftar.');
+            isProcessing = false;
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Check-in'; }
+            return;
+        }
+
+        const sudah = appData.presensi.some(p => p.ID_Anggota === inputId && String(p.ID_Kegiatan) === String(scanState.idKegiatan));
+        if (sudah) {
+            showScanLoader(false);
+            tampilkanHasilScan('warning-result', anggota.Nama_Lengkap, 'Sudah check-in untuk kegiatan ini.');
+            isProcessing = false;
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Check-in'; }
+            return;
+        }
+
+        const result = await callApi('checkin', {
+            id_anggota: inputId,
+            id_kegiatan: scanState.idKegiatan,
+            status_kehadiran: status,
+            checkin_method: scanState.mode === 'kamera' ? 'QR Scan' : 'Manual'
+        });
+
+        showScanLoader(false);
+        isProcessing = false;
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Check-in'; }
+
+        if (!result.success) { tampilkanHasilScan('error', anggota.Nama_Lengkap, result.message || 'Check-in gagal.'); return; }
+        tampilkanHasilScan('success', anggota.Nama_Lengkap, 'Check-in berhasil · +'+result.data.poin+' poin');
+        await refreshAllData();
+        if (document.getElementById('viewAdminDash').classList.contains('active')) renderAdminDashboard();
+        if (document.getElementById('viewKelolaPresensi').classList.contains('active')) renderPresensi();
+    }
+
+    function tampilkanHasilScan(kind, nama, detail) {
+        showScanLoader(false);
+        stopCamera();
+        const box = document.getElementById('scanResultBox');
+        box.className = 'scan-result-box ' + kind;
+        const icon = kind === 'success' ? 'fa-circle-check' : (kind === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation');
+        box.querySelector('.icon').innerHTML = '<i class="fas '+icon+'"></i>';
+        document.getElementById('scanResultNama').textContent = nama;
+        document.getElementById('scanResultDetail').textContent = detail;
+        beep(kind === 'success' ? 'success' : (kind === 'error' ? 'error' : 'warning'));
+        showScanStep('scanStepResult');
+        setTimeout(() => { if (document.getElementById('scanModal').classList.contains('active')) lanjutkanScan(); }, 2200);
+    }
+
+    function lanjutkanScan() {
+        document.getElementById('scanInputManual').value = '';
+        showScanStep('scanStepScanner');
+        if (scanState.mode === 'kamera') startCamera();
+    }
+
+    function closeScanModal() {
+        stopCamera();
+        document.getElementById('scanModal').classList.remove('active');
+        scanState.idKegiatan = null;
+    }
+    document.getElementById('scanModal').addEventListener('click', function(e) { if (e.target === this) closeScanModal(); });
 
     // ================================================================
     // ADMIN DASHBOARD
     // ================================================================
     function renderAdminDashboard() {
         const anggotaAktif = appData.anggota.filter(a => a.Status === 'Aktif' || a.Status === 'Sementara');
-        const totalHadir = appData.presensi.filter(p => p.Status_Kehadiran === 'Hadir').length;
-        const totalAlfa = appData.presensi.filter(p => p.Status_Kehadiran === 'Alfa').length;
-        const pendingApproval = appData.anggota.filter(a => a.Status === 'Pending').length;
         document.getElementById('adminTotalAnggota').textContent = anggotaAktif.length;
-        document.getElementById('adminTotalHadir').textContent = totalHadir;
-        document.getElementById('adminTotalAlfa').textContent = totalAlfa;
-        document.getElementById('adminPendingApproval').textContent = pendingApproval;
+        document.getElementById('adminTotalHadir').textContent = appData.presensi.filter(p => p.Status_Kehadiran === 'Hadir').length;
+        document.getElementById('adminTotalAlfa').textContent = appData.presensi.filter(p => p.Status_Kehadiran === 'Alfa').length;
+        document.getElementById('adminPendingApproval').textContent = appData.anggota.filter(a => a.Status === 'Pending').length;
     }
 
     // ================================================================
     // KELOLA ANGGOTA
     // ================================================================
     function totalPoinAnggota(id) {
-        // Hitung dari kontribusi (termasuk manual), bukan hanya presensi
-        return appData.kontribusi
-            .filter(k => k.ID_Anggota === id)
-            .reduce((sum, k) => sum + (parseInt(k.Poin) || 0), 0);
+        return appData.kontribusi.filter(k => k.ID_Anggota === id).reduce((s,k) => s + (parseInt(k.Poin)||0), 0);
     }
 
     function renderAnggota() {
         const search = document.getElementById('searchAnggota').value.toLowerCase();
         const filterStatus = document.getElementById('filterStatusAnggota').value;
         let list = appData.anggota.filter(a => a.Status !== 'Pending');
-        if (search) list = list.filter(a => (a.Nama_Lengkap || '').toLowerCase().includes(search) || (a.ID_Anggota || '').toLowerCase().includes(search));
+        if (search) list = list.filter(a => (a.Nama_Lengkap||'').toLowerCase().includes(search) || (a.ID_Anggota||'').toLowerCase().includes(search));
         if (filterStatus) list = list.filter(a => a.Status === filterStatus);
-        list.sort((a, b) => a.Nama_Lengkap.localeCompare(b.Nama_Lengkap));
+        list.sort((a,b) => a.Nama_Lengkap.localeCompare(b.Nama_Lengkap));
         const total = list.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
         if (pageKelolaAnggota > totalPages) pageKelolaAnggota = totalPages;
@@ -2128,32 +2153,20 @@
         if (pageData.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-muted text-center">Tidak ada data</td></tr>'; }
         else {
             const statusClass = { Aktif: 'hadir', Sementara: 'izin', Nonaktif: 'alfa', Ditolak: 'ditolak' };
-            tbody.innerHTML = pageData.map(a => `
-                <tr>
-                    <td><strong>${esc(a.ID_Anggota)}</strong></td>
-                    <td>${esc(a.Nama_Lengkap)}</td>
-                    <td>${a.Role === 'admin' ? '<span class="badge-status izin">Admin</span>' : 'Anggota'}</td>
-                    <td><span class="badge-status ${statusClass[a.Status] || 'alfa'}">${esc(a.Status || 'Aktif')}</span></td>
-                    <td class="poin-value ${totalPoinAnggota(a.ID_Anggota) >= 0 ? 'positive' : 'negative'}">${formatPoin(totalPoinAnggota(a.ID_Anggota))}</td>
-                    <td>
-                        <button class="btn btn-primary btn-xs" onclick="viewProfilAnggota('${esc(a.ID_Anggota)}')" title="Lihat profil"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-warning btn-xs" onclick="editAnggota('${esc(a.ID_Anggota)}')" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger btn-xs" onclick="hapusAnggota('${esc(a.ID_Anggota)}')" title="Nonaktifkan"><i class="fas fa-trash"></i></button>
-                        <button class="btn btn-secondary btn-xs" onclick="printCardAdmin('${esc(a.ID_Anggota)}')" title="Cetak kartu"><i class="fas fa-id-card"></i></button>
-                    </td>
-                </tr>`).join('');
+            tbody.innerHTML = pageData.map(a => '<tr><td><strong>'+esc(a.ID_Anggota)+'</strong></td><td>'+esc(a.Nama_Lengkap)+'</td><td>'+(a.Role === 'admin' ? '<span class="badge-status izin">Admin</span>' : 'Anggota')+'</td><td><span class="badge-status '+(statusClass[a.Status]||'alfa')+'">'+esc(a.Status||'Aktif')+'</span></td><td class="poin-value '+(totalPoinAnggota(a.ID_Anggota) >= 0 ? 'positive' : 'negative')+'">'+formatPoin(totalPoinAnggota(a.ID_Anggota))+'</td><td><button class="btn btn-primary btn-xs" onclick="viewProfilAnggota(\''+esc(a.ID_Anggota)+'\')" title="Lihat profil"><i class="fas fa-eye"></i></button><button class="btn btn-warning btn-xs" onclick="editAnggota(\''+esc(a.ID_Anggota)+'\')" title="Edit"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-xs" onclick="hapusAnggota(\''+esc(a.ID_Anggota)+'\')" title="Nonaktifkan"><i class="fas fa-trash"></i></button><button class="btn btn-secondary btn-xs" onclick="printCardAdmin(\''+esc(a.ID_Anggota)+'\')" title="Cetak kartu"><i class="fas fa-id-card"></i></button></td></tr>').join('');
         }
-        let html = `<span class="info">Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}</span>`;
-        html += `<button onclick="goToPageAnggotaList(${pageKelolaAnggota - 1})" ${pageKelolaAnggota <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPageAnggotaList(${i})" class="${i === pageKelolaAnggota ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPageAnggotaList(${pageKelolaAnggota + 1})" ${pageKelolaAnggota >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+        let html = '<span class="info">Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total+'</span>';
+        html += '<button onclick="goToPageAnggotaList('+(pageKelolaAnggota-1)+')" '+(pageKelolaAnggota<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i></button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPageAnggotaList('+i+')" class="'+(i===pageKelolaAnggota?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPageAnggotaList('+(pageKelolaAnggota+1)+')" '+(pageKelolaAnggota>=totalPages?'disabled':'')+'><i class="fas fa-chevron-right"></i></button>';
         document.getElementById('paginationKelolaAnggota').innerHTML = html;
     }
+
     function goToPageAnggotaList(page) {
         const search = document.getElementById('searchAnggota').value.toLowerCase();
         const filterStatus = document.getElementById('filterStatusAnggota').value;
         let list = appData.anggota.filter(a => a.Status !== 'Pending');
-        if (search) list = list.filter(a => (a.Nama_Lengkap || '').toLowerCase().includes(search) || (a.ID_Anggota || '').toLowerCase().includes(search));
+        if (search) list = list.filter(a => (a.Nama_Lengkap||'').toLowerCase().includes(search) || (a.ID_Anggota||'').toLowerCase().includes(search));
         if (filterStatus) list = list.filter(a => a.Status === filterStatus);
         const total = list.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
@@ -2163,10 +2176,57 @@
     }
 
     // ================================================================
+    // HAPUS ANGGOTA (DENGAN LOADER)
+    // ================================================================
+    async function hapusAnggota(id) {
+        if (!confirm('Yakin ingin menonaktifkan anggota ini?')) return;
+        const btn = document.activeElement;
+        setButtonLoading(btn, true, 'Memproses...');
+        const result = await callApi('deleteAnggota', { id: id });
+        setButtonLoading(btn, false);
+        if (!result.success) { toast(result.message || 'Gagal!', 'error'); return; }
+        toast('Anggota dinonaktifkan!', 'warning');
+        await refreshAllData();
+        renderAnggota();
+        if (document.getElementById('viewAdminDash').classList.contains('active')) renderAdminDashboard();
+    }
+
+    // ================================================================
+    // HAPUS KEGIATAN (DENGAN LOADER)
+    // ================================================================
+    async function hapusKegiatan(id) {
+        if (!confirm('Yakin ingin menghapus kegiatan ini?')) return;
+        const btn = document.activeElement;
+        setButtonLoading(btn, true, 'Memproses...');
+        const result = await callApi('deleteKegiatan', { id: id });
+        setButtonLoading(btn, false);
+        if (!result.success) { toast(result.message || 'Gagal!', 'error'); return; }
+        toast('Kegiatan dihapus!', 'warning');
+        await refreshAllData();
+        renderKegiatan();
+    }
+
+    // ================================================================
+    // PROSES APPROVAL (DENGAN LOADER)
+    // ================================================================
+    async function prosesApproval(id, approve) {
+        if (!confirm(approve ? 'Setujui pendaftaran anggota ini?' : 'Tolak pendaftaran anggota ini?')) return;
+        const btn = document.activeElement;
+        setButtonLoading(btn, true, approve ? 'Menyetujui...' : 'Menolak...');
+        const result = await callApi(approve ? 'approveAnggota' : 'rejectAnggota', { id: id });
+        setButtonLoading(btn, false);
+        if (!result.success) { toast(result.message || 'Gagal memproses.', 'error'); return; }
+        toast(approve ? 'Anggota disetujui!' : 'Pendaftaran ditolak.', approve ? 'success' : 'warning');
+        await refreshAllData();
+        renderApproval();
+        buildSidebar(true);
+    }
+
+    // ================================================================
     // KELOLA KEGIATAN
     // ================================================================
     function renderKegiatan() {
-        let list = [...appData.kegiatan].sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
+        let list = [...appData.kegiatan].sort((a,b) => new Date(b.Tanggal) - new Date(a.Tanggal));
         const total = list.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
         if (pageKelolaKegiatan > totalPages) pageKelolaKegiatan = totalPages;
@@ -2179,26 +2239,16 @@
             tbody.innerHTML = pageData.map(k => {
                 const hadir = appData.presensi.filter(p => String(p.ID_Kegiatan) === String(k.ID_Kegiatan) && p.Status_Kehadiran === 'Hadir').length;
                 const alfaDone = String(k.Alfa_Processed).toUpperCase() === 'TRUE';
-                return `<tr>
-                    <td><strong>${esc(k.Nama_Kegiatan)}</strong></td>
-                    <td>${esc(formatTanggal(k.Tanggal))}</td>
-                    <td>${esc(formatTanggal(k.Tanggal_Selesai || k.Tanggal))}</td>
-                    <td>${esc(k.Tempat || '-')}</td>
-                    <td>${hadir}</td>
-                    <td>${alfaDone ? '<span class="badge-status hadir">Sudah</span>' : '<span class="badge-status izin">Belum</span>'}</td>
-                    <td>
-                        <button class="btn btn-primary btn-xs" onclick="viewPresensiKegiatan('${esc(k.ID_Kegiatan)}')"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-warning btn-xs" onclick="editKegiatan('${esc(k.ID_Kegiatan)}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger btn-xs" onclick="hapusKegiatan('${esc(k.ID_Kegiatan)}')"><i class="fas fa-trash"></i></button>
-                    </td></tr>`;
+                return '<tr><td><strong>'+esc(k.Nama_Kegiatan)+'</strong></td><td>'+esc(formatTanggal(k.Tanggal))+'</td><td>'+esc(formatTanggal(k.Tanggal_Selesai||k.Tanggal))+'</td><td>'+esc(k.Tempat||'-')+'</td><td>'+hadir+'</td><td>'+(alfaDone ? '<span class="badge-status hadir">Sudah</span>' : '<span class="badge-status izin">Belum</span>')+'</td><td><button class="btn btn-primary btn-xs" onclick="viewPresensiKegiatan(\''+esc(k.ID_Kegiatan)+'\')"><i class="fas fa-eye"></i></button><button class="btn btn-warning btn-xs" onclick="editKegiatan(\''+esc(k.ID_Kegiatan)+'\')"><i class="fas fa-edit"></i></button><button class="btn btn-danger btn-xs" onclick="hapusKegiatan(\''+esc(k.ID_Kegiatan)+'\')"><i class="fas fa-trash"></i></button></td></tr>';
             }).join('');
         }
-        let html = `<span class="info">Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}</span>`;
-        html += `<button onclick="goToPageKegiatanList(${pageKelolaKegiatan - 1})" ${pageKelolaKegiatan <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPageKegiatanList(${i})" class="${i === pageKelolaKegiatan ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPageKegiatanList(${pageKelolaKegiatan + 1})" ${pageKelolaKegiatan >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+        let html = '<span class="info">Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total+'</span>';
+        html += '<button onclick="goToPageKegiatanList('+(pageKelolaKegiatan-1)+')" '+(pageKelolaKegiatan<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i></button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPageKegiatanList('+i+')" class="'+(i===pageKelolaKegiatan?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPageKegiatanList('+(pageKelolaKegiatan+1)+')" '+(pageKelolaKegiatan>=totalPages?'disabled':'')+'><i class="fas fa-chevron-right"></i></button>';
         document.getElementById('paginationKelolaKegiatan').innerHTML = html;
     }
+
     function goToPageKegiatanList(page) {
         const total = appData.kegiatan.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
@@ -2215,13 +2265,13 @@
         const kegiatanId = document.getElementById('filterPresensiKegiatan').value;
         const sel = document.getElementById('filterPresensiKegiatan');
         const currentVal = sel.value;
-        sel.innerHTML = '<option value="">Semua Kegiatan</option>' + appData.kegiatan.map(k => `<option value="${esc(k.ID_Kegiatan)}">${esc(k.Nama_Kegiatan)}</option>`).join('');
+        sel.innerHTML = '<option value="">Semua Kegiatan</option>' + appData.kegiatan.map(k => '<option value="'+esc(k.ID_Kegiatan)+'">'+esc(k.Nama_Kegiatan)+'</option>').join('');
         sel.value = currentVal;
 
         let list = appData.presensi;
         if (date) list = list.filter(p => p.Tanggal_Checkin && p.Tanggal_Checkin.startsWith(date));
         if (kegiatanId) list = list.filter(p => String(p.ID_Kegiatan) === String(kegiatanId));
-        list = [...list].sort((a, b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin));
+        list = [...list].sort((a,b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin));
 
         const total = list.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
@@ -2232,17 +2282,15 @@
         const tbody = document.getElementById('presensiTable');
         if (pageData.length === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-muted text-center">Tidak ada data</td></tr>'; }
         else {
-            tbody.innerHTML = pageData.map(p => `
-                <tr><td>${esc(formatTanggalWaktu(p.Tanggal_Checkin, p.Waktu_Checkin))}</td><td>${esc(anggotaNama(p.ID_Anggota))}</td><td>${esc(kegiatanNama(p.ID_Kegiatan))}</td>
-                <td><span class="badge-status ${esc((p.Status_Kehadiran || 'alfa').toLowerCase())}">${esc(p.Status_Kehadiran || 'Alfa')}</span></td>
-                <td class="poin-value ${(parseInt(p.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(p.Poin)}</td></tr>`).join('');
+            tbody.innerHTML = pageData.map(p => '<tr><td>'+esc(formatTanggalWaktu(p.Tanggal_Checkin, p.Waktu_Checkin))+'</td><td>'+esc(anggotaNama(p.ID_Anggota))+'</td><td>'+esc(kegiatanNama(p.ID_Kegiatan))+'</td><td><span class="badge-status '+esc((p.Status_Kehadiran||'alfa').toLowerCase())+'">'+esc(p.Status_Kehadiran||'Alfa')+'</span></td><td class="poin-value '+(parseInt(p.Poin)||0 >=0 ? 'positive' : 'negative')+'">'+formatPoin(p.Poin)+'</td></tr>').join('');
         }
-        let html = `<span class="info">Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}</span>`;
-        html += `<button onclick="goToPagePresensiList(${pageKelolaPresensi - 1})" ${pageKelolaPresensi <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPagePresensiList(${i})" class="${i === pageKelolaPresensi ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPagePresensiList(${pageKelolaPresensi + 1})" ${pageKelolaPresensi >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+        let html = '<span class="info">Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total+'</span>';
+        html += '<button onclick="goToPagePresensiList('+(pageKelolaPresensi-1)+')" '+(pageKelolaPresensi<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i></button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPagePresensiList('+i+')" class="'+(i===pageKelolaPresensi?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPagePresensiList('+(pageKelolaPresensi+1)+')" '+(pageKelolaPresensi>=totalPages?'disabled':'')+'><i class="fas fa-chevron-right"></i></button>';
         document.getElementById('paginationKelolaPresensi').innerHTML = html;
     }
+
     function goToPagePresensiList(page) {
         const date = document.getElementById('filterPresensiDate').value;
         const kegiatanId = document.getElementById('filterPresensiKegiatan').value;
@@ -2262,7 +2310,7 @@
     async function renderApproval() {
         const result = await callApi('getAnggotaPending');
         const box = document.getElementById('approvalList');
-        if (!result.success) { box.innerHTML = `<p class="text-muted">${esc(result.message)}</p>`; return; }
+        if (!result.success) { box.innerHTML = '<p class="text-muted">'+esc(result.message)+'</p>'; return; }
         const list = result.data || [];
         const total = list.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
@@ -2272,27 +2320,15 @@
         const pageData = list.slice(start, end);
         if (pageData.length === 0) { box.innerHTML = '<p class="text-muted text-center">Tidak ada pendaftaran yang menunggu persetujuan.</p>'; }
         else {
-            box.innerHTML = pageData.map(a => `
-                <div class="card" style="margin-bottom:12px;box-shadow:none;border:1px solid var(--border);">
-                    <div class="flex-between flex-wrap" style="gap:12px;">
-                        <div>
-                            <strong>${esc(a.Nama_Lengkap)}</strong> <span class="text-muted">(${esc(a.ID_Anggota)})</span>
-                            <div class="text-muted" style="font-size:13px;">${esc(a.No_HP)} · ${esc(a.Email || '-')} · ${esc(a.Alamat || '-')}</div>
-                            ${a.duplicateWarning ? `<div class="alert-box warning mt-2"><i class="fas fa-triangle-exclamation"></i> Kemungkinan duplikat dengan: ${a.duplicateWarning.map(d => esc(d.nama) + ' (' + esc(d.field) + ')').join(', ')}</div>` : ''}
-                        </div>
-                        <div style="display:flex;gap:8px;">
-                            <button class="btn btn-success btn-sm" onclick="prosesApproval('${esc(a.ID_Anggota)}', true)"><i class="fas fa-check"></i> Setujui</button>
-                            <button class="btn btn-danger btn-sm" onclick="prosesApproval('${esc(a.ID_Anggota)}', false)"><i class="fas fa-xmark"></i> Tolak</button>
-                        </div>
-                    </div>
-                </div>`).join('');
+            box.innerHTML = pageData.map(a => '<div class="card" style="margin-bottom:12px;box-shadow:none;border:1px solid var(--border);"><div class="flex-between flex-wrap" style="gap:12px;"><div><strong>'+esc(a.Nama_Lengkap)+'</strong> <span class="text-muted">('+esc(a.ID_Anggota)+')</span><div class="text-muted" style="font-size:13px;">'+esc(a.No_HP)+' · '+esc(a.Email||'-')+' · '+esc(a.Alamat||'-')+'</div>'+(a.duplicateWarning ? '<div class="alert-box warning mt-2"><i class="fas fa-triangle-exclamation"></i> Kemungkinan duplikat dengan: '+a.duplicateWarning.map(d => esc(d.nama)+' ('+esc(d.field)+')').join(', ')+'</div>' : '')+'</div><div style="display:flex;gap:8px;"><button class="btn btn-success btn-sm" onclick="prosesApproval(\''+esc(a.ID_Anggota)+'\', true)"><i class="fas fa-check"></i> Setujui</button><button class="btn btn-danger btn-sm" onclick="prosesApproval(\''+esc(a.ID_Anggota)+'\', false)"><i class="fas fa-xmark"></i> Tolak</button></div></div></div>').join('');
         }
-        let html = `<span class="info">Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}</span>`;
-        html += `<button onclick="goToPageApproval(${pageApproval - 1})" ${pageApproval <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i></button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPageApproval(${i})" class="${i === pageApproval ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPageApproval(${pageApproval + 1})" ${pageApproval >= totalPages ? 'disabled' : ''}><i class="fas fa-chevron-right"></i></button>`;
+        let html = '<span class="info">Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total+'</span>';
+        html += '<button onclick="goToPageApproval('+(pageApproval-1)+')" '+(pageApproval<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i></button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPageApproval('+i+')" class="'+(i===pageApproval?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPageApproval('+(pageApproval+1)+')" '+(pageApproval>=totalPages?'disabled':'')+'><i class="fas fa-chevron-right"></i></button>';
         document.getElementById('paginationApproval').innerHTML = html;
     }
+
     function goToPageApproval(page) {
         callApi('getAnggotaPending').then(res => {
             const list = res.data || [];
@@ -2319,14 +2355,9 @@
         const suggestions = document.getElementById('poinSuggestions');
         if (!query) { suggestions.classList.remove('active'); return; }
         const lower = query.toLowerCase();
-        const filtered = poinAnggotaList.filter(a =>
-            a.Nama_Lengkap.toLowerCase().includes(lower) ||
-            a.ID_Anggota.toLowerCase().includes(lower)
-        ).slice(0, 10);
+        const filtered = poinAnggotaList.filter(a => a.Nama_Lengkap.toLowerCase().includes(lower) || a.ID_Anggota.toLowerCase().includes(lower)).slice(0,10);
         if (filtered.length === 0) { suggestions.classList.remove('active'); return; }
-        suggestions.innerHTML = filtered.map(a =>
-            `<div class="item" onclick="selectPoinAnggota('${esc(a.ID_Anggota)}', '${esc(a.Nama_Lengkap)}')">${esc(a.Nama_Lengkap)} (${esc(a.ID_Anggota)})</div>`
-        ).join('');
+        suggestions.innerHTML = filtered.map(a => '<div class="item" onclick="selectPoinAnggota(\''+esc(a.ID_Anggota)+'\',\''+esc(a.Nama_Lengkap)+'\')">'+esc(a.Nama_Lengkap)+' ('+esc(a.ID_Anggota)+')</div>').join('');
         suggestions.classList.add('active');
     }
 
@@ -2342,7 +2373,7 @@
         if (!idAnggota) { infoDiv.style.display = 'none'; return; }
         const anggota = appData.anggota.find(a => a.ID_Anggota === idAnggota);
         if (!anggota) { infoDiv.style.display = 'none'; return; }
-        const totalPoin = appData.kontribusi.filter(k => k.ID_Anggota === idAnggota).reduce((sum, k) => sum + (parseInt(k.Poin) || 0), 0);
+        const totalPoin = appData.kontribusi.filter(k => k.ID_Anggota === idAnggota).reduce((s,k) => s + (parseInt(k.Poin)||0), 0);
         document.getElementById('poinInfoNama').textContent = anggota.Nama_Lengkap;
         document.getElementById('poinInfoId').textContent = anggota.ID_Anggota;
         document.getElementById('poinInfoTotal').textContent = totalPoin;
@@ -2360,7 +2391,7 @@
         input.value = (parseInt(input.value) || 0) + dir;
     }
 
-    document.getElementById('formTambahPoin').addEventListener('submit', async function (e) {
+    document.getElementById('formTambahPoin').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = this.querySelector('button[type="submit"]');
         const original = btn.innerHTML;
@@ -2372,7 +2403,7 @@
         if (!keterangan) { toast('Keterangan wajib diisi!', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
         const result = await callApi('addKontribusiManual', { id_anggota: idAnggota, poin: jumlah, keterangan: keterangan });
         if (!result.success) { toast(result.message || 'Gagal menyimpan!', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
-        toast(`${jumlah >= 0 ? '+' : ''}${jumlah} poin berhasil disimpan!`, 'success');
+        toast((jumlah>=0?'+':'')+jumlah+' poin berhasil disimpan!', 'success');
         document.getElementById('poinJumlah').value = 0;
         document.getElementById('poinKeterangan').value = '';
         await refreshAllData();
@@ -2389,128 +2420,147 @@
     });
 
     // ================================================================
-    // SCAN (DENGAN STATUS KEHADIRAN)
+    // PROSES ALFA MANUAL (DENGAN LOADER)
     // ================================================================
-    function showScanStep(step) { document.querySelectorAll('.scan-step').forEach(s => s.classList.remove('active')); document.getElementById(step).classList.add('active'); }
-    function openScanAdmin() {
-        const list = appData.kegiatan.filter(k => k.Status === 'Aktif');
-        const box = document.getElementById('scanKegiatanList');
-        box.innerHTML = list.length === 0 ? '<p class="text-muted text-center">Tidak ada kegiatan berstatus Aktif. Tambah kegiatan dulu di menu Kelola Kegiatan.</p>' : list.map(k => `
-            <div class="scan-kegiatan-item">
-                <div><strong>${esc(k.Nama_Kegiatan)}</strong><div class="text-muted" style="font-size:12px;">${esc(formatTanggal(k.Tanggal))} · ${esc(k.Tempat || '-')}</div></div>
-                <button class="btn btn-primary btn-sm" onclick="pilihKegiatanScan('${esc(k.ID_Kegiatan)}','${esc(k.Nama_Kegiatan).replace(/'/g, "\\'")}')"><i class="fas fa-arrow-right"></i></button>
-            </div>`).join('');
-        showScanStep('scanStepKegiatan');
-        document.getElementById('scanModal').classList.add('active');
-    }
-    function pilihKegiatanScan(id, nama) { scanState.idKegiatan = id; scanState.namaKegiatan = nama; document.getElementById('scanKegiatanBadge').querySelector('span').textContent = nama; showScanStep('scanStepScanner'); switchScanMode('kamera'); }
-    function gantiKegiatanScan() { stopCamera(); showScanStep('scanStepKegiatan'); }
-    function switchScanMode(mode) {
-        scanState.mode = mode;
-        document.getElementById('btnModeKamera').classList.toggle('active', mode === 'kamera');
-        document.getElementById('btnModeManual').classList.toggle('active', mode === 'manual');
-        document.getElementById('qrReaderBox').classList.toggle('hidden', mode !== 'kamera');
-        document.getElementById('scanManualBox').classList.toggle('hidden', mode !== 'manual');
-        if (mode === 'kamera') startCamera(); else stopCamera();
-        if (mode === 'manual') setTimeout(() => document.getElementById('scanInputManual')?.focus(), 200);
-    }
-    function startCamera() {
-        stopCamera();
-        const readerBox = document.getElementById('qrReaderBox');
-        readerBox.innerHTML = '<div id="qrReaderInner" style="width:100%;"></div>';
-        try {
-            scanState.html5QrCode = new Html5Qrcode('qrReaderInner');
-            scanState.html5QrCode.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 220, height: 220 } },
-                (decodedText) => { prosesScanId(decodedText.trim()); },
-                () => {}
-            ).catch(() => { readerBox.innerHTML = '<p class="text-muted" style="padding:24px;text-align:center;color:#fff;">Kamera tidak tersedia. Gunakan mode Manual.</p>'; });
-        } catch (e) { readerBox.innerHTML = '<p class="text-muted" style="padding:24px;text-align:center;color:#fff;">Kamera tidak tersedia. Gunakan mode Manual.</p>'; }
-    }
-    function stopCamera() { if (scanState.html5QrCode) { try { scanState.html5QrCode.stop().then(() => scanState.html5QrCode.clear()).catch(() => {}); } catch (e) {} scanState.html5QrCode = null; } }
-
-    async function prosesScanId(inputId) {
-        if (!inputId || isProcessing) return;
-        isProcessing = true;
-        const btn = document.querySelector('#scanManualBox .btn-success');
-        if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>'; }
-
-        // Ambil status dari dropdown
-        const status = document.getElementById('scanStatus').value;
-
-        const anggota = appData.anggota.find(a => a.ID_Anggota === inputId);
-        if (!anggota) {
-            tampilkanHasilScan('error', 'ID Tidak Ditemukan', `ID "${esc(inputId)}" tidak terdaftar.`);
-            isProcessing = false;
-            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Check-in'; }
-            return;
-        }
-
-        const sudah = appData.presensi.some(p => p.ID_Anggota === inputId && String(p.ID_Kegiatan) === String(scanState.idKegiatan));
-        if (sudah) {
-            tampilkanHasilScan('warning-result', anggota.Nama_Lengkap, 'Sudah check-in untuk kegiatan ini.');
-            isProcessing = false;
-            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Check-in'; }
-            return;
-        }
-
-        const result = await callApi('checkin', {
-            id_anggota: inputId,
-            id_kegiatan: scanState.idKegiatan,
-            status_kehadiran: status,
-            checkin_method: scanState.mode === 'kamera' ? 'QR Scan' : 'Manual'
-        });
-
-        isProcessing = false;
-        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i> Check-in'; }
-        if (!result.success) {
-            tampilkanHasilScan('error', anggota.Nama_Lengkap, result.message || 'Check-in gagal.');
-            return;
-        }
-        tampilkanHasilScan('success', anggota.Nama_Lengkap, `Check-in berhasil · +${result.data.poin} poin`);
+    async function processAlfaManual() {
+        const btn = document.querySelector('#viewInisialisasi .btn-warning');
+        setButtonLoading(btn, true, 'Memproses...');
+        toast('Memproses Alfa otomatis...', 'warning');
+        const result = await callApi('processAlfaOtomatis');
+        setButtonLoading(btn, false);
+        if (!result.success) { toast(result.message || 'Gagal!', 'error'); return; }
+        toast('Selesai. Kegiatan diproses: '+result.data.kegiatanDiproses+', Alfa dicatat: '+result.data.alfaTercatat, 'success');
         await refreshAllData();
-        if (document.getElementById('viewAdminDash').classList.contains('active')) renderAdminDashboard();
-        if (document.getElementById('viewKelolaPresensi').classList.contains('active')) renderPresensi();
     }
-
-    function tampilkanHasilScan(kind, nama, detail) {
-        stopCamera();
-        const box = document.getElementById('scanResultBox');
-        box.className = 'scan-result-box ' + kind;
-        const icon = kind === 'success' ? 'fa-circle-check' : (kind === 'error' ? 'fa-circle-xmark' : 'fa-triangle-exclamation');
-        box.querySelector('.icon').innerHTML = `<i class="fas ${icon}"></i>`;
-        document.getElementById('scanResultNama').textContent = nama;
-        document.getElementById('scanResultDetail').textContent = detail;
-        beep(kind === 'success' ? 'success' : (kind === 'error' ? 'error' : 'warning'));
-        showScanStep('scanStepResult');
-        setTimeout(() => { if (document.getElementById('scanModal').classList.contains('active')) lanjutkanScan(); }, 2200);
-    }
-    function lanjutkanScan() { document.getElementById('scanInputManual').value = ''; showScanStep('scanStepScanner'); if (scanState.mode === 'kamera') startCamera(); }
-    function closeScanModal() { stopCamera(); document.getElementById('scanModal').classList.remove('active'); scanState.idKegiatan = null; }
-    document.getElementById('scanModal').addEventListener('click', function (e) { if (e.target === this) closeScanModal(); });
 
     // ================================================================
-    // CRUD ANGGOTA
+    // EXPORT LAPORAN (DENGAN LOADER)
+    // ================================================================
+    async function exportLaporan(jenis, format) {
+        const btns = document.querySelectorAll('[onclick*="exportLaporan(\''+jenis+'\',\''+format+'\')"]');
+        const btn = btns[0] || document.activeElement;
+        setButtonLoading(btn, true, 'Membuat...');
+        toast('Sedang membuat file export, mohon tunggu...', 'warning');
+        const params = jenis === 'anggota'
+            ? { dateFrom: document.getElementById('periodeDari').value || null, dateTo: document.getElementById('periodeSampai').value || null }
+            : jenis === 'bulanan'
+                ? (() => { const [t,b] = document.getElementById('laporanBulan').value.split('-'); return { bulan: b, tahun: t }; })()
+                : {};
+        const result = await callApi('exportLaporan', { jenis, format, params });
+        setButtonLoading(btn, false);
+        if (!result.success) { toast(result.message || 'Export gagal.', 'error'); return; }
+        const urls = result.data;
+        if (urls.pdf) window.open(urls.pdf, '_blank');
+        if (urls.xlsx) window.open(urls.xlsx, '_blank');
+        toast('Export berhasil dibuat!', 'success');
+    }
+
+    // ================================================================
+    // LAPORAN
+    // ================================================================
+    function resetPeriode() { document.getElementById('periodeDari').value = ''; document.getElementById('periodeSampai').value = ''; goToPageAnggota(1); }
+
+    async function renderLaporanPeriode() {
+        const dateFrom = document.getElementById('periodeDari').value || null;
+        const dateTo = document.getElementById('periodeSampai').value || null;
+        const result = await callApi('getLaporanPeriode', { dateFrom, dateTo });
+        if (!result.success) { document.getElementById('laporanAnggotaTable').innerHTML = '<tr><td colspan="5" class="text-muted text-center">'+esc(result.message)+'</td></tr>'; document.getElementById('paginationAnggota').innerHTML = ''; return; }
+        laporanAnggotaCache = result.data || [];
+        laporanAnggotaCache.sort((a,b) => a.nama.localeCompare(b.nama));
+        renderPageAnggota();
+    }
+
+    function renderPageAnggota() {
+        const total = laporanAnggotaCache.length;
+        const totalPages = Math.ceil(total / PER_PAGE) || 1;
+        if (pageAnggota > totalPages) pageAnggota = totalPages;
+        const start = (pageAnggota - 1) * PER_PAGE;
+        const end = Math.min(start + PER_PAGE, total);
+        const pageData = laporanAnggotaCache.slice(start, end);
+        const tbody = document.getElementById('laporanAnggotaTable');
+        if (total === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-muted text-center">Tidak ada data</td></tr>'; }
+        else { tbody.innerHTML = pageData.map(a => '<tr><td>'+esc(a.nama)+'</td><td>'+a.hadir+'</td><td>'+a.alfa+'</td><td>'+a.persen_kehadiran+'%</td><td class="poin-value '+(a.total_poin>=0?'positive':'negative')+'">'+formatPoin(a.total_poin)+'</td></tr>').join(''); }
+        document.getElementById('infoAnggota').textContent = 'Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total;
+        let html = '<button onclick="goToPageAnggota('+(pageAnggota-1)+')" '+(pageAnggota<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i> Prev</button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPageAnggota('+i+')" class="'+(i===pageAnggota?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPageAnggota('+(pageAnggota+1)+')" '+(pageAnggota>=totalPages?'disabled':'')+'>Next <i class="fas fa-chevron-right"></i></button>';
+        document.getElementById('paginationAnggota').innerHTML = html;
+    }
+
+    function goToPageAnggota(page) {
+        const total = laporanAnggotaCache.length;
+        const totalPages = Math.ceil(total / PER_PAGE) || 1;
+        if (page < 1 || page > totalPages) return;
+        pageAnggota = page;
+        renderPageAnggota();
+    }
+
+    async function renderLaporanKegiatan() {
+        const list = appData.kegiatan.map(k => {
+            const hadir = appData.presensi.filter(p => String(p.ID_Kegiatan) === String(k.ID_Kegiatan) && p.Status_Kehadiran === 'Hadir').length;
+            return { ...k, hadir };
+        });
+        list.sort((a,b) => new Date(b.Tanggal) - new Date(a.Tanggal));
+        laporanKegiatanCache = list;
+        renderPageKegiatan();
+    }
+
+    function renderPageKegiatan() {
+        const total = laporanKegiatanCache.length;
+        const totalPages = Math.ceil(total / PER_PAGE) || 1;
+        if (pageKegiatan > totalPages) pageKegiatan = totalPages;
+        const start = (pageKegiatan - 1) * PER_PAGE;
+        const end = Math.min(start + PER_PAGE, total);
+        const pageData = laporanKegiatanCache.slice(start, end);
+        const tbody = document.getElementById('laporanKegiatanTable');
+        if (total === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-muted text-center">Tidak ada data</td></tr>'; }
+        else { tbody.innerHTML = pageData.map(k => '<tr><td>'+esc(k.Nama_Kegiatan)+'</td><td>'+esc(formatTanggal(k.Tanggal))+'</td><td>'+k.hadir+'</td></tr>').join(''); }
+        document.getElementById('infoKegiatan').textContent = 'Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total;
+        let html = '<button onclick="goToPageKegiatan('+(pageKegiatan-1)+')" '+(pageKegiatan<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i> Prev</button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPageKegiatan('+i+')" class="'+(i===pageKegiatan?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPageKegiatan('+(pageKegiatan+1)+')" '+(pageKegiatan>=totalPages?'disabled':'')+'>Next <i class="fas fa-chevron-right"></i></button>';
+        document.getElementById('paginationKegiatan').innerHTML = html;
+    }
+
+    function goToPageKegiatan(page) {
+        const total = laporanKegiatanCache.length;
+        const totalPages = Math.ceil(total / PER_PAGE) || 1;
+        if (page < 1 || page > totalPages) return;
+        pageKegiatan = page;
+        renderPageKegiatan();
+    }
+
+    async function renderLaporanBulanan() {
+        const bulan = document.getElementById('laporanBulan').value;
+        if (!bulan) return;
+        const [tahun, bln] = bulan.split('-').map(Number);
+        const result = await callApi('getLaporanBulanan', { bulan: bln, tahun: tahun });
+        const tbody = document.getElementById('laporanBulananTable');
+        const rows = result.success ? (result.data || []) : [];
+        tbody.innerHTML = rows.length === 0 ? '<tr><td colspan="7" class="text-muted text-center">Tidak ada data</td></tr>' : rows.map(r => '<tr><td>'+esc(formatTanggal(r.tanggal))+'</td><td>'+esc(r.nama_kegiatan)+'</td><td>'+r.hadir+'</td><td>'+r.terlambat+'</td><td>'+r.izin+'</td><td>'+r.sakit+'</td><td>'+r.alfa+'</td></tr>').join('');
+    }
+
+    // ================================================================
+    // CRUD ANGGOTA (DENGAN TAHUN MASUK)
     // ================================================================
     async function openModalAnggota(data) {
         const isEdit = !!data;
         const d = data || {};
-        const html = `
-            <h2>${isEdit ? 'Edit' : 'Tambah'} Anggota</h2>
-            <p class="sub">${isEdit ? 'Perbarui data anggota' : 'Isi data anggota baru — akun langsung aktif'}</p>
-            <form id="formAnggota" style="max-height:60vh;overflow-y:auto;padding-right:8px;">
-                <div class="form-group"><label>Nama Lengkap <span style="color:red;">*</span></label><input type="text" id="fAnggotaNama" class="form-control" value="${esc(d.Nama_Lengkap || '')}" required /></div>
-                <div class="form-group"><label>No. HP <span style="color:red;">*</span></label><input type="text" id="fAnggotaNoHP" class="form-control" value="${esc(d.No_HP || '')}" required /></div>
-                <div class="form-group"><label>Email</label><input type="email" id="fAnggotaEmail" class="form-control" value="${esc(d.Email || '')}" /></div>
-                <div class="form-row"><div class="form-group"><label>Jabatan</label><input type="text" id="fAnggotaJabatan" class="form-control" value="${esc(d.Jabatan || '')}" /></div><div class="form-group"><label>Status</label><select id="fAnggotaStatus" class="form-control"><option value="Aktif" ${d.Status === 'Aktif' ? 'selected' : ''}>Aktif</option><option value="Sementara" ${d.Status === 'Sementara' ? 'selected' : ''}>Sementara</option><option value="Nonaktif" ${d.Status === 'Nonaktif' ? 'selected' : ''}>Nonaktif</option></select></div></div>
-                <div class="form-row"><div class="form-group"><label>Role</label><select id="fAnggotaRole" class="form-control"><option value="member" ${d.Role === 'member' || !d.Role ? 'selected' : ''}>Anggota</option><option value="admin" ${d.Role === 'admin' ? 'selected' : ''}>Admin</option></select></div><div class="form-group"><label>Alamat</label><select id="fAnggotaAlamat" class="form-control"></select></div></div>
-                <div class="form-row"><div class="form-group"><label>Tempat Lahir</label><input type="text" id="fAnggotaTempatLahir" class="form-control" value="${esc(d.Tempat_Lahir || '')}" /></div><div class="form-group"><label>Tanggal Lahir</label><input type="date" id="fAnggotaTanggalLahir" class="form-control" value="${esc(d.Tanggal_Lahir || '')}" /></div></div>
-                <div class="form-row"><div class="form-group"><label>Nama Panggilan</label><input type="text" id="fAnggotaPanggilan" class="form-control" value="${esc(d.Nama_Panggilan || '')}" /></div><div class="form-group"><label>Agama</label><select id="fAnggotaAgama" class="form-control"><option value="">Pilih</option>${['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'].map(a => `<option value="${a}" ${d.Agama === a ? 'selected' : ''}>${a}</option>`).join('')}</select></div></div>
-                ${isEdit ? `<input type="hidden" id="fAnggotaId" value="${esc(d.ID_Anggota)}" />` : ''}
-                <button type="submit" class="btn btn-primary w-full" style="justify-content:center;padding:12px;margin-top:8px;"><i class="fas fa-save"></i> ${isEdit ? 'Simpan' : 'Tambah'}</button>
-            </form>`;
+        const html = '<h2>'+(isEdit?'Edit':'Tambah')+' Anggota</h2><p class="sub">'+(isEdit?'Perbarui data anggota':'Isi data anggota baru — akun langsung aktif')+'</p><form id="formAnggota" style="max-height:60vh;overflow-y:auto;padding-right:8px;">'+
+            '<div class="form-group"><label>Nama Lengkap <span style="color:red;">*</span></label><input type="text" id="fAnggotaNama" class="form-control" value="'+esc(d.Nama_Lengkap||'')+'" required /></div>'+
+            '<div class="form-group"><label>No. HP <span style="color:red;">*</span></label><input type="text" id="fAnggotaNoHP" class="form-control" value="'+esc(d.No_HP||'')+'" required /></div>'+
+            '<div class="form-group"><label>Email</label><input type="email" id="fAnggotaEmail" class="form-control" value="'+esc(d.Email||'')+'" /></div>'+
+            '<div class="form-row"><div class="form-group"><label>Jabatan</label><input type="text" id="fAnggotaJabatan" class="form-control" value="'+esc(d.Jabatan||'')+'" /></div><div class="form-group"><label>Status</label><select id="fAnggotaStatus" class="form-control"><option value="Aktif" '+(d.Status==='Aktif'?'selected':'')+'>Aktif</option><option value="Sementara" '+(d.Status==='Sementara'?'selected':'')+'>Sementara</option><option value="Nonaktif" '+(d.Status==='Nonaktif'?'selected':'')+'>Nonaktif</option></select></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Role</label><select id="fAnggotaRole" class="form-control"><option value="member" '+(d.Role==='member'||!d.Role?'selected':'')+'>Anggota</option><option value="admin" '+(d.Role==='admin'?'selected':'')+'>Admin</option></select></div><div class="form-group"><label>Alamat</label><select id="fAnggotaAlamat" class="form-control"></select></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Tempat Lahir</label><input type="text" id="fAnggotaTempatLahir" class="form-control" value="'+esc(d.Tempat_Lahir||'')+'" /></div><div class="form-group"><label>Tanggal Lahir</label><input type="date" id="fAnggotaTanggalLahir" class="form-control" value="'+esc(d.Tanggal_Lahir||'')+'" /></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Nama Panggilan</label><input type="text" id="fAnggotaPanggilan" class="form-control" value="'+esc(d.Nama_Panggilan||'')+'" /></div><div class="form-group"><label>Agama</label><select id="fAnggotaAgama" class="form-control"><option value="">Pilih</option>'+['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu','Lainnya'].map(a => '<option value="'+a+'" '+(d.Agama===a?'selected':'')+'>'+a+'</option>').join('')+'</select></div></div>'+
+            '<div class="form-group"><label>Tahun Masuk</label><input type="number" id="fAnggotaTahunMasuk" class="form-control" value="'+(d.Tahun_Masuk||new Date().getFullYear())+'" min="2000" max="2099" /></div>'+
+            (isEdit ? '<input type="hidden" id="fAnggotaId" value="'+esc(d.ID_Anggota)+'" />' : '')+
+            '<button type="submit" class="btn btn-primary w-full" style="justify-content:center;padding:12px;margin-top:8px;"><i class="fas fa-save"></i> '+(isEdit?'Simpan':'Tambah')+'</button></form>';
         openModal(html);
         populateAlamatDropdown('fAnggotaAlamat', d.Alamat);
-        document.getElementById('formAnggota').addEventListener('submit', async function (e) {
+
+        document.getElementById('formAnggota').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('button[type="submit"]');
             const original = btn.innerHTML;
@@ -2526,13 +2576,15 @@
                 tempat_lahir: document.getElementById('fAnggotaTempatLahir').value.trim(),
                 tanggal_lahir: document.getElementById('fAnggotaTanggalLahir').value,
                 nama_panggilan: document.getElementById('fAnggotaPanggilan').value.trim(),
-                agama: document.getElementById('fAnggotaAgama').value
+                agama: document.getElementById('fAnggotaAgama').value,
+                tahun_masuk: document.getElementById('fAnggotaTahunMasuk').value.trim()
             };
             if (!payload.nama_lengkap || !payload.no_hp) { toast('Nama dan No HP wajib diisi!', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
             let result;
             if (isEdit) { result = await callApi('updateAnggota', { id: document.getElementById('fAnggotaId').value, data: payload }); }
             else { result = await callApi('addAnggota', payload); }
             if (!result.success) { toast(result.message || 'Gagal!', 'error'); btn.disabled = false; btn.innerHTML = original; return; }
+            if (!isEdit) { showPasswordModal(result.data.id, result.data.password, 'Anggota Ditambahkan!', 'ID dan password anggota baru:'); }
             toast(isEdit ? 'Anggota diperbarui!' : 'Anggota ditambahkan!', 'success');
             closeModal();
             await refreshAllData();
@@ -2543,58 +2595,6 @@
     }
 
     function editAnggota(id) { const d = appData.anggota.find(a => a.ID_Anggota === id); if (d) openModalAnggota(d); }
-    async function hapusAnggota(id) { if (!confirm('Yakin ingin menonaktifkan anggota ini?')) return; const result = await callApi('deleteAnggota', { id: id }); if (!result.success) { toast(result.message || 'Gagal!', 'error'); return; } toast('Anggota dinonaktifkan!', 'warning'); await refreshAllData(); renderAnggota(); if (document.getElementById('viewAdminDash').classList.contains('active')) renderAdminDashboard(); }
-
-    async function viewProfilAnggota(id) {
-        const data = appData.anggota.find(a => a.ID_Anggota === id);
-        if (!data) return;
-        navigateTo('profilAnggota');
-        const histori = appData.kontribusi.filter(k => k.ID_Anggota === id);
-        const totalPoin = histori.reduce((s, k) => s + (parseInt(k.Poin, 10) || 0), 0);
-        const riwayatPoin = histori.sort((a, b) => (b.Tanggal || '').localeCompare(a.Tanggal || ''));
-        const presensi = appData.presensi.filter(p => p.ID_Anggota === id);
-        const hadir = presensi.filter(p => p.Status_Kehadiran === 'Hadir').length;
-        const persen = presensi.length > 0 ? Math.round((hadir / presensi.length) * 100) : 0;
-        const qr = data.QR_Code || `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${data.ID_Anggota}`;
-        document.getElementById('profilAnggotaContent').innerHTML = `
-            <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:20px;">
-                <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:700;flex-shrink:0;background-size:cover;background-position:center;overflow:hidden;" id="adminProfilAvatar">${esc((data.Nama_Lengkap || 'U')[0].toUpperCase())}</div>
-                <div>
-                    <div style="font-size:24px;font-weight:700;">${esc(data.Nama_Lengkap)}</div>
-                    <div style="color:var(--text-muted);">${esc(data.ID_Anggota)}</div>
-                    <div style="color:var(--text-muted);">${esc(data.Alamat || '-')} · <span class="badge-status ${data.Status === 'Aktif' ? 'hadir' : 'alfa'}">${esc(data.Status || 'Aktif')}</span></div>
-                    <div style="margin-top:8px;display:flex;gap:16px;flex-wrap:wrap;">
-                        <span><strong>${hadir}</strong> hadir</span>
-                        <span class="poin-value ${totalPoin >= 0 ? 'positive' : 'negative'}"><strong>${formatPoin(totalPoin)}</strong> poin</span>
-                        <span><strong>${persen}%</strong> kehadiran</span>
-                    </div>
-                </div>
-            </div>
-            <div class="qr-container" style="align-items:flex-start;"><img src="${qr}" style="max-width:140px;" /><div class="qr-label">${esc(data.ID_Anggota)}</div></div>
-            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
-                <button class="btn btn-secondary btn-sm" onclick="printCardAdmin('${esc(data.ID_Anggota)}')"><i class="fas fa-id-card"></i> Cetak Kartu</button>
-                <button class="btn btn-warning btn-sm" onclick="editAnggota('${esc(data.ID_Anggota)}')"><i class="fas fa-edit"></i> Edit</button>
-                <button class="btn btn-danger btn-sm" onclick="resetPasswordAdmin('${esc(data.ID_Anggota)}')"><i class="fas fa-key"></i> Reset Password</button>
-            </div>
-            <div style="margin-top:16px;"><h4 style="font-weight:600;margin-bottom:8px;">Riwayat Poin</h4>
-                <div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Oleh</th><th>Poin</th></tr></thead><tbody>
-                    ${riwayatPoin.length === 0 ? '<tr><td colspan="5" class="text-muted text-center">Belum ada riwayat</td></tr>' : riwayatPoin.slice(0, 30).map(k => `
-                    <tr><td>${esc(formatTanggal(k.Tanggal))}</td><td>${esc(k.Jenis)}</td><td>${esc(k.Keterangan)}</td><td>${esc(k.Diberikan_Oleh)}</td>
-                    <td class="poin-value ${(parseInt(k.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(k.Poin)}</td></tr>`).join('')}
-                </tbody></table></div>
-            </div>`;
-        const avatarEl = document.getElementById('adminProfilAvatar');
-        const fotoUrl = data.Foto_Url || '';
-        if (fotoUrl) {
-            avatarEl.style.backgroundImage = `url(${fotoUrl})`;
-            avatarEl.style.backgroundSize = 'cover';
-            avatarEl.style.backgroundPosition = 'center';
-            avatarEl.textContent = '';
-        } else {
-            avatarEl.style.backgroundImage = '';
-            avatarEl.textContent = (data.Nama_Lengkap || 'U')[0].toUpperCase();
-        }
-    }
 
     // ================================================================
     // KELOLA KEGIATAN (CRUD)
@@ -2602,26 +2602,17 @@
     function openModalKegiatan(data) {
         const isEdit = !!data;
         const d = data || {};
-        const html = `
-            <h2>${isEdit ? 'Edit' : 'Tambah'} Kegiatan</h2>
-            <p class="sub">Waktu selesai wajib diisi — dipakai sistem untuk menandai Alfa otomatis.</p>
-            <form id="formKegiatan">
-                <div class="form-group"><label>Nama Kegiatan</label><input type="text" id="fKegiatanNama" class="form-control" value="${esc(d.Nama_Kegiatan || '')}" required /></div>
-                <div class="form-row">
-                    <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="fKegiatanTanggal" class="form-control" value="${esc(d.Tanggal || new Date().toISOString().slice(0,10))}" required /></div>
-                    <div class="form-group"><label>Tanggal Selesai</label><input type="date" id="fKegiatanTanggalSelesai" class="form-control" value="${esc(d.Tanggal_Selesai || d.Tanggal || new Date().toISOString().slice(0,10))}" /></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group"><label>Waktu Mulai</label><input type="time" id="fKegiatanMulai" class="form-control" value="${esc(d.Waktu_Mulai || '')}" /></div>
-                    <div class="form-group"><label>Waktu Selesai <span style="color:red;">*</span></label><input type="time" id="fKegiatanSelesai" class="form-control" value="${esc(d.Waktu_Selesai || '')}" required /></div>
-                </div>
-                <div class="form-group"><label>Tempat</label><input type="text" id="fKegiatanTempat" class="form-control" value="${esc(d.Tempat || '')}" /></div>
-                <div class="form-group"><label>Status</label><select id="fKegiatanStatus" class="form-control"><option value="Aktif" ${d.Status === 'Aktif' ? 'selected' : ''}>Aktif</option><option value="Selesai" ${d.Status === 'Selesai' ? 'selected' : ''}>Selesai</option><option value="Batal" ${d.Status === 'Batal' ? 'selected' : ''}>Batal</option></select></div>
-                ${isEdit ? `<input type="hidden" id="fKegiatanId" value="${esc(d.ID_Kegiatan)}" />` : ''}
-                <button type="submit" class="btn btn-primary w-full" style="justify-content:center;padding:12px;"><i class="fas fa-save"></i> ${isEdit ? 'Simpan' : 'Tambah'}</button>
-            </form>`;
+        const html = '<h2>'+(isEdit?'Edit':'Tambah')+' Kegiatan</h2><p class="sub">Waktu selesai wajib diisi — dipakai sistem untuk menandai Alfa otomatis.</p><form id="formKegiatan">'+
+            '<div class="form-group"><label>Nama Kegiatan</label><input type="text" id="fKegiatanNama" class="form-control" value="'+esc(d.Nama_Kegiatan||'')+'" required /></div>'+
+            '<div class="form-row"><div class="form-group"><label>Tanggal Mulai</label><input type="date" id="fKegiatanTanggal" class="form-control" value="'+esc(d.Tanggal||new Date().toISOString().slice(0,10))+'" required /></div><div class="form-group"><label>Tanggal Selesai</label><input type="date" id="fKegiatanTanggalSelesai" class="form-control" value="'+esc(d.Tanggal_Selesai||d.Tanggal||new Date().toISOString().slice(0,10))+'" /></div></div>'+
+            '<div class="form-row"><div class="form-group"><label>Waktu Mulai</label><input type="time" id="fKegiatanMulai" class="form-control" value="'+esc(d.Waktu_Mulai||'')+'" /></div><div class="form-group"><label>Waktu Selesai <span style="color:red;">*</span></label><input type="time" id="fKegiatanSelesai" class="form-control" value="'+esc(d.Waktu_Selesai||'')+'" required /></div></div>'+
+            '<div class="form-group"><label>Tempat</label><input type="text" id="fKegiatanTempat" class="form-control" value="'+esc(d.Tempat||'')+'" /></div>'+
+            '<div class="form-group"><label>Status</label><select id="fKegiatanStatus" class="form-control"><option value="Aktif" '+(d.Status==='Aktif'?'selected':'')+'>Aktif</option><option value="Selesai" '+(d.Status==='Selesai'?'selected':'')+'>Selesai</option><option value="Batal" '+(d.Status==='Batal'?'selected':'')+'>Batal</option></select></div>'+
+            (isEdit ? '<input type="hidden" id="fKegiatanId" value="'+esc(d.ID_Kegiatan)+'" />' : '')+
+            '<button type="submit" class="btn btn-primary w-full" style="justify-content:center;padding:12px;"><i class="fas fa-save"></i> '+(isEdit?'Simpan':'Tambah')+'</button></form>';
         openModal(html);
-        document.getElementById('formKegiatan').addEventListener('submit', async function (e) {
+
+        document.getElementById('formKegiatan').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('button[type="submit"]');
             const original = btn.innerHTML;
@@ -2650,129 +2641,104 @@
     }
 
     function editKegiatan(id) { const d = appData.kegiatan.find(k => String(k.ID_Kegiatan) === String(id)); if (d) openModalKegiatan(d); }
-    async function hapusKegiatan(id) { if (!confirm('Yakin ingin menghapus kegiatan ini?')) return; const result = await callApi('deleteKegiatan', { id: id }); if (!result.success) { toast(result.message || 'Gagal!', 'error'); return; } toast('Kegiatan dihapus!', 'warning'); await refreshAllData(); renderKegiatan(); }
 
+    // ================================================================
+    // VIEW PRESENSI KEGIATAN
+    // ================================================================
     function viewPresensiKegiatan(id) {
         const kegiatan = appData.kegiatan.find(k => String(k.ID_Kegiatan) === String(id));
         if (!kegiatan) return;
         const list = appData.presensi.filter(p => String(p.ID_Kegiatan) === String(id));
-        openModal(`
-            <h2>Presensi: ${esc(kegiatan.Nama_Kegiatan)}</h2><p class="sub">${esc(formatTanggal(kegiatan.Tanggal))} · ${esc(kegiatan.Tempat || '-')}</p>
-            <div class="table-wrap"><table><thead><tr><th>Anggota</th><th>Status</th><th>Poin</th></tr></thead><tbody>
-                ${list.length === 0 ? '<tr><td colspan="3" class="text-muted text-center">Belum ada presensi</td></tr>' : list.map(p => `
-                <tr><td>${esc(anggotaNama(p.ID_Anggota))}</td><td><span class="badge-status ${esc((p.Status_Kehadiran || 'alfa').toLowerCase())}">${esc(p.Status_Kehadiran || 'Alfa')}</span></td>
-                <td class="poin-value ${(parseInt(p.Poin) || 0) >= 0 ? 'positive' : 'negative'}">${formatPoin(p.Poin)}</td></tr>`).join('')}
-            </tbody></table></div>`);
+        openModal('<h2>Presensi: '+esc(kegiatan.Nama_Kegiatan)+'</h2><p class="sub">'+esc(formatTanggal(kegiatan.Tanggal))+' · '+esc(kegiatan.Tempat||'-')+'</p><div class="table-wrap"><table><thead><tr><th>Anggota</th><th>Status</th><th>Poin</th></tr></thead><tbody>'+
+            (list.length === 0 ? '<tr><td colspan="3" class="text-muted text-center">Belum ada presensi</td></tr>' : list.map(p => '<tr><td>'+esc(anggotaNama(p.ID_Anggota))+'</td><td><span class="badge-status '+esc((p.Status_Kehadiran||'alfa').toLowerCase())+'">'+esc(p.Status_Kehadiran||'Alfa')+'</span></td><td class="poin-value '+(parseInt(p.Poin)||0 >=0 ? 'positive' : 'negative')+'">'+formatPoin(p.Poin)+'</td></tr>').join(''))+
+        '</tbody></table></div>');
     }
 
     // ================================================================
-    // PROSES APPROVAL
+    // VIEW PROFIL ANGGOTA (ADMIN)
     // ================================================================
-    async function prosesApproval(id, approve) {
-        if (!confirm(approve ? 'Setujui pendaftaran anggota ini?' : 'Tolak pendaftaran anggota ini?')) return;
-        const result = await callApi(approve ? 'approveAnggota' : 'rejectAnggota', { id: id });
-        if (!result.success) { toast(result.message || 'Gagal memproses.', 'error'); return; }
-        toast(approve ? 'Anggota disetujui!' : 'Pendaftaran ditolak.', approve ? 'success' : 'warning');
-        await refreshAllData();
-        renderApproval();
-        buildSidebar(true);
+    async function viewProfilAnggota(id) {
+        const data = appData.anggota.find(a => a.ID_Anggota === id);
+        if (!data) return;
+        navigateTo('profilAnggota');
+        const histori = appData.kontribusi.filter(k => k.ID_Anggota === id);
+        const totalPoin = histori.reduce((s,k) => s + (parseInt(k.Poin)||0), 0);
+        const riwayatPoin = histori.sort((a,b) => (b.Tanggal||'').localeCompare(a.Tanggal||''));
+        const presensi = appData.presensi.filter(p => p.ID_Anggota === id);
+        const hadir = presensi.filter(p => p.Status_Kehadiran === 'Hadir').length;
+        const persen = presensi.length > 0 ? Math.round(hadir / presensi.length * 100) : 0;
+        const qr = data.QR_Code || 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(data.ID_Anggota);
+
+        document.getElementById('profilAnggotaContent').innerHTML =
+            '<div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:20px;">'+
+                '<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:700;flex-shrink:0;background-size:cover;background-position:center;overflow:hidden;" id="adminProfilAvatar">'+esc((data.Nama_Lengkap||'U')[0].toUpperCase())+'</div>'+
+                '<div><div style="font-size:24px;font-weight:700;">'+esc(data.Nama_Lengkap)+'</div><div style="color:var(--text-muted);">'+esc(data.ID_Anggota)+'</div><div style="color:var(--text-muted);">'+esc(data.Alamat||'-')+' · <span class="badge-status '+(data.Status==='Aktif'?'hadir':'alfa')+'">'+esc(data.Status||'Aktif')+'</span></div>'+
+                '<div style="margin-top:8px;display:flex;gap:16px;flex-wrap:wrap;"><span><strong>'+hadir+'</strong> hadir</span><span class="poin-value '+(totalPoin>=0?'positive':'negative')+'"><strong>'+formatPoin(totalPoin)+'</strong> poin</span><span><strong>'+persen+'%</strong> kehadiran</span></div></div>'+
+            '</div>'+
+            '<div class="qr-container" style="align-items:flex-start;"><img src="'+qr+'" style="max-width:140px;" /><div class="qr-label">'+esc(data.ID_Anggota)+'</div></div>'+
+            '<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">'+
+                '<button class="btn btn-secondary btn-sm" onclick="printCardAdmin(\''+esc(data.ID_Anggota)+'\')"><i class="fas fa-id-card"></i> Cetak Kartu</button>'+
+                '<button class="btn btn-warning btn-sm" onclick="editAnggota(\''+esc(data.ID_Anggota)+'\')"><i class="fas fa-edit"></i> Edit</button>'+
+                '<button class="btn btn-danger btn-sm" onclick="resetPasswordAdmin(\''+esc(data.ID_Anggota)+'\')"><i class="fas fa-key"></i> Reset Password</button>'+
+            '</div>'+
+            '<div style="margin-top:16px;"><h4 style="font-weight:600;margin-bottom:8px;">Riwayat Poin</h4><div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Oleh</th><th>Poin</th></tr></thead><tbody>'+
+                (riwayatPoin.length === 0 ? '<tr><td colspan="5" class="text-muted text-center">Belum ada riwayat</td></tr>' : riwayatPoin.slice(0,30).map(k => '<tr><td>'+esc(formatTanggal(k.Tanggal))+'</td><td>'+esc(k.Jenis)+'</td><td>'+esc(k.Keterangan)+'</td><td>'+esc(k.Diberikan_Oleh)+'</td><td class="poin-value '+(parseInt(k.Poin)||0 >=0 ? 'positive' : 'negative')+'">'+formatPoin(k.Poin)+'</td></tr>').join(''))+
+            '</tbody></table></div></div>';
+        const avatarEl = document.getElementById('adminProfilAvatar');
+        const fotoUrl = data.Foto_Url || '';
+        if (fotoUrl) {
+            avatarEl.style.backgroundImage = 'url('+fotoUrl+')';
+            avatarEl.style.backgroundSize = 'cover';
+            avatarEl.style.backgroundPosition = 'center';
+            avatarEl.textContent = '';
+        } else {
+            avatarEl.style.backgroundImage = '';
+            avatarEl.textContent = (data.Nama_Lengkap||'U')[0].toUpperCase();
+        }
     }
 
     // ================================================================
-    // LAPORAN
+    // RIWAYAT MEMBER
     // ================================================================
-    function resetPeriode() { document.getElementById('periodeDari').value = ''; document.getElementById('periodeSampai').value = ''; goToPageAnggota(1); }
-    async function renderLaporanPeriode() {
-        const dateFrom = document.getElementById('periodeDari').value || null;
-        const dateTo = document.getElementById('periodeSampai').value || null;
-        const result = await callApi('getLaporanPeriode', { dateFrom, dateTo });
-        if (!result.success) { document.getElementById('laporanAnggotaTable').innerHTML = `<tr><td colspan="5" class="text-muted text-center">${esc(result.message)}</td></tr>`; document.getElementById('paginationAnggota').innerHTML = ''; return; }
-        laporanAnggotaCache = result.data || [];
-        laporanAnggotaCache.sort((a, b) => a.nama.localeCompare(b.nama));
-        renderPageAnggota();
-    }
-    function renderPageAnggota() {
-        const total = laporanAnggotaCache.length;
+    function loadRiwayatMember() {
+        const user = currentUser;
+        const presensi = appData.presensi.filter(p => p.ID_Anggota === user.id);
+        const sorted = [...presensi].sort((a,b) => new Date(b.Tanggal_Checkin) - new Date(a.Tanggal_Checkin));
+        const total = sorted.length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
-        if (pageAnggota > totalPages) pageAnggota = totalPages;
-        const start = (pageAnggota - 1) * PER_PAGE;
+        if (pageRiwayatMember > totalPages) pageRiwayatMember = totalPages;
+        const start = (pageRiwayatMember - 1) * PER_PAGE;
         const end = Math.min(start + PER_PAGE, total);
-        const pageData = laporanAnggotaCache.slice(start, end);
-        const tbody = document.getElementById('laporanAnggotaTable');
-        if (total === 0) { tbody.innerHTML = '<tr><td colspan="5" class="text-muted text-center">Tidak ada data</td></tr>'; }
-        else { tbody.innerHTML = pageData.map(a => `<tr><td>${esc(a.nama)}</td><td>${a.hadir}</td><td>${a.alfa}</td><td>${a.persen_kehadiran}%</td><td class="poin-value ${a.total_poin >= 0 ? 'positive' : 'negative'}">${formatPoin(a.total_poin)}</td></tr>`).join(''); }
-        document.getElementById('infoAnggota').textContent = `Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}`;
-        let html = `<button onclick="goToPageAnggota(${pageAnggota - 1})" ${pageAnggota <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> Prev</button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPageAnggota(${i})" class="${i === pageAnggota ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPageAnggota(${pageAnggota + 1})" ${pageAnggota >= totalPages ? 'disabled' : ''}>Next <i class="fas fa-chevron-right"></i></button>`;
-        document.getElementById('paginationAnggota').innerHTML = html;
-    }
-    function goToPageAnggota(page) { const total = laporanAnggotaCache.length; const totalPages = Math.ceil(total / PER_PAGE) || 1; if (page < 1 || page > totalPages) return; pageAnggota = page; renderPageAnggota(); }
+        const pageData = sorted.slice(start, end);
+        const riwayatTable = document.getElementById('riwayatTableMember');
+        riwayatTable.innerHTML = pageData.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat</td></tr>' : pageData.map(p => '<tr><td>'+esc(formatTanggalWaktu(p.Tanggal_Checkin, p.Waktu_Checkin))+'</td><td>'+esc(kegiatanNama(p.ID_Kegiatan))+'</td><td><span class="badge-status '+esc((p.Status_Kehadiran||'alfa').toLowerCase())+'">'+esc(p.Status_Kehadiran||'Alfa')+'</span></td><td class="poin-value '+(parseInt(p.Poin)||0 >=0 ? 'positive' : 'negative')+'">'+formatPoin(p.Poin)+'</td></tr>').join('');
 
-    async function renderLaporanKegiatan() {
-        const list = appData.kegiatan.map(k => { const hadir = appData.presensi.filter(p => String(p.ID_Kegiatan) === String(k.ID_Kegiatan) && p.Status_Kehadiran === 'Hadir').length; return { ...k, hadir }; });
-        list.sort((a, b) => new Date(b.Tanggal) - new Date(a.Tanggal));
-        laporanKegiatanCache = list;
-        renderPageKegiatan();
+        let html = '<span class="info">Menampilkan '+(total>0?start+1:0)+'-'+end+' dari '+total+'</span>';
+        html += '<button onclick="goToPageRiwayatMember('+(pageRiwayatMember-1)+')" '+(pageRiwayatMember<=1?'disabled':'')+'><i class="fas fa-chevron-left"></i></button>';
+        for (let i=1; i<=totalPages; i++) { html += '<button onclick="goToPageRiwayatMember('+i+')" class="'+(i===pageRiwayatMember?'active':'')+'">'+i+'</button>'; }
+        html += '<button onclick="goToPageRiwayatMember('+(pageRiwayatMember+1)+')" '+(pageRiwayatMember>=totalPages?'disabled':'')+'><i class="fas fa-chevron-right"></i></button>';
+        document.getElementById('paginationRiwayatMember').innerHTML = html;
+
+        const histori = appData.kontribusi.filter(k => k.ID_Anggota === user.id);
+        const tbody = document.getElementById('riwayatPoinTableMember');
+        const rows = histori.sort((a,b) => (b.Tanggal||'').localeCompare(a.Tanggal||''));
+        tbody.innerHTML = rows.length === 0 ? '<tr><td colspan="4" class="text-muted text-center">Belum ada riwayat poin</td></tr>' : rows.map(k => '<tr><td>'+esc(formatTanggal(k.Tanggal))+'</td><td>'+esc(k.Jenis)+'</td><td>'+esc(k.Keterangan)+'</td><td class="poin-value '+(parseInt(k.Poin)||0 >=0 ? 'positive' : 'negative')+'">'+formatPoin(k.Poin)+'</td></tr>').join('');
     }
-    function renderPageKegiatan() {
-        const total = laporanKegiatanCache.length;
+
+    function goToPageRiwayatMember(page) {
+        const total = appData.presensi.filter(p => p.ID_Anggota === currentUser.id).length;
         const totalPages = Math.ceil(total / PER_PAGE) || 1;
-        if (pageKegiatan > totalPages) pageKegiatan = totalPages;
-        const start = (pageKegiatan - 1) * PER_PAGE;
-        const end = Math.min(start + PER_PAGE, total);
-        const pageData = laporanKegiatanCache.slice(start, end);
-        const tbody = document.getElementById('laporanKegiatanTable');
-        if (total === 0) { tbody.innerHTML = '<tr><td colspan="3" class="text-muted text-center">Tidak ada data</td></tr>'; }
-        else { tbody.innerHTML = pageData.map(k => `<tr><td>${esc(k.Nama_Kegiatan)}</td><td>${esc(formatTanggal(k.Tanggal))}</td><td>${k.hadir}</td></tr>`).join(''); }
-        document.getElementById('infoKegiatan').textContent = `Menampilkan ${total > 0 ? start+1 : 0}-${end} dari ${total}`;
-        let html = `<button onclick="goToPageKegiatan(${pageKegiatan - 1})" ${pageKegiatan <= 1 ? 'disabled' : ''}><i class="fas fa-chevron-left"></i> Prev</button>`;
-        for (let i = 1; i <= totalPages; i++) { html += `<button onclick="goToPageKegiatan(${i})" class="${i === pageKegiatan ? 'active' : ''}">${i}</button>`; }
-        html += `<button onclick="goToPageKegiatan(${pageKegiatan + 1})" ${pageKegiatan >= totalPages ? 'disabled' : ''}>Next <i class="fas fa-chevron-right"></i></button>`;
-        document.getElementById('paginationKegiatan').innerHTML = html;
-    }
-    function goToPageKegiatan(page) { const total = laporanKegiatanCache.length; const totalPages = Math.ceil(total / PER_PAGE) || 1; if (page < 1 || page > totalPages) return; pageKegiatan = page; renderPageKegiatan(); }
-
-    async function renderLaporanBulanan() {
-        const bulan = document.getElementById('laporanBulan').value;
-        if (!bulan) return;
-        const [tahun, bln] = bulan.split('-').map(Number);
-        const result = await callApi('getLaporanBulanan', { bulan: bln, tahun: tahun });
-        const tbody = document.getElementById('laporanBulananTable');
-        const rows = result.success ? (result.data || []) : [];
-        tbody.innerHTML = rows.length === 0 ? '<tr><td colspan="7" class="text-muted text-center">Tidak ada data</td></tr>' : rows.map(r => `
-            <tr><td>${esc(formatTanggal(r.tanggal))}</td><td>${esc(r.nama_kegiatan)}</td><td>${r.hadir}</td><td>${r.terlambat}</td><td>${r.izin}</td><td>${r.sakit}</td><td>${r.alfa}</td></tr>`).join('');
-    }
-
-    async function exportLaporan(jenis, format) {
-        toast('Sedang membuat file export, mohon tunggu...', 'warning');
-        const params = jenis === 'anggota' ? { dateFrom: document.getElementById('periodeDari').value || null, dateTo: document.getElementById('periodeSampai').value || null } :
-                       jenis === 'bulanan' ? (() => { const [t, b] = document.getElementById('laporanBulan').value.split('-'); return { bulan: b, tahun: t }; })() : {};
-        const result = await callApi('exportLaporan', { jenis, format, params });
-        if (!result.success) { toast(result.message || 'Export gagal.', 'error'); return; }
-        const urls = result.data;
-        if (urls.pdf) window.open(urls.pdf, '_blank');
-        if (urls.xlsx) window.open(urls.xlsx, '_blank');
-        toast('Export berhasil dibuat!', 'success');
-    }
-
-    // ================================================================
-    // INISIALISASI & ALFA
-    // ================================================================
-    async function processAlfaManual() {
-        toast('Memproses Alfa otomatis...', 'warning');
-        const result = await callApi('processAlfaOtomatis');
-        if (!result.success) { toast(result.message || 'Gagal!', 'error'); return; }
-        toast(`Selesai. Kegiatan diproses: ${result.data.kegiatanDiproses}, Alfa dicatat: ${result.data.alfaTercatat}`, 'success');
-        await refreshAllData();
+        if (page < 1 || page > totalPages) return;
+        pageRiwayatMember = page;
+        loadRiwayatMember();
     }
 
     // ================================================================
     // UTILITY
     // ================================================================
     function anggotaNama(id) { const a = appData.anggota.find(x => x.ID_Anggota === id); return a ? a.Nama_Lengkap : id; }
-    function kegiatanNama(id) { const k = appData.kegiatan.find(x => String(x.ID_Kegiatan) === String(id)); return k ? k.Nama_Kegiatan : (id || '-'); }
-    function formatPoin(p) { const n = parseInt(p) || 0; return (n >= 0 ? '+' : '') + n; }
+    function kegiatanNama(id) { const k = appData.kegiatan.find(x => String(x.ID_Kegiatan) === String(id)); return k ? k.Nama_Kegiatan : (id||'-'); }
+    function formatPoin(p) { const n = parseInt(p)||0; return (n>=0?'+':'')+n; }
 
     // ================================================================
     // BOOT
@@ -2784,7 +2750,7 @@
             try {
                 currentUser = JSON.parse(saved);
                 if (!appData.anggota.some(a => a.ID_Anggota === currentUser.id)) { localStorage.removeItem('currentUser'); currentUser = null; }
-            } catch (e) { localStorage.removeItem('currentUser'); currentUser = null; }
+            } catch(e) { localStorage.removeItem('currentUser'); currentUser = null; }
         }
         if (currentUser) {
             document.getElementById('landingPage').style.display = 'none';
@@ -2795,7 +2761,7 @@
             document.getElementById('dashboardApp').style.display = 'none';
             renderLandingStats();
         }
-        console.log('🟢 Karang Taruna BONKAR-IN v6.0 loaded —', appData.anggota.length, 'anggota,', appData.kegiatan.length, 'kegiatan,', appData.presensi.length, 'presensi');
+        console.log('🟢 Karang Taruna BONKAR-IN v7.1 loaded —', appData.anggota.length, 'anggota,', appData.kegiatan.length, 'kegiatan,', appData.presensi.length, 'presensi');
     })();
 </script>
 </body>
