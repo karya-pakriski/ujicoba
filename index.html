@@ -1157,10 +1157,10 @@
     let fotoMimeType = 'image/jpeg';
 
     // ================================================================
-    // CETAK KARTU LOGIN PER ANGGOTA (baru)
+    // CETAK KARTU LOGIN PER ANGGOTA
     // ================================================================
     function printLoginCardsPerAnggota() {
-        const anggota = appData.anggota.filter(a => a.Status === 'Aktif'); // hanya Aktif, tidak termasuk Sementara
+        const anggota = appData.anggota.filter(a => a.Status === 'Aktif');
         if (anggota.length === 0) {
             toast('Tidak ada anggota dengan status Aktif untuk dicetak.', 'warning');
             return;
@@ -1218,7 +1218,6 @@
         setButtonLoading(btn, true, 'Memproses...');
 
         try {
-            // 1. Panggil processAlfaOtomatis (backend akan memproses semua yang eligible)
             const resultAlfa = await callApi('processAlfaOtomatis');
             if (!resultAlfa.success) {
                 toast('Gagal memproses Alfa: ' + resultAlfa.message, 'error');
@@ -1226,7 +1225,6 @@
                 return;
             }
 
-            // 2. Untuk setiap kegiatan terpilih, ubah status menjadi "Selesai"
             let updated = 0;
             for (const id of ids) {
                 const res = await callApi('updateKegiatan', { id: id, data: { status: 'Selesai' } });
@@ -1357,7 +1355,7 @@
     }
 
     // ================================================================
-    // DATE FORMATTER (DIPERBAIKI)
+    // DATE FORMATTER
     // ================================================================
     function formatTanggal(iso) {
         if (!iso) return '-';
@@ -1494,7 +1492,7 @@
     }
 
     // ================================================================
-    // LOGIN / LOGOUT / REGISTER (dengan minimum loading time)
+    // LOGIN / LOGOUT / REGISTER
     // ================================================================
     function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
     function closeLoginModal() { document.getElementById('loginModal').classList.remove('active'); }
@@ -2873,27 +2871,53 @@
     function formatPoin(p) { const n = parseInt(p)||0; return (n>=0?'+':'')+n; }
 
     // ================================================================
-    // BOOT
+    // BOOT (DIPERBAIKI: refresh tidak logout)
     // ================================================================
     (async function boot() {
-        await refreshAllData();
+        // 1. Baca currentUser dari localStorage TERLEBIH DAHULU
         const saved = localStorage.getItem('currentUser');
         if (saved) {
             try {
                 currentUser = JSON.parse(saved);
-                if (!appData.anggota.some(a => a.ID_Anggota === currentUser.id)) { localStorage.removeItem('currentUser'); currentUser = null; }
             } catch(e) { localStorage.removeItem('currentUser'); currentUser = null; }
         }
+
+        // 2. Jika ada currentUser, langsung tampilkan dashboard (tanpa menunggu data)
         if (currentUser) {
             document.getElementById('landingPage').style.display = 'none';
             document.getElementById('dashboardApp').style.display = 'block';
             initApp(currentUser);
+            // Muat data di latar belakang (tidak memblokir tampilan)
+            refreshAllData().then(ok => {
+                if (ok) {
+                    // Validasi user masih ada di data terbaru
+                    const stillExists = appData.anggota.some(a => a.ID_Anggota === currentUser.id);
+                    if (!stillExists) {
+                        // Jangan logout otomatis, cukup beri tahu
+                        toast('Data akun Anda tidak ditemukan di server. Silakan login ulang.', 'warning');
+                    } else {
+                        // Perbarui nama/role jika berubah
+                        const fresh = appData.anggota.find(a => a.ID_Anggota === currentUser.id);
+                        if (fresh) {
+                            currentUser.nama = fresh.Nama_Lengkap;
+                            currentUser.role = fresh.Role || 'member';
+                            currentUser.status = fresh.Status || 'Aktif';
+                            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                            document.getElementById('userName').textContent = currentUser.nama;
+                            document.getElementById('userRole').textContent = currentUser.role === 'admin' ? 'Administrator' : 'Anggota';
+                            updateUserAvatar(currentUser.id);
+                        }
+                    }
+                }
+            });
         } else {
+            // Tidak ada user, tampilkan landing & muat data untuk statistik
             document.getElementById('landingPage').style.display = 'block';
             document.getElementById('dashboardApp').style.display = 'none';
+            await refreshAllData();
             renderLandingStats();
         }
-        console.log('🟢 Karang Taruna BONKAR-IN v7.1 loaded —', appData.anggota.length, 'anggota,', appData.kegiatan.length, 'kegiatan,', appData.presensi.length, 'presensi');
+        console.log('🟢 Karang Taruna BONKAR-IN v7.1 loaded');
     })();
 </script>
 </body>
